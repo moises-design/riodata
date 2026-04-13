@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — My Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,800;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#0F0F0E; --ink-2:#2A2A27; --ink-3:#5C5C54;
+  --border:#E2DDD6; --parchment:#F7F3EE; --white:#FDFCFB;
+  --rust:#B8431E; --rust-2:#D4582E; --rust-light:#F2E8E3;
+  --teal:#1A6B72; --teal-light:#E3F0F1;
+  --gold:#B07D1A; --gold-light:#FBF4E3;
+  --green:#2A6B43; --green-light:#E4F0EA;
+  --purple:#5B3FA6; --purple-light:#EDE8F8;
+  --navy:#1A2E5A; --navy-light:#E8EDF8;
+  --r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--parchment);color:var(--ink);min-height:100vh;}
+
+/* ── ROLE SELECTOR (pre-login demo) ── */
+.role-selector-overlay {
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(15,15,14,0.85);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;
+  padding:20px;
+}
+.role-selector-box {
+  background:var(--white);border-radius:16px;
+  width:100%;max-width:680px;
+  padding:40px;
+  animation:popIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn{from{opacity:0;transform:scale(0.92)}to{opacity:1;transform:scale(1)}}
+.rs-brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.rs-brand span{color:var(--rust);}
+.rs-title{font-family:'Fraunces',serif;font-size:28px;font-weight:700;letter-spacing:-0.5px;margin-bottom:8px;}
+.rs-sub{font-size:14px;color:var(--ink-3);margin-bottom:28px;line-height:1.6;}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px;}
+.role-card{
+  border:1.5px solid var(--border);border-radius:var(--r);
+  padding:16px 12px;text-align:center;cursor:pointer;
+  transition:all 0.2s;background:var(--white);
+  position:relative;
+}
+.role-card:hover{border-color:var(--rust);background:var(--rust-light);transform:translateY(-2px);}
+.role-card.selected{border-color:var(--rust);background:var(--rust-light);}
+.role-icon{font-size:26px;margin-bottom:8px;}
+.role-name{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.role-desc{font-size:11px;color:var(--ink-3);line-height:1.4;}
+.role-badge{
+  position:absolute;top:-7px;right:-7px;
+  background:var(--rust);color:white;
+  font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:0.08em;
+}
+.rs-btn{
+  width:100%;padding:14px;border-radius:var(--r);
+  background:var(--rust);color:white;border:none;
+  font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;
+  transition:all 0.2s;
+}
+.rs-btn:hover{background:var(--rust-2);}
+.rs-note{text-align:center;font-size:12px;color:var(--ink-3);margin-top:12px;}
+
+/* ── APP SHELL ── */
+.app{display:flex;min-height:100vh;}
+.main-content{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  width:260px;background:var(--ink);flex-shrink:0;
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;height:100vh;
+  z-index:50;overflow-y:auto;
+  transition:transform 0.3s;
+}
+.sidebar-brand-area{
+  padding:20px 18px 16px;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.sidebar-brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:white;}
+.sidebar-brand span{color:var(--rust);}
+.sidebar-user{
+  display:flex;align-items:center;gap:10px;
+  margin-top:14px;padding:10px 12px;
+  background:rgba(255,255,255,0.05);border-radius:var(--r);
+}
+.user-avatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;color:white;flex-shrink:0;
+}
+.user-name{font-size:13px;font-weight:600;color:rgba(255,255,255,0.9);}
+.user-role-tag{
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;
+  display:inline-block;
+}
+
+.nav-section{padding:14px 10px 4px;}
+.nav-section-label{
+  font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;
+  color:rgba(255,255,255,0.22);padding:0 8px;margin-bottom:4px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:6px;
+  font-size:13.5px;font-weight:500;
+  color:rgba(255,255,255,0.48);cursor:pointer;
+  transition:all 0.15s;text-decoration:none;
+  position:relative;
+}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85);}
+.nav-item.active{background:rgba(184,67,30,0.18);color:white;}
+.nav-item.active .nav-icon{color:var(--rust);}
+.nav-icon{font-size:15px;width:18px;text-align:center;flex-shrink:0;}
+.nav-pill{
+  margin-left:auto;min-width:20px;height:18px;border-radius:9px;
+  font-size:9.5px;font-weight:700;padding:0 5px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--rust);color:white;
+}
+.nav-pill.green{background:var(--green);}
+.nav-pill.gold{background:var(--gold);}
+
+.nav-lock{
+  opacity:0.3;cursor:not-allowed;
+}
+.nav-lock::after{content:'🔒';position:absolute;right:10px;font-size:10px;}
+
+.sidebar-bottom{
+  margin-top:auto;padding:14px 10px;
+  border-top:1px solid rgba(255,255,255,0.07);
+}
+.sidebar-upgrade{
+  background:linear-gradient(135deg,rgba(184,67,30,0.15),rgba(184,67,30,0.05));
+  border:1px solid rgba(184,67,30,0.25);
+  border-radius:var(--r);padding:14px;margin-bottom:10px;
+}
+.upgrade-title{font-size:12px;font-weight:700;color:white;margin-bottom:4px;}
+.upgrade-desc{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.4;margin-bottom:10px;}
+.upgrade-btn{
+  width:100%;padding:7px;background:var(--rust);color:white;
+  border:none;border-radius:5px;font-size:12px;font-weight:600;
+  cursor:pointer;font-family:inherit;
+}
+
+/* ── TOP BAR ── */
+.topbar{
+  background:var(--white);border-bottom:1px solid var(--border);
+  height:56px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  position:sticky;top:0;z-index:40;
+  margin-left:260px;
+}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.topbar-page-title{font-family:'Fraunces',serif;font-size:17px;font-weight:700;}
+.topbar-breadcrumb{font-size:12px;color:var(--ink-3);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.tb-btn{
+  padding:7px 14px;border-radius:var(--r);font-size:13px;font-weight:500;
+  cursor:pointer;border:1.5px solid var(--border);background:transparent;
+  color:var(--ink-3);font-family:inherit;transition:all 0.15s;
+  display:flex;align-items:center;gap:6px;
+}
+.tb-btn:hover{border-color:var(--rust);color:var(--rust);}
+.tb-btn-fill{background:var(--rust);color:white;border-color:var(--rust);}
+.tb-btn-fill:hover{background:var(--rust-2);color:white;}
+.notif-wrap{position:relative;}
+.notif-badge{
+  position:absolute;top:-4px;right:-4px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--rust);color:white;
+  font-size:9px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--white);
+}
+
+/* ── PAGE CONTENT ── */
+.page-content{
+  margin-left:260px;
+  padding:28px;
+  flex:1;
+}
+
+/* ── DASHBOARD PANELS ── */
+.dash-panel{display:none;}
+.dash-panel.active{display:block;}
+
+/* Welcome banner */
+.welcome-banner{
+  border-radius:12px;padding:28px 32px;margin-bottom:24px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  position:relative;overflow:hidden;
+}
+.wb-glow{
+  position:absolute;right:-40px;top:-40px;
+  width:200px;height:200px;border-radius:50%;
+  opacity:0.15;
+}
+.wb-eyebrow{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;opacity:0.7;margin-bottom:8px;}
+.wb-title{font-family:'Fraunces',serif;font-size:24px;font-weight:700;letter-spacing:-0.3px;margin-bottom:6px;}
+.wb-sub{font-size:14px;opacity:0.72;line-height:1.55;max-width:500px;}
+.wb-actions{display:flex;gap:8px;flex-shrink:0;}
+.wb-btn{
+  padding:10px 20px;border-radius:var(--r);font-size:13.5px;font-weight:600;
+  cursor:pointer;border:none;font-family:inherit;white-space:nowrap;transition:all 0.15s;
+}
+
+/* KPI cards */
+.kpi-row{display:grid;gap:14px;margin-bottom:20px;}
+.kpi-row-4{grid-template-columns:repeat(4,1fr);}
+.kpi-row-3{grid-template-columns:repeat(3,1fr);}
+.kpi-row-2{grid-template-columns:repeat(2,1fr);}
+.kpi-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);padding:20px;
+}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.kpi-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;}
+.kpi-trend{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;}
+.trend-up{color:var(--green);background:var(--green-light);}
+.trend-down{color:var(--rust);background:var(--rust-light);}
+.trend-new{color:var(--teal);background:var(--teal-light);}
+.kpi-val{font-family:'Fraunces',serif;font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1;margin-bottom:4px;}
+.kpi-label{font-size:12px;color:var(--ink-3);}
+
+/* Grid layouts */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-3{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;}
+.grid-full{margin-bottom:16px;}
+
+/* Cards */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);}
+.card-hdr{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-family:'Fraunces',serif;font-size:15px;font-weight:700;}
+.card-action{font-size:12.5px;color:var(--rust);cursor:pointer;font-weight:500;text-decoration:none;}
+.card-body{padding:20px;}
+.card-body-0{padding:0;}
+
+/* Activity list */
+.act-list{}
+.act-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:12px 20px;border-bottom:1px solid var(--border);
+  transition:background 0.15s;
+}
+.act-item:hover{background:var(--parchment);}
+.act-item:last-child{border-bottom:none;}
+.act-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;
+}
+.act-text{font-size:13px;color:var(--ink-2);line-height:1.5;flex:1;}
+.act-text strong{color:var(--ink);}
+.act-time{font-size:11px;color:var(--ink-3);white-space:nowrap;margin-top:1px;}
+
+/* Tags */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;padding:3px 9px;border-radius:4px;
+  text-transform:uppercase;letter-spacing:0.05em;
+}
+.tag-green{background:var(--green-light);color:var(--green);}
+.tag-rust{background:var(--rust-light);color:var(--rust);}
+.tag-teal{background:var(--teal-light);color:var(--teal);}
+.tag-gold{background:var(--gold-light);color:var(--gold);}
+.tag-purple{background:var(--purple-light);color:var(--purple);}
+.tag-navy{background:var(--navy-light);color:var(--navy);}
+
+/* Progress bars */
+.prog-row{margin-bottom:14px;}
+.prog-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;}
+.prog-name{font-weight:500;}
+.prog-val{color:var(--ink-3);}
+.prog-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 0.8s ease;}
+
+/* Table */
+.mini-table{width:100%;border-collapse:collapse;font-size:13px;}
+.mini-table th{
+  text-align:left;padding:8px 14px;
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--ink-3);border-bottom:1.5px solid var(--border);background:var(--parchment);
+}
+.mini-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--ink-2);}
+.mini-table tr:last-child td{border-bottom:none;}
+.mini-table tr:hover td{background:rgba(247,243,238,0.6);}
+.td-bold{font-weight:600;color:var(--ink);}
+
+/* Company card list */
+.company-list{}
+.company-row{
+  display:flex;align-items:center;gap:14px;
+  padding:12px 20px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background 0.15s;
+}
+.company-row:hover{background:var(--parchment);}
+.company-row:last-child{border-bottom:none;}
+.co-avatar{
+  width:38px;height:38px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:16px;font-weight:700;flex-shrink:0;
+}
+.co-info{flex:1;min-width:0;}
+.co-name{font-size:13.5px;font-weight:600;color:var(--ink);}
+.co-meta{font-size:11.5px;color:var(--ink-3);margin-top:2px;}
+.co-right{text-align:right;}
+.co-badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:3px;}
+.ready-yes{background:var(--green-light);color:var(--green);}
+.ready-no{background:var(--border);color:var(--ink-3);}
+.co-sector{font-size:11px;color:var(--ink-3);margin-top:3px;}
+
+/* Opportunity cards */
+.opp-card{
+  border:1px solid var(--border);border-radius:var(--r);
+  padding:18px;margin-bottom:12px;cursor:pointer;
+  transition:all 0.2s;position:relative;
+  border-left:3px solid var(--border);
+}
+.opp-card:hover{border-left-color:var(--rust);box-shadow:0 3px 12px rgba(0,0,0,0.07);}
+.opp-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--rust);margin-bottom:6px;}
+.opp-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:5px;letter-spacing:-0.2px;}
+.opp-meta{font-size:12.5px;color:var(--ink-3);}
+.opp-footer{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);}
+.opp-value{font-size:13px;font-weight:700;color:var(--green);}
+.opp-deadline{font-size:11.5px;color:var(--ink-3);}
+
+/* Skill gap bars */
+.gap-row{padding:10px 0;border-bottom:1px solid var(--border);}
+.gap-row:last-child{border-bottom:none;}
+.gap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.gap-name{font-size:13px;font-weight:600;}
+.gap-severity{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.sev-critical{background:var(--rust-light);color:var(--rust);}
+.sev-high{background:var(--gold-light);color:var(--gold);}
+.sev-surplus{background:var(--green-light);color:var(--green);}
+.gap-nums{font-size:11.5px;color:var(--ink-3);margin-bottom:4px;}
+.gap-bar-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.gap-bar-fill{height:100%;border-radius:3px;}
+
+/* Data access card (for acquisition pitch) */
+.data-access-card{
+  background:linear-gradient(135deg,var(--navy) 0%,#0D1F3C 100%);
+  border-radius:12px;padding:28px;margin-bottom:16px;
+  position:relative;overflow:hidden;color:white;
+}
+.dac-glow{
+  position:absolute;right:-60px;top:-60px;
+  width:240px;height:240px;border-radius:50%;
+  background:radial-gradient(circle,rgba(91,63,166,0.4),transparent 70%);
+}
+.dac-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.18em;color:rgba(255,255,255,0.4);margin-bottom:8px;}
+.dac-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+.dac-desc{font-size:13.5px;color:rgba(255,255,255,0.6);line-height:1.6;margin-bottom:18px;}
+.dac-stats{display:flex;gap:24px;margin-bottom:20px;}
+.dac-stat-num{font-family:'Fraunces',serif;font-size:28px;font-weight:700;line-height:1;}
+.dac-stat-label{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;text-transform:uppercase;letter-spacing:0.06em;}
+.dac-btn{
+  padding:10px 22px;border-radius:var(--r);
+  background:white;color:var(--navy);border:none;
+  font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;
+  transition:all 0.15s;display:inline-flex;align-items:center;gap:6px;
+}
+.dac-btn:hover{background:var(--parchment);}
+
+/* Chart sim */
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:80px;padding:0 4px;}
+.cb{flex:1;border-radius:3px 3px 0 0;min-width:8px;opacity:0.85;transition:opacity 0.2s;}
+.cb:hover{opacity:1;}
+.chart-labels{display:flex;gap:6px;margin-top:6px;padding:0 4px;}
+.cl{flex:1;font-size:9px;text-align:center;color:var(--ink-3);}
+
+/* Inline form */
+.inline-form{display:flex;flex-direction:column;gap:12px;}
+.form-field{}
+.form-label{font-size:12px;font-weight:600;color:var(--ink-2);margin-bottom:5px;display:block;}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:10px 13px;
+  border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:inherit;font-size:13.5px;color:var(--ink);
+  background:var(--white);transition:border-color 0.15s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--rust);}
+.form-textarea{min-height:80px;resize:vertical;}
+.form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.submit-btn{
+  padding:11px;background:var(--rust);color:white;border:none;
+  border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:600;
+  cursor:pointer;transition:all 0.15s;
+}
+.submit-btn:hover{background:var(--rust-2);}
+
+/* Acquisition pitch box */
+.pitch-box{
+  border:1.5px solid var(--border);border-radius:10px;
+  padding:20px;margin-bottom:12px;
+}
+.pitch-logo{font-size:28px;margin-bottom:10px;}
+.pitch-org{font-family:'Fraunces',serif;font-size:16px;font-weight:700;margin-bottom:4px;}
+.pitch-desc{font-size:13px;color:var(--ink-3);line-height:1.55;margin-bottom:14px;}
+.pitch-data-points{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.pitch-dp{
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;
+  background:var(--parchment);border:1px solid var(--border);color:var(--ink-3);
+}
+.pitch-footer{display:flex;gap:8px;}
+.pitch-btn-primary{
+  flex:1;padding:9px;background:var(--rust);color:white;border:none;
+  border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;
+}
+.pitch-btn-sec{
+  padding:9px 16px;background:transparent;color:var(--ink-3);
+  border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:inherit;font-size:13px;cursor:pointer;
+}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .topbar,.page-content{margin-left:0;}
+  .role-grid{grid-template-columns:1fr 1fr;}
+  .kpi-row-4{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3{grid-template-columns:1fr;}
+  .topbar{padding:0 16px;}
+  .page-content{padding:16px;}
+}
+@media(max-width:480px){
+  .role-grid{grid-template-columns:1fr 1fr;}
+  .role-selector-box{padding:24px 20px;}
+  .rs-title{font-size:22px;}
+  .kpi-row-4,.kpi-row-3{grid-template-columns:1fr 1fr;}
+  .form-row-2{grid-template-columns:1fr;}
+}
+</style>
+
+<!-- ═══ RIODATA SUPABASE CONNECTION ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://knbtwcxwdhyjvgncnzjo.supabase.co';
+const SUPA_KEY = 'sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+});
+
+async function rdSignUp(email, password, fullName, userType, org) {
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: fullName, user_type: userType, organization: org } }
+  });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignOut() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+async function rdSubmitCompany(formData) {
+  const { data, error } = await sb.from('companies').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdLoadCompanies(filters) {
+  filters = filters || {};
+  let query = sb.from('companies').select('*').eq('status', 'active');
+  if (filters.sector) query = query.eq('sector', filters.sector);
+  if (filters.city) query = query.ilike('city', '%' + filters.city + '%');
+  if (filters.ready) query = query.eq('ready_to_work', true);
+  if (filters.search) query = query.or('legal_name.ilike.%' + filters.search + '%,description.ilike.%' + filters.search + '%');
+  const { data, error } = await query.order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdLoadProjects() {
+  const { data, error } = await sb.from('projects').select('*').eq('status', 'active').order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdSubmitProject(formData) {
+  const { data, error } = await sb.from('projects').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdTrack(page) {
+  await sb.from('analytics_events').insert([{ event_type: 'page_view', page: page, user_id: currentUser?.id || null }]);
+}
+
+window.addEventListener('load', () => rdTrack(window.location.pathname || '/'));
+</script>
+<!-- ═══════════════════════════════════════════ -->
+
+</head>
+<body>
+
+<!-- ══ ROLE SELECTOR ══════════════════════════════════════════ -->
+<div class="role-selector-overlay" id="role-overlay">
+  <div class="role-selector-box">
+    <div class="rs-brand">Rio<span style="color:#1A6B72">Data</span></div>
+    <div class="rs-title">Who are you signing in as?</div>
+    <div class="rs-sub">RioData personalizes your dashboard based on your role. Every account is free — your view changes based on what's most useful to you.</div>
+
+    <div class="role-grid">
+      <div class="role-card selected" onclick="selectRole(this,'business')" data-role="business">
+        <div class="role-badge">Most Common</div>
+        <div class="role-icon">🏢</div>
+        <div class="role-name">Business Owner</div>
+        <div class="role-desc">List your company, get matched to projects, manage your profile</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'developer')" data-role="developer">
+        <div class="role-icon">🏗️</div>
+        <div class="role-name">Developer / GC</div>
+        <div class="role-desc">Find local subcontractors, post projects, build your supply chain</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'jobseeker')" data-role="jobseeker">
+        <div class="role-icon">🎓</div>
+        <div class="role-name">Job Seeker</div>
+        <div class="role-desc">Explore careers, match to open positions, find training programs</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'investor')" data-role="investor">
+        <div class="role-icon">💼</div>
+        <div class="role-name">Investor</div>
+        <div class="role-desc">Regional economic data, project pipeline, market intelligence</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'university')" data-role="university">
+        <div class="role-icon">🏛️</div>
+        <div class="role-name">University / College</div>
+        <div class="role-desc">Connect programs to employers, track graduate outcomes, workforce data</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'government')" data-role="government">
+        <div class="role-icon">⭐</div>
+        <div class="role-name">Government / EDC</div>
+        <div class="role-desc">Economic development, workforce planning, regional intelligence</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'researcher')" data-role="researcher">
+        <div class="role-icon">🔬</div>
+        <div class="role-name">Researcher</div>
+        <div class="role-desc">Academic and policy research, regional datasets, trend analysis</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'contractor')" data-role="contractor">
+        <div class="role-icon">🔧</div>
+        <div class="role-name">Independent Contractor</div>
+        <div class="role-desc">Solo skilled worker — find project work, get certified, build a profile</div>
+      </div>
+      <div class="role-card" onclick="selectRole(this,'media')" data-role="media">
+        <div class="role-icon">📰</div>
+        <div class="role-name">Media / Press</div>
+        <div class="role-desc">Access regional data, economic reports, story leads for the border region</div>
+      </div>
+    </div>
+
+    <button class="rs-btn" onclick="launchDashboard()">Enter My Dashboard →</button>
+    <div class="rs-note">Free forever. No credit card. Switch roles anytime in settings.</div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ══════════════════════════════════════════════ -->
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand-area">
+      <div class="sidebar-brand">Rio<span style="color:#1A6B72">Data</span></div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="user-avatar" style="background:var(--rust)">M</div>
+        <div>
+          <div class="user-name" id="user-name">Maria Garcia</div>
+          <div class="user-role-tag" id="user-role-tag" style="background:rgba(184,67,30,0.2);color:#F0A080;">Business Owner</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebar-nav"><!-- populated by JS --></div>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-upgrade" id="sidebar-upgrade">
+        <div class="upgrade-title">🔒 Premium Data</div>
+        <div class="upgrade-desc">Full county-level exports, API access, and white-label reports available for institutions.</div>
+        <button class="upgrade-btn" onclick="showPanel('acquire')">Learn About Licensing →</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="tb-btn" style="display:none" id="menu-btn" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="topbar-page-title" id="topbar-title">My Dashboard</div>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-wrap">
+          <button class="tb-btn">🔔<div class="notif-badge">3</div></button>
+        </div>
+        <button class="tb-btn tb-btn-fill" id="topbar-cta">+ Post Project</button>
+      </div>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <div class="page-content">
+
+      <!-- ══ BUSINESS OWNER DASHBOARD ══ -->
+      <div class="dash-panel active" id="panel-business">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#B8431E,#8B2E12);color:white;">
+          <div class="wb-glow" style="background:radial-gradient(circle,rgba(255,255,255,0.2),transparent 70%);"></div>
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">Business Owner Dashboard</div>
+            <div class="wb-title">Good morning, Maria 👋</div>
+            <div class="wb-sub">Your company profile is <strong style="color:white">live and active.</strong> You have 3 new project matches and 1 message waiting.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:white;color:var(--rust);" onclick="showPanel('business-profile')">Edit Profile</button>
+            <button class="wb-btn" style="background:rgba(255,255,255,0.15);color:white;border:1px solid rgba(255,255,255,0.3);">View Public Listing →</button>
+          </div>
+        </div>
+
+        <div class="kpi-row kpi-row-4">
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--rust-light)">👁️</div><span class="kpi-trend trend-up">↑ 34%</span></div>
+            <div class="kpi-val">284</div><div class="kpi-label">Profile Views This Month</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--teal-light)">🔗</div><span class="kpi-trend trend-new">+3 New</span></div>
+            <div class="kpi-val">7</div><div class="kpi-label">Project Matches</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-light)">💬</div><span class="kpi-trend trend-up">1 Unread</span></div>
+            <div class="kpi-val">3</div><div class="kpi-label">Inquiries Received</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><div class="kpi-icon" style="background:var(--green-light)">✅</div></div>
+            <div class="kpi-val" style="color:var(--green)">Ready</div><div class="kpi-label">Your Status</div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div>
+            <div class="card grid-full">
+              <div class="card-hdr"><div class="card-title">Your Matched Projects</div><a class="card-action">View All →</a></div>
+              <div class="card-body-0">
+                <div class="opp-card" style="margin:12px 12px 0;border-left-color:var(--rust);">
+                  <div class="opp-type">⚡ Energy / LNG — Strong Match</div>
+                  <div class="opp-title">Port of Brownsville LNG — Phase 3 Civil</div>
+                  <div class="opp-meta">NextDecade · Brownsville, TX · HUBZone preferred</div>
+                  <div class="opp-footer"><span class="opp-value">$420M total</span><span class="opp-deadline">Deadline: May 15</span></div>
+                </div>
+                <div class="opp-card" style="margin:12px 12px 0;">
+                  <div class="opp-type">🏛️ Government Contract</div>
+                  <div class="opp-title">Webb County Road Maintenance — 3-Year RFQ</div>
+                  <div class="opp-meta">Webb County · Laredo, TX · HUBZone set-aside</div>
+                  <div class="opp-footer"><span class="opp-value">$18M/yr</span><span class="opp-deadline">Deadline: Jun 1</span></div>
+                </div>
+                <div class="opp-card" style="margin:12px;">
+                  <div class="opp-type">🏗️ Construction</div>
+                  <div class="opp-title">Hidalgo County Medical District Expansion</div>
+                  <div class="opp-meta">McAllen, TX · Licensed TX contractors</div>
+                  <div class="opp-footer"><span class="opp-value">$94M total</span><span class="opp-deadline">Deadline: May 30</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-hdr"><div class="card-title">Profile Completion</div></div>
+              <div class="card-body">
+                <div class="prog-row"><div class="prog-top"><span class="prog-name">Basic Info</span><span class="prog-val" style="color:var(--green)">✓ Complete</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div></div>
+                <div class="prog-row"><div class="prog-top"><span class="prog-name">Services & Sector</span><span class="prog-val" style="color:var(--green)">✓ Complete</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div></div>
+                <div class="prog-row"><div class="prog-top"><span class="prog-name">Certifications</span><span class="prog-val" style="color:var(--green)">✓ Complete</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div></div>
+                <div class="prog-row"><div class="prog-top"><span class="prog-name">Past Projects</span><span class="prog-val" style="color:var(--gold)">60% — Add more</span></div><div class="prog-bg"><div class="prog-fill" style="width:60%;background:var(--gold)"></div></div></div>
+                <div class="prog-row"><div class="prog-top"><span class="prog-name">Company Logo</span><span class="prog-val" style="color:var(--rust)">Missing</span></div><div class="prog-bg"><div class="prog-fill" style="width:0%;background:var(--rust)"></div></div></div>
+                <button class="submit-btn" style="margin-top:8px;width:100%;">Complete Profile →</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hdr"><div class="card-title">Your Certifications</div></div>
+              <div class="card-body" style="display:flex;flex-wrap:wrap;gap:6px;">
+                <span class="tag tag-green">✓ HUBZone</span>
+                <span class="tag tag-green">✓ SAM Registered</span>
+                <span class="tag tag-gold">+ Add OSHA 30</span>
+                <span class="tag tag-gold">+ Add NCCER</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DEVELOPER / GC DASHBOARD ══ -->
+      <div class="dash-panel" id="panel-developer">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#1A2E5A,#0D1F3C);color:white;">
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">Developer / General Contractor</div>
+            <div class="wb-title">Find the right local subs — fast.</div>
+            <div class="wb-sub">214 verified, ready-to-work companies across South Texas and Northern Mexico. Search by sector, cert, and location.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:white;color:var(--navy);">Search Companies</button>
+            <button class="wb-btn" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);">Post a Project</button>
+          </div>
+        </div>
+        <div class="kpi-row kpi-row-4">
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--teal-light)">🏢</div><span class="kpi-trend trend-up">+18 this mo</span></div><div class="kpi-val">214</div><div class="kpi-label">Ready Companies</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rust-light)">📋</div><span class="kpi-trend trend-new">3 Active</span></div><div class="kpi-val">3</div><div class="kpi-label">Your Posted Projects</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--green-light)">✉️</div></div><div class="kpi-val">12</div><div class="kpi-label">Responses Received</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-light)">⭐</div></div><div class="kpi-val">8</div><div class="kpi-label">Saved Companies</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Ready-to-Work Companies — Your Sectors</div><a class="card-action">View All →</a></div>
+            <div class="card-body-0">
+              <div class="company-row"><div class="co-avatar" style="background:var(--rust-light);color:var(--rust)">F</div><div class="co-info"><div class="co-name">Falcon Industrial Services</div><div class="co-meta">📍 Laredo, TX · HUBZone · SAM</div></div><div class="co-right"><span class="co-badge ready-yes">✅ Ready</span><div class="co-sector">Construction</div></div></div>
+              <div class="company-row"><div class="co-avatar" style="background:var(--teal-light);color:var(--teal)">B</div><div class="co-info"><div class="co-name">Border Energy Solutions</div><div class="co-meta">📍 Matamoros, MX · ISO 9001</div></div><div class="co-right"><span class="co-badge ready-yes">✅ Ready</span><div class="co-sector">Energy</div></div></div>
+              <div class="company-row"><div class="co-avatar" style="background:var(--green-light);color:var(--green)">V</div><div class="co-info"><div class="co-name">Valley Civil Contractors</div><div class="co-meta">📍 Brownsville, TX · HUBZone</div></div><div class="co-right"><span class="co-badge ready-yes">✅ Ready</span><div class="co-sector">Construction</div></div></div>
+              <div class="company-row"><div class="co-avatar" style="background:var(--gold-light);color:var(--gold)">S</div><div class="co-info"><div class="co-name">Sendero Electric LLC</div><div class="co-meta">📍 Corpus Christi, TX · SAM</div></div><div class="co-right"><span class="co-badge ready-yes">✅ Ready</span><div class="co-sector">Energy</div></div></div>
+              <div class="company-row"><div class="co-avatar" style="background:var(--rust-light);color:var(--rust)">G</div><div class="co-info"><div class="co-name">Gulf Coast Marine Const.</div><div class="co-meta">📍 Brownsville, TX · SAM · HUBZone</div></div><div class="co-right"><span class="co-badge ready-yes">✅ Ready</span><div class="co-sector">Marine / LNG</div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Post a New Project</div></div>
+            <div class="card-body">
+              <div class="inline-form">
+                <div class="form-field"><label class="form-label">Project Title</label><input class="form-input" placeholder="e.g. Laredo Warehouse — Civil Works"></div>
+                <div class="form-row-2">
+                  <div class="form-field"><label class="form-label">Project Type</label><select class="form-select"><option>Construction</option><option>Energy / LNG</option><option>Data Center</option><option>Government</option><option>Manufacturing</option></select></div>
+                  <div class="form-field"><label class="form-label">Location</label><input class="form-input" placeholder="City, TX"></div>
+                </div>
+                <div class="form-field"><label class="form-label">Description</label><textarea class="form-textarea" placeholder="What services do you need? Timeline? Scale?"></textarea></div>
+                <div class="form-row-2">
+                  <div class="form-field"><label class="form-label">Estimated Value</label><input class="form-input" placeholder="e.g. $2.4M"></div>
+                  <div class="form-field"><label class="form-label">Deadline</label><input class="form-input" type="date"></div>
+                </div>
+                <button class="submit-btn">Post & Find Matches →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ JOB SEEKER DASHBOARD ══ -->
+      <div class="dash-panel" id="panel-jobseeker">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#2A6B43,#1A4A2E);color:white;">
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">Job Seeker Dashboard</div>
+            <div class="wb-title">Your next career starts here.</div>
+            <div class="wb-sub">480+ open positions across South Texas and Northern Mexico. Find your path, get certified, and connect directly with regional employers.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:white;color:var(--green);">Browse Jobs</button>
+            <button class="wb-btn" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);">Build Profile</button>
+          </div>
+        </div>
+        <div class="kpi-row kpi-row-4">
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--green-light)">💼</div></div><div class="kpi-val">480+</div><div class="kpi-label">Open Positions</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rust-light)">🎯</div><span class="kpi-trend trend-new">For You</span></div><div class="kpi-val">12</div><div class="kpi-label">Matched Roles</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-light)">🎓</div></div><div class="kpi-val">6</div><div class="kpi-label">Training Programs Near You</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--teal-light)">📈</div></div><div class="kpi-val">$52K</div><div class="kpi-label">Avg Salary — Your Field</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Top Career Pathways — Right Now</div></div>
+            <div class="card-body-0">
+              <table class="mini-table">
+                <thead><tr><th>Role</th><th>Openings</th><th>Avg Pay</th><th>Training</th></tr></thead>
+                <tbody>
+                  <tr><td class="td-bold">CDL Driver</td><td><span class="tag tag-rust">480</span></td><td style="color:var(--green);font-weight:600">$52K</td><td>6 weeks</td></tr>
+                  <tr><td class="td-bold">Welder (AWS Cert)</td><td><span class="tag tag-rust">340</span></td><td style="color:var(--green);font-weight:600">$43K</td><td>6–12 mo</td></tr>
+                  <tr><td class="td-bold">Electrician Apprentice</td><td><span class="tag tag-rust">220</span></td><td style="color:var(--green);font-weight:600">$48K</td><td>2–4 yrs</td></tr>
+                  <tr><td class="td-bold">Customs Broker</td><td><span class="tag tag-gold">120</span></td><td style="color:var(--green);font-weight:600">$58K</td><td>3–6 mo</td></tr>
+                  <tr><td class="td-bold">HVAC Technician</td><td><span class="tag tag-gold">110</span></td><td style="color:var(--green);font-weight:600">$44K</td><td>1–2 yrs</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Build Your Profile</div><a class="card-action">40% complete</a></div>
+            <div class="card-body">
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Basic Info</span><span class="prog-val" style="color:var(--green)">✓</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--green)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Skills & Experience</span><span class="prog-val" style="color:var(--gold)">Partial</span></div><div class="prog-bg"><div class="prog-fill" style="width:50%;background:var(--gold)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Certifications</span><span class="prog-val" style="color:var(--rust)">None added</span></div><div class="prog-bg"><div class="prog-fill" style="width:0%;background:var(--rust)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Preferred Locations</span><span class="prog-val" style="color:var(--rust)">Not set</span></div><div class="prog-bg"><div class="prog-fill" style="width:0%;background:var(--rust)"></div></div></div>
+              <button class="submit-btn" style="width:100%;margin-top:12px;">Complete Profile — Get More Matches</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ INVESTOR DASHBOARD ══ -->
+      <div class="dash-panel" id="panel-investor">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#B07D1A,#7A5510);color:white;">
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">Investor Intelligence Dashboard</div>
+            <div class="wb-title">The data room for the border region.</div>
+            <div class="wb-sub">$9.3B active project pipeline. Fastest growing trade corridor in North America. Youngest workforce in the country. Here's your live view.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:white;color:var(--gold);">Download Report</button>
+            <button class="wb-btn" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);">View Pipeline →</button>
+          </div>
+        </div>
+        <div class="kpi-row kpi-row-4">
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-light)">📈</div><span class="kpi-trend trend-up">↑ 7.4%</span></div><div class="kpi-val">$48.2B</div><div class="kpi-label">Regional GDP</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rust-light)">🏗️</div><span class="kpi-trend trend-up">↑ 31%</span></div><div class="kpi-val">$9.3B</div><div class="kpi-label">Active Project Pipeline</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--teal-light)">🚢</div><span class="kpi-trend trend-up">↑ 8.2%</span></div><div class="kpi-val">$370B</div><div class="kpi-label">Annual Cross-Border Trade</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--green-light)">👥</div></div><div class="kpi-val">+12.8%</div><div class="kpi-label">Population Growth (5yr)</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Active Project Pipeline by Sector</div></div>
+            <div class="card-body">
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Energy / LNG</span><span class="prog-val" style="font-weight:700;color:var(--ink)">$4.2B</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--rust)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Construction</span><span class="prog-val" style="font-weight:700;color:var(--ink)">$2.8B</span></div><div class="prog-bg"><div class="prog-fill" style="width:67%;background:var(--teal)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Data Centers</span><span class="prog-val" style="font-weight:700;color:var(--ink)">$1.4B</span></div><div class="prog-bg"><div class="prog-fill" style="width:33%;background:var(--gold)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Industrial Mfg</span><span class="prog-val" style="font-weight:700;color:var(--ink)">$880M</span></div><div class="prog-bg"><div class="prog-fill" style="width:21%;background:var(--green)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Infrastructure</span><span class="prog-val" style="font-weight:700;color:var(--ink)">$560M</span></div><div class="prog-bg"><div class="prog-fill" style="width:13%;background:var(--purple)"></div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Region vs. Major Metros — GDP Growth</div></div>
+            <div class="card-body">
+              <div class="chart-bars">
+                <div class="cb" style="height:55%;background:var(--border)" title="DFW 4.2%"></div>
+                <div class="cb" style="height:30%;background:var(--border)" title="LA 1.8%"></div>
+                <div class="cb" style="height:35%;background:var(--border)" title="NYC 2.1%"></div>
+                <div class="cb" style="height:45%;background:var(--border)" title="Houston 5.2%"></div>
+                <div class="cb" style="height:40%;background:var(--border)" title="Austin 5.8%"></div>
+                <div class="cb" style="height:100%;background:var(--rust)" title="Our Region 7.4%"></div>
+              </div>
+              <div class="chart-labels">
+                <div class="cl">DFW</div><div class="cl">LA</div><div class="cl">NYC</div>
+                <div class="cl">Houston</div><div class="cl">Austin</div>
+                <div class="cl" style="color:var(--rust);font-weight:700">Us</div>
+              </div>
+              <div style="margin-top:14px;padding:12px;background:var(--rust-light);border-radius:6px;">
+                <div style="font-size:11px;font-weight:700;color:var(--rust);margin-bottom:3px;">🏆 #1 GDP Growth in Texas</div>
+                <div style="font-size:12px;color:var(--ink-3)">+7.4% YoY — outpacing every major Texas metro</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="data-access-card">
+          <div class="dac-glow"></div>
+          <div style="position:relative;z-index:1;">
+            <div class="dac-eyebrow">Premium Data Access</div>
+            <div class="dac-title">Full County-Level Dataset — Available for Licensing</div>
+            <div class="dac-desc">RioData maintains the most complete structured dataset on South Texas and Northern Mexico business capacity, workforce, and economic activity. Available for institutional licensing, API access, or acquisition.</div>
+            <div class="dac-stats">
+              <div><div class="dac-stat-num">340+</div><div class="dac-stat-label">Verified Companies</div></div>
+              <div><div class="dac-stat-num">7</div><div class="dac-stat-label">Counties Covered</div></div>
+              <div><div class="dac-stat-num">58</div><div class="dac-stat-label">Active Projects</div></div>
+              <div><div class="dac-stat-num">Real-Time</div><div class="dac-stat-label">Data Updates</div></div>
+            </div>
+            <button class="dac-btn" onclick="showPanel('acquire')">📊 Inquire About Data Licensing →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ UNIVERSITY DASHBOARD ══ -->
+      <div class="dash-panel" id="panel-university">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#1A6B72,#0E454A);color:white;">
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">University / College Dashboard</div>
+            <div class="wb-title">Connect your programs to real regional demand.</div>
+            <div class="wb-sub">See which of your programs are filling the biggest workforce gaps. Connect with employers actively hiring your graduates. Track outcomes in real time.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:white;color:var(--teal);">Connect an Employer</button>
+            <button class="wb-btn" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);">Update Program Data</button>
+          </div>
+        </div>
+        <div class="kpi-row kpi-row-4">
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--teal-light)">🎓</div></div><div class="kpi-val">1,400</div><div class="kpi-label">Annual Grads (Your School)</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--green-light)">💼</div><span class="kpi-trend trend-up">82%</span></div><div class="kpi-val">1,148</div><div class="kpi-label">Employed Within 6 Months</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rust-light)">🔴</div></div><div class="kpi-val">3</div><div class="kpi-label">Critical Gap Programs</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-light)">🤝</div></div><div class="kpi-val">14</div><div class="kpi-label">Employer Connections</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Your Programs vs. Regional Demand</div></div>
+            <div class="card-body-0" style="padding:16px;">
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">Welding Technology</span><span class="gap-severity sev-critical">Critical Gap</span></div><div class="gap-nums">Region needs 780 · You produce 120/yr · Gap: 340 unfilled</div><div class="gap-bar-bg"><div class="gap-bar-fill" style="width:43%;background:var(--rust)"></div></div></div>
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">Electrical Technology</span><span class="gap-severity sev-high">High Demand</span></div><div class="gap-nums">Region needs 540 · You produce 90/yr · Gap: 220 unfilled</div><div class="gap-bar-bg"><div class="gap-bar-fill" style="width:59%;background:var(--gold)"></div></div></div>
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">CDL / Transportation</span><span class="gap-severity sev-critical">Critical Gap</span></div><div class="gap-nums">Region needs 1,200 · You produce 200/yr · Gap: 480 unfilled</div><div class="gap-bar-bg"><div class="gap-bar-fill" style="width:40%;background:var(--rust)"></div></div></div>
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">Business / Intl Trade</span><span class="gap-severity sev-surplus">Healthy Supply</span></div><div class="gap-nums">Region needs 400 · You produce 380/yr · Well matched</div><div class="gap-bar-bg"><div class="gap-bar-fill" style="width:90%;background:var(--green)"></div></div></div>
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">Nursing (ADN)</span><span class="gap-severity sev-high">High Demand</span></div><div class="gap-nums">Region needs 840 · You produce 160/yr · Gap: 360 unfilled</div><div class="gap-bar-bg"><div class="gap-bar-fill" style="width:47%;background:var(--gold)"></div></div></div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="card-hdr"><div class="card-title">Employers Actively Hiring Your Grads</div><a class="card-action">Add More →</a></div>
+              <div class="card-body-0">
+                <div class="company-row"><div class="co-avatar" style="background:var(--rust-light);color:var(--rust)">F</div><div class="co-info"><div class="co-name">Falcon Industrial Services</div><div class="co-meta">Seeking: Welders, Pipe Fitters</div></div><div class="co-right"><span class="tag tag-rust">4 Openings</span></div></div>
+                <div class="company-row"><div class="co-avatar" style="background:var(--teal-light);color:var(--teal)">S</div><div class="co-info"><div class="co-name">Sendero Electric LLC</div><div class="co-meta">Seeking: Electricians, Apprentices</div></div><div class="co-right"><span class="tag tag-rust">6 Openings</span></div></div>
+                <div class="company-row"><div class="co-avatar" style="background:var(--green-light);color:var(--green)">N</div><div class="co-info"><div class="co-name">NextDecade / Rio Grande LNG</div><div class="co-meta">Seeking: All skilled trades</div></div><div class="co-right"><span class="tag tag-rust">80+ Openings</span></div></div>
+              </div>
+            </div>
+            <div class="data-access-card" style="margin-bottom:0;">
+              <div style="position:relative;z-index:1;">
+                <div class="dac-eyebrow">For Your Institution</div>
+                <div class="dac-title" style="font-size:16px;">Acquire RioData Data for Your Region</div>
+                <div class="dac-desc" style="font-size:12px;">License the full Hidalgo County workforce and business dataset. Power your economic development research, accreditation reports, and grant applications.</div>
+                <button class="dac-btn" style="font-size:12px;padding:8px 16px;" onclick="showPanel('acquire')">Learn About Acquisition →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ GOVERNMENT / EDC DASHBOARD ══ -->
+      <div class="dash-panel" id="panel-government">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#5B3FA6,#3A2470);color:white;">
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">Economic Development / Government</div>
+            <div class="wb-title">Your region's economic intelligence hub.</div>
+            <div class="wb-sub">Track business growth, workforce gaps, project pipeline, and investment activity across all counties in real time. Built for economic developers.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:white;color:var(--purple);">Export Report</button>
+            <button class="wb-btn" style="background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.25);">Add a Project Lead</button>
+          </div>
+        </div>
+        <div class="kpi-row kpi-row-4">
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--purple-light)">🏢</div><span class="kpi-trend trend-up">↑ 14%</span></div><div class="kpi-val">1,847</div><div class="kpi-label">New Businesses YTD</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rust-light)">💰</div><span class="kpi-trend trend-up">↑ 31%</span></div><div class="kpi-val">$9.3B</div><div class="kpi-label">Active Project Pipeline</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--gold-light)">👷</div><span class="kpi-trend trend-down">4,200 gap</span></div><div class="kpi-val">612K</div><div class="kpi-label">Regional Employment</div></div>
+          <div class="kpi-card"><div class="kpi-top"><div class="kpi-icon" style="background:var(--green-light)">🌱</div></div><div class="kpi-val">+12.8%</div><div class="kpi-label">5-Year Population Growth</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Business Growth by County</div><a class="card-action">Full Report →</a></div>
+            <div class="card-body">
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Hidalgo County</span><span class="prog-val" style="font-weight:700;color:var(--green)">+14.2%</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--purple)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Webb County</span><span class="prog-val" style="font-weight:700;color:var(--green)">+11.8%</span></div><div class="prog-bg"><div class="prog-fill" style="width:83%;background:var(--purple)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Cameron County</span><span class="prog-val" style="font-weight:700;color:var(--green)">+13.1%</span></div><div class="prog-bg"><div class="prog-fill" style="width:92%;background:var(--purple)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Starr County</span><span class="prog-val" style="font-weight:700;color:var(--green)">+19.4%</span></div><div class="prog-bg"><div class="prog-fill" style="width:100%;background:var(--rust)"></div></div></div>
+              <div class="prog-row"><div class="prog-top"><span class="prog-name">Nuevo León (MX)</span><span class="prog-val" style="font-weight:700;color:var(--green)">+8.7%</span></div><div class="prog-bg"><div class="prog-fill" style="width:61%;background:var(--teal)"></div></div></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hdr"><div class="card-title">Critical Workforce Gaps — Action Needed</div></div>
+            <div class="card-body-0" style="padding:16px;">
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">CDL Drivers</span><span class="gap-severity sev-critical">480 Short</span></div><div class="gap-nums">Recommend: Expand CDL training funding at Laredo College, STC</div></div>
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">Welders</span><span class="gap-severity sev-critical">340 Short</span></div><div class="gap-nums">Recommend: TWC grant for TSTC welding cohort expansion</div></div>
+              <div class="gap-row"><div class="gap-top"><span class="gap-name">IT / Cybersecurity</span><span class="gap-severity sev-critical">290 Short</span></div><div class="gap-nums">Recommend: UTRGV CS expansion + bootcamp partnerships</div></div>
+              <div class="gap-row" style="border:none"><div class="gap-top"><span class="gap-name">Electricians</span><span class="gap-severity sev-high">220 Short</span></div><div class="gap-nums">Recommend: Apprenticeship expansion with AEP Texas</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ACQUISITION PITCH PANEL ══ -->
+      <div class="dash-panel" id="panel-acquire">
+        <div class="welcome-banner" style="background:linear-gradient(135deg,#0F0F0E,#2A2A27);color:white;">
+          <div style="position:relative;z-index:1;">
+            <div class="wb-eyebrow">Data Licensing & Acquisition</div>
+            <div class="wb-title">Own the data layer for this region.</div>
+            <div class="wb-sub">RioData is more than a platform — it's a structured, verified, real-time dataset on the most strategically important economic corridor in North America. We're open to licensing, acquisition, or institutional partnership.</div>
+          </div>
+          <div class="wb-actions" style="position:relative;z-index:1;">
+            <button class="wb-btn" style="background:var(--rust);color:white;">Start Conversation →</button>
+          </div>
+        </div>
+
+        <!-- What's in the dataset -->
+        <div class="card grid-full" style="margin-bottom:16px;">
+          <div class="card-hdr"><div class="card-title">What's In the Dataset</div></div>
+          <div class="card-body">
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+              <div style="padding:16px;background:var(--parchment);border-radius:8px;">
+                <div style="font-size:22px;margin-bottom:8px;">🏢</div>
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:6px;">Business Directory</div>
+                <div style="font-size:13px;color:var(--ink-3);line-height:1.6;">340+ verified companies with sector, services, certifications, capacity, location, contact, and ready-to-work status. Growing weekly.</div>
+              </div>
+              <div style="padding:16px;background:var(--parchment);border-radius:8px;">
+                <div style="font-size:22px;margin-bottom:8px;">👷</div>
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:6px;">Workforce Intelligence</div>
+                <div style="font-size:13px;color:var(--ink-3);line-height:1.6;">Skills gap data by occupation. School-to-employer pipeline. Certification rates. Job opening counts. Wage levels by county and sector.</div>
+              </div>
+              <div style="padding:16px;background:var(--parchment);border-radius:8px;">
+                <div style="font-size:22px;margin-bottom:8px;">🏗️</div>
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:6px;">Project Pipeline</div>
+                <div style="font-size:13px;color:var(--ink-3);line-height:1.6;">Active construction, energy, and infrastructure projects with value, location, timeline, and subcontractor matching data.</div>
+              </div>
+              <div style="padding:16px;background:var(--parchment);border-radius:8px;">
+                <div style="font-size:22px;margin-bottom:8px;">📊</div>
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:6px;">Economic Indicators</div>
+                <div style="font-size:13px;color:var(--ink-3);line-height:1.6;">GDP, employment, wages, business formations, and cross-border trade data aggregated by county and sector — updated monthly.</div>
+              </div>
+              <div style="padding:16px;background:var(--parchment);border-radius:8px;">
+                <div style="font-size:22px;margin-bottom:8px;">🎓</div>
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:6px;">Education Pipeline</div>
+                <div style="font-size:13px;color:var(--ink-3);line-height:1.6;">16 institutions tracked. Program-level grad counts, employment rates, salary outcomes, and employer connection data.</div>
+              </div>
+              <div style="padding:16px;background:var(--parchment);border-radius:8px;">
+                <div style="font-size:22px;margin-bottom:8px;">🌐</div>
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:6px;">Cross-Border Coverage</div>
+                <div style="font-size:13px;color:var(--ink-3);line-height:1.6;">The only platform with structured data on BOTH sides of the border — South Texas counties AND Tamaulipas, Nuevo León, Coahuila.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acquisition targets -->
+        <div style="margin-bottom:8px;font-family:'Fraunces',serif;font-size:18px;font-weight:700;">Who This Is Built For</div>
+        <div style="font-size:14px;color:var(--ink-3);margin-bottom:16px;">These institutions would benefit most from owning or licensing this data layer. We're in conversations and open to proposals.</div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+          <div class="pitch-box">
+            <div class="pitch-logo">🏛️</div>
+            <div class="pitch-org">UTRGV — UT Rio Grande Valley</div>
+            <div class="pitch-desc">UTRGV's economic development and workforce research mission aligns directly with this platform. The Hidalgo County dataset alone would power grant applications, SACSCOC accreditation evidence, and state reporting.</div>
+            <div class="pitch-data-points">
+              <span class="pitch-dp">Hidalgo County data</span>
+              <span class="pitch-dp">Employer connections</span>
+              <span class="pitch-dp">Workforce pipeline</span>
+              <span class="pitch-dp">Research access</span>
+            </div>
+            <div class="pitch-footer">
+              <button class="pitch-btn-primary">Send Proposal →</button>
+              <button class="pitch-btn-sec">Preview Data</button>
+            </div>
+          </div>
+          <div class="pitch-box">
+            <div class="pitch-logo">🏫</div>
+            <div class="pitch-org">South Texas College</div>
+            <div class="pitch-desc">STC's workforce development mission — serving 33,000 students in Hidalgo and Starr Counties — would be supercharged by owning the regional skills gap and employer dataset. Direct line from programs to jobs.</div>
+            <div class="pitch-data-points">
+              <span class="pitch-dp">Skills gap data</span>
+              <span class="pitch-dp">Program ROI evidence</span>
+              <span class="pitch-dp">Employer matching</span>
+              <span class="pitch-dp">Grant documentation</span>
+            </div>
+            <div class="pitch-footer">
+              <button class="pitch-btn-primary">Send Proposal →</button>
+              <button class="pitch-btn-sec">Preview Data</button>
+            </div>
+          </div>
+          <div class="pitch-box">
+            <div class="pitch-logo">🌐</div>
+            <div class="pitch-org">Laredo EDC / McAllen EDC</div>
+            <div class="pitch-desc">Economic development corporations would use this as their primary public-facing business recruitment and retention tool — replacing scattered spreadsheets with a live, verified regional directory and analytics layer.</div>
+            <div class="pitch-data-points">
+              <span class="pitch-dp">Business directory</span>
+              <span class="pitch-dp">Investment intelligence</span>
+              <span class="pitch-dp">Project pipeline</span>
+              <span class="pitch-dp">White-label option</span>
+            </div>
+            <div class="pitch-footer">
+              <button class="pitch-btn-primary">Send Proposal →</button>
+              <button class="pitch-btn-sec">Preview Data</button>
+            </div>
+          </div>
+          <div class="pitch-box">
+            <div class="pitch-logo">🏦</div>
+            <div class="pitch-org">IBC Bank / Frost Bank</div>
+            <div class="pitch-desc">Regional financial institutions could license the business directory for loan prospecting, small business outreach, and economic reporting to regulators — an entirely new use of CRA-qualifying community data.</div>
+            <div class="pitch-data-points">
+              <span class="pitch-dp">Business financial profiles</span>
+              <span class="pitch-dp">Growth indicators</span>
+              <span class="pitch-dp">CRA documentation</span>
+              <span class="pitch-dp">Market intelligence</span>
+            </div>
+            <div class="pitch-footer">
+              <button class="pitch-btn-primary">Send Proposal →</button>
+              <button class="pitch-btn-sec">Preview Data</button>
+            </div>
+          </div>
+          <div class="pitch-box">
+            <div class="pitch-logo">🤠</div>
+            <div class="pitch-org">Texas A&M International (TAMIU)</div>
+            <div class="pitch-desc">TAMIU's international trade focus and Laredo location make it the natural academic home for the region's cross-border business dataset. Research publications, workforce reports, and community engagement all benefit.</div>
+            <div class="pitch-data-points">
+              <span class="pitch-dp">Cross-border data</span>
+              <span class="pitch-dp">Webb County focus</span>
+              <span class="pitch-dp">Research platform</span>
+              <span class="pitch-dp">Academic licensing</span>
+            </div>
+            <div class="pitch-footer">
+              <button class="pitch-btn-primary">Send Proposal →</button>
+              <button class="pitch-btn-sec">Preview Data</button>
+            </div>
+          </div>
+          <div class="pitch-box" style="border-color:var(--rust);background:var(--rust-light);">
+            <div class="pitch-logo">🌎</div>
+            <div class="pitch-org">Custom / Direct Acquisition</div>
+            <div class="pitch-desc">Open to full platform acquisition, regional data licensing by county, API access agreements, or white-label partnerships. This platform was built to scale — it can be the data backbone for any regional institution.</div>
+            <div class="pitch-data-points">
+              <span class="pitch-dp" style="border-color:rgba(184,67,30,0.3);color:var(--rust)">Full acquisition</span>
+              <span class="pitch-dp" style="border-color:rgba(184,67,30,0.3);color:var(--rust)">County license</span>
+              <span class="pitch-dp" style="border-color:rgba(184,67,30,0.3);color:var(--rust)">API access</span>
+              <span class="pitch-dp" style="border-color:rgba(184,67,30,0.3);color:var(--rust)">White-label</span>
+            </div>
+            <div class="pitch-footer">
+              <button class="pitch-btn-primary" style="background:var(--rust);">Start Conversation →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact form -->
+        <div class="card">
+          <div class="card-hdr"><div class="card-title">Inquire About Data Access or Acquisition</div></div>
+          <div class="card-body">
+            <div class="inline-form">
+              <div class="form-row-2">
+                <div class="form-field"><label class="form-label">Your Name</label><input class="form-input" placeholder="Full name"></div>
+                <div class="form-field"><label class="form-label">Institution / Organization</label><input class="form-input" placeholder="e.g. UTRGV, Laredo EDC, IBC Bank"></div>
+              </div>
+              <div class="form-row-2">
+                <div class="form-field"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="you@institution.edu"></div>
+                <div class="form-field"><label class="form-label">Interest Type</label><select class="form-select"><option>Full Platform Acquisition</option><option>County-Level Data License</option><option>API Access Agreement</option><option>White-Label Partnership</option><option>Research / Academic Access</option><option>Other / Let's Talk</option></select></div>
+              </div>
+              <div class="form-field"><label class="form-label">Tell us about your interest</label><textarea class="form-textarea" placeholder="What data do you need? How would your institution use it? What counties or sectors are most relevant?"></textarea></div>
+              <button class="submit-btn" style="max-width:300px;">Send Inquiry →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end page-content -->
+  </div><!-- end main-content -->
+</div><!-- end app -->
+
+<script>
+// ── ROLE CONFIG ──────────────────────────────────────────────
+const ROLES = {
+  business:   { label:'Business Owner',         color:'#B8431E', bg:'rgba(184,67,30,0.2)', panel:'business',    nav:'business',    cta:'+ Edit My Profile',      title:'My Business Dashboard',   initials:'M' },
+  developer:  { label:'Developer / GC',          color:'#1A2E5A', bg:'rgba(26,46,90,0.2)',  panel:'developer',   nav:'developer',   cta:'+ Post a Project',       title:'Find Subcontractors',     initials:'J' },
+  jobseeker:  { label:'Job Seeker',              color:'#2A6B43', bg:'rgba(42,107,67,0.2)', panel:'jobseeker',   nav:'jobseeker',   cta:'Complete My Profile',    title:'Career Dashboard',        initials:'L' },
+  investor:   { label:'Investor',                color:'#B07D1A', bg:'rgba(176,125,26,0.2)',panel:'investor',    nav:'investor',    cta:'↓ Download Report',      title:'Investor Intelligence',   initials:'R' },
+  university: { label:'University / College',    color:'#1A6B72', bg:'rgba(26,107,114,0.2)',panel:'university',  nav:'university',  cta:'Connect an Employer',    title:'University Dashboard',    initials:'T' },
+  government: { label:'Government / EDC',        color:'#5B3FA6', bg:'rgba(91,63,166,0.2)', panel:'government',  nav:'government',  cta:'Export Report',          title:'Economic Development',    initials:'C' },
+  researcher: { label:'Researcher',              color:'#1A6B72', bg:'rgba(26,107,114,0.2)',panel:'investor',    nav:'investor',    cta:'↓ Download Dataset',     title:'Research Dashboard',      initials:'A' },
+  contractor: { label:'Independent Contractor',  color:'#B8431E', bg:'rgba(184,67,30,0.2)', panel:'jobseeker',   nav:'jobseeker',   cta:'Find Project Work',      title:'My Work Dashboard',       initials:'S' },
+  media:      { label:'Media / Press',           color:'#0F0F0E', bg:'rgba(0,0,0,0.15)',     panel:'investor',    nav:'investor',    cta:'↓ Download Press Kit',   title:'Media & Press Dashboard', initials:'P' },
+}
+
+const NAV_CONFIGS = {
+  business: [
+    { section:'My Business', items:[
+      {icon:'📊', label:'Dashboard', panel:'business', active:true},
+      {icon:'🏢', label:'My Profile', panel:'business-profile'},
+      {icon:'🔗', label:'Project Matches', badge:'7', badgeColor:'green', panel:'business'},
+      {icon:'💬', label:'Messages', badge:'1'},
+      {icon:'📋', label:'Applications Sent'},
+    ]},
+    { section:'Explore', items:[
+      {icon:'📂', label:'All Opportunities'},
+      {icon:'🗺️', label:'Map View'},
+      {icon:'🎓', label:'Get Certified'},
+    ]},
+    { section:'Analytics', items:[
+      {icon:'📈', label:'Regional Data'},
+      {icon:'🔒', label:'County Export', lock:true},
+    ]},
+  ],
+  developer: [
+    { section:'My Projects', items:[
+      {icon:'📊', label:'Dashboard', panel:'developer', active:true},
+      {icon:'📋', label:'My Posted Projects', badge:'3'},
+      {icon:'💬', label:'Responses', badge:'12'},
+    ]},
+    { section:'Find Companies', items:[
+      {icon:'🔍', label:'Search Directory'},
+      {icon:'⭐', label:'Saved Companies', badge:'8', badgeColor:'gold'},
+      {icon:'🗺️', label:'Map View'},
+      {icon:'✅', label:'Ready to Work Only'},
+    ]},
+    { section:'Intel', items:[
+      {icon:'📈', label:'Regional Analytics'},
+      {icon:'💼', label:'Project Pipeline'},
+    ]},
+  ],
+  jobseeker: [
+    { section:'My Career', items:[
+      {icon:'📊', label:'Dashboard', panel:'jobseeker', active:true},
+      {icon:'👤', label:'My Profile', badge:'40%', badgeColor:'gold'},
+      {icon:'🎯', label:'Job Matches', badge:'12', badgeColor:'green'},
+      {icon:'📩', label:'Applications'},
+    ]},
+    { section:'Explore', items:[
+      {icon:'💼', label:'Browse All Jobs'},
+      {icon:'🎓', label:'Training Programs'},
+      {icon:'🗺️', label:'Jobs Near Me'},
+      {icon:'📈', label:'Career Pathways'},
+    ]},
+  ],
+  investor: [
+    { section:'Intelligence', items:[
+      {icon:'📊', label:'Dashboard', panel:'investor', active:true},
+      {icon:'🏗️', label:'Project Pipeline'},
+      {icon:'🌐', label:'Cross-Border Trade'},
+      {icon:'📈', label:'Economic Trends'},
+    ]},
+    { section:'Data Access', items:[
+      {icon:'📁', label:'Download Reports'},
+      {icon:'🔑', label:'API Access', panel:'acquire'},
+      {icon:'💼', label:'Data Licensing', panel:'acquire'},
+    ]},
+  ],
+  university: [
+    { section:'My Institution', items:[
+      {icon:'📊', label:'Dashboard', panel:'university', active:true},
+      {icon:'🎓', label:'Program Data'},
+      {icon:'🤝', label:'Employer Connections', badge:'14', badgeColor:'green'},
+      {icon:'📈', label:'Graduate Outcomes'},
+    ]},
+    { section:'Regional Data', items:[
+      {icon:'👷', label:'Skills Gap Tracker'},
+      {icon:'🏢', label:'Hiring Companies'},
+      {icon:'💼', label:'Data Licensing', panel:'acquire'},
+    ]},
+  ],
+  government: [
+    { section:'Economic Dev', items:[
+      {icon:'📊', label:'Dashboard', panel:'government', active:true},
+      {icon:'🏢', label:'Business Registry'},
+      {icon:'📈', label:'Growth by County'},
+      {icon:'👷', label:'Workforce Gaps'},
+      {icon:'🏗️', label:'Project Pipeline'},
+    ]},
+    { section:'Tools', items:[
+      {icon:'📁', label:'Export Reports'},
+      {icon:'🗺️', label:'Regional Map'},
+      {icon:'💼', label:'Data Licensing', panel:'acquire'},
+    ]},
+  ],
+}
+
+let currentRole = 'business'
+
+function selectRole(el, role) {
+  document.querySelectorAll('.role-card').forEach(c => c.classList.remove('selected'))
+  el.classList.add('selected')
+  currentRole = role
+}
+
+function launchDashboard() {
+  const role = ROLES[currentRole]
+  document.getElementById('role-overlay').style.display = 'none'
+
+  // Set user info
+  document.getElementById('user-avatar').style.background = role.color
+  document.getElementById('user-avatar').textContent = role.initials
+  document.getElementById('user-name').textContent = getUserName(currentRole)
+  document.getElementById('user-role-tag').textContent = role.label
+  document.getElementById('user-role-tag').style.background = role.bg
+  document.getElementById('user-role-tag').style.color = role.color
+
+  // Set topbar
+  document.getElementById('topbar-title').textContent = role.title
+  document.getElementById('topbar-cta').textContent = role.cta
+  document.getElementById('topbar-cta').style.background = role.color
+
+  // Build nav
+  buildNav(currentRole)
+
+  // Show panel
+  showPanel(role.panel)
+}
+
+function getUserName(role) {
+  const names = {business:'Maria Garcia', developer:'James Wheeler', jobseeker:'Luis Herrera',
+    investor:'Robert Kim', university:'Dr. Teresa Salinas', government:'Carlos Vela',
+    researcher:'Dr. Ana Flores', contractor:'Samuel Cruz', media:'Patricia Ramos'}
+  return names[role] || 'User'
+}
+
+function buildNav(role) {
+  const config = NAV_CONFIGS[role] || NAV_CONFIGS.investor
+  const html = config.map(section => `
+    <div class="nav-section">
+      <div class="nav-section-label">${section.section}</div>
+      ${section.items.map(item => `
+        <div class="nav-item ${item.active ? 'active' : ''} ${item.lock ? 'nav-lock' : ''}"
+             onclick="${item.panel ? `showPanel('${item.panel}')` : ''}">
+          <span class="nav-icon">${item.icon}</span>
+          ${item.label}
+          ${item.badge ? `<span class="nav-pill ${item.badgeColor||''}">${item.badge}</span>` : ''}
+        </div>
+      `).join('')}
+    </div>
+  `).join('')
+  document.getElementById('sidebar-nav').innerHTML = html
+}
+
+function showPanel(id) {
+  document.querySelectorAll('.dash-panel').forEach(p => p.classList.remove('active'))
+  const panel = document.getElementById('panel-' + id)
+  if (panel) panel.classList.add('active')
+  window.scrollTo({top: 0, behavior: 'smooth'})
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open')
+}
+
+// mobile menu button
+if (window.innerWidth <= 900) {
+  document.getElementById('menu-btn').style.display = 'flex'
+}
+</script>
+</body>
+</html>

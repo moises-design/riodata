@@ -1,0 +1,2500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — South Texas & Northern Mexico Regional Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;0,9..144,800;1,9..144,400&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0F0F0E;
+  --ink-2: #2A2A27;
+  --ink-3: #5C5C54;
+  --border: #E2DDD6;
+  --parchment: #F7F3EE;
+  --white: #FDFCFB;
+  --rust: #B8431E;
+  --rust-2: #D4582E;
+  --rust-light: #F2E8E3;
+  --teal: #1A6B72;
+  --teal-light: #E3F0F1;
+  --gold: #B07D1A;
+  --gold-light: #FBF4E3;
+  --green: #2A6B43;
+  --green-light: #E4F0EA;
+  --r: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Instrument Sans', sans-serif;
+  background: var(--white);
+  color: var(--ink);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════
+   TOP BAR
+═══════════════════════════════════════ */
+.topbar {
+  background: var(--ink);
+  color: rgba(255,255,255,0.55);
+  font-size: 11.5px;
+  padding: 8px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  letter-spacing: 0.02em;
+}
+.topbar-left { display: flex; gap: 24px; align-items: center; }
+.topbar-dot { width: 6px; height: 6px; background: #4CAF78; border-radius: 50%; display: inline-block; margin-right: 6px; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.topbar a { color: rgba(255,255,255,0.55); text-decoration: none; }
+.topbar a:hover { color: var(--white); }
+
+/* ═══════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════ */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(253,252,251,0.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 48px;
+  display: flex; align-items: stretch;
+  height: 64px;
+}
+.nav-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 700;
+  color: var(--ink); text-decoration: none;
+  margin-right: 48px;
+  letter-spacing: -0.5px;
+}
+.nav-brand-dot { 
+  width: 8px; height: 8px; border-radius: 50%; 
+  background: var(--rust); margin-bottom: 2px;
+}
+.nav-menu {
+  display: flex; align-items: stretch;
+  list-style: none; gap: 0; flex: 1;
+}
+.nav-menu li { display: flex; align-items: stretch; }
+.nav-menu a {
+  display: flex; align-items: center;
+  padding: 0 18px;
+  font-size: 13.5px; font-weight: 500;
+  color: var(--ink-3); text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.nav-menu a:hover { color: var(--ink); border-bottom-color: var(--border); }
+.nav-menu a.active { color: var(--rust); border-bottom-color: var(--rust); }
+.nav-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.btn-ghost {
+  padding: 8px 18px; border-radius: var(--r);
+  font-size: 13.5px; font-weight: 500;
+  color: var(--ink); text-decoration: none;
+  border: 1.5px solid var(--border);
+  cursor: pointer; background: transparent;
+  transition: all 0.2s; font-family: inherit;
+}
+.btn-ghost:hover { border-color: var(--ink); background: var(--parchment); }
+.btn-fill {
+  padding: 8px 20px; border-radius: var(--r);
+  font-size: 13.5px; font-weight: 600;
+  color: var(--white); text-decoration: none;
+  border: none; cursor: pointer;
+  background: var(--rust);
+  transition: all 0.2s; font-family: inherit;
+}
+.btn-fill:hover { background: var(--rust-2); }
+
+/* ═══════════════════════════════════════
+   PAGES / ROUTING
+═══════════════════════════════════════ */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════════════
+   HOME HERO
+═══════════════════════════════════════ */
+.hero {
+  min-height: calc(100vh - 96px);
+  display: grid;
+  grid-template-columns: 55% 45%;
+  position: relative;
+  overflow: hidden;
+}
+.hero-content {
+  padding: 48px 64px 60px 80px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 2;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--rust);
+  margin-bottom: 28px;
+}
+.hero-eyebrow-line { width: 28px; height: 1.5px; background: var(--rust); }
+h1.hero-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 5.5vw, 80px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  color: var(--ink);
+  margin-bottom: 20px;
+}
+h1.hero-title em {
+  font-style: italic; font-weight: 300;
+  color: var(--rust); display: block;
+}
+.hero-desc {
+  font-size: 16px; font-weight: 400;
+  line-height: 1.7; color: var(--ink-2);
+  max-width: 460px; margin-bottom: 36px;
+}
+.hero-cta-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.btn-lg {
+  padding: 14px 32px; border-radius: var(--r);
+  font-size: 15px; font-weight: 600;
+  text-decoration: none; border: none; cursor: pointer;
+  font-family: inherit; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-lg-primary { background: var(--rust); color: var(--white); }
+.btn-lg-primary:hover { background: var(--rust-2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(184,67,30,0.3); }
+.btn-lg-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--border); }
+.btn-lg-outline:hover { border-color: var(--ink); background: var(--parchment); }
+.hero-trust {
+  margin-top: 36px; padding-top: 28px;
+  border-top: 1px solid var(--border);
+  display: flex; gap: 0; flex-wrap: wrap;
+}
+.trust-item {
+  padding-right: 28px; margin-right: 28px;
+  border-right: 1px solid var(--border);
+}
+.trust-item:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+.trust-num {
+  font-family: 'Fraunces', serif;
+  font-size: 30px; font-weight: 700;
+  color: var(--ink); line-height: 1; letter-spacing: -1px;
+}
+.trust-label { font-size: 11px; color: var(--ink-3); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* Hero Right Panel */
+.hero-right {
+  background: var(--ink);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-grid-bg {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.hero-glow {
+  position: absolute;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(184,67,30,0.2) 0%, transparent 70%);
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+}
+.hero-panel {
+  position: relative; z-index: 2;
+  width: 100%; padding: 48px 40px;
+}
+.panel-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.2em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  margin-bottom: 20px;
+}
+.live-feed { display: flex; flex-direction: column; gap: 10px; }
+.feed-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--r);
+  padding: 14px 18px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.3s;
+  animation: feedIn 0.5s ease both;
+}
+.feed-card:hover { background: rgba(255,255,255,0.1); }
+.feed-card:nth-child(1){animation-delay:0.1s}
+.feed-card:nth-child(2){animation-delay:0.2s}
+.feed-card:nth-child(3){animation-delay:0.3s}
+.feed-card:nth-child(4){animation-delay:0.4s}
+.feed-card:nth-child(5){animation-delay:0.5s}
+@keyframes feedIn {
+  from{opacity:0;transform:translateX(16px)}
+  to{opacity:1;transform:translateX(0)}
+}
+.feed-name { font-size: 13.5px; font-weight: 600; color: rgba(255,255,255,0.9); }
+.feed-sub { font-size: 11.5px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.feed-badges { display: flex; gap: 6px; align-items: center; }
+.badge {
+  font-size: 9.5px; font-weight: 700; padding: 3px 8px;
+  border-radius: 3px; text-transform: uppercase; letter-spacing: 0.07em;
+}
+.badge-ready { background: rgba(42,107,67,0.35); color: #6FCF97; border: 1px solid rgba(42,107,67,0.4); }
+.badge-sector { background: rgba(184,67,30,0.25); color: #F0A080; border: 1px solid rgba(184,67,30,0.35); }
+.badge-cert { background: rgba(176,125,26,0.25); color: #F0D080; border: 1px solid rgba(176,125,26,0.35); }
+.badge-edu { background: rgba(26,107,114,0.3); color: #80D4DA; border: 1px solid rgba(26,107,114,0.35); }
+
+.hero-map-label {
+  margin-top: 24px; padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.map-region { font-size: 11.5px; color: rgba(255,255,255,0.35); }
+.map-dot { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: rgba(255,255,255,0.5); }
+.dot-green { width: 7px; height: 7px; background: #4CAF78; border-radius: 50%; animation: pulse 2s infinite; }
+
+/* ═══════════════════════════════════════
+   SECTION SHARED STYLES
+═══════════════════════════════════════ */
+.section { padding: 80px 80px; }
+.section-sm { padding: 56px 80px; }
+.section-dark { background: var(--ink); }
+.section-parchment { background: var(--parchment); }
+.section-white { background: var(--white); }
+
+.section-eyebrow {
+  font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--rust);
+  margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before { content:''; width: 20px; height: 1.5px; background: var(--rust); }
+.section-dark .section-eyebrow { color: rgba(232,120,80,0.8); }
+.section-dark .section-eyebrow::before { background: rgba(232,120,80,0.8); }
+
+h2.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(22px, 3.5vw, 48px);
+  font-weight: 700; letter-spacing: -1px; line-height: 1.1;
+  color: var(--ink); margin-bottom: 16px;
+}
+.section-dark h2.section-title { color: var(--white); }
+.section-subtitle {
+  font-size: 17px; color: var(--ink-3); line-height: 1.7;
+  max-width: 580px;
+}
+.section-dark .section-subtitle { color: rgba(255,255,255,0.5); }
+
+/* ═══════════════════════════════════════
+   WHY THIS REGION — VALUE PROP
+═══════════════════════════════════════ */
+.region-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; margin-top: 56px;
+}
+.region-stat {
+  background: var(--white);
+  padding: 36px 32px;
+  transition: background 0.2s;
+}
+.region-stat:hover { background: var(--parchment); }
+.region-stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 44px; font-weight: 700;
+  letter-spacing: -2px; color: var(--ink); line-height: 1;
+  margin-bottom: 8px;
+}
+.region-stat-num span { font-size: 24px; color: var(--rust); }
+.region-stat-title { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.region-stat-desc { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+
+/* PILLAR CARDS */
+.pillars-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px; margin-top: 56px;
+}
+.pillar {
+  border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 36px 32px;
+  cursor: pointer; transition: all 0.25s;
+  text-decoration: none; color: inherit;
+  display: block; position: relative; overflow: hidden;
+}
+.pillar::after {
+  content: '→';
+  position: absolute; right: 24px; bottom: 24px;
+  font-size: 18px; color: var(--border);
+  transition: all 0.25s;
+}
+.pillar:hover { border-color: var(--rust); transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+.pillar:hover::after { color: var(--rust); right: 20px; }
+.pillar-icon {
+  width: 48px; height: 48px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 24px;
+}
+.pillar-icon-rust { background: var(--rust-light); }
+.pillar-icon-teal { background: var(--teal-light); }
+.pillar-icon-gold { background: var(--gold-light); }
+.pillar-icon-green { background: var(--green-light); }
+.pillar-title {
+  font-family: 'Fraunces', serif;
+  font-size: 21px; font-weight: 700;
+  letter-spacing: -0.5px; margin-bottom: 10px;
+}
+.pillar-desc { font-size: 14px; color: var(--ink-3); line-height: 1.65; margin-bottom: 20px; }
+.pillar-features { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.pillar-features li {
+  font-size: 12.5px; color: var(--ink-3);
+  padding-left: 14px; position: relative;
+}
+.pillar-features li::before { content: '·'; position: absolute; left: 0; color: var(--rust); font-size: 16px; line-height: 1.3; }
+
+/* ═══════════════════════════════════════
+   COMPARISON BAR — vs Dallas/LA/NYC
+═══════════════════════════════════════ */
+.compare-section { padding: 80px; background: var(--ink); }
+.compare-header { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: center; margin-bottom: 56px; }
+.compare-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.compare-card {
+  border-radius: 10px; padding: 28px 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.compare-card.highlight { border-color: var(--rust); background: rgba(184,67,30,0.1); }
+.compare-card-city {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.12em; color: rgba(255,255,255,0.4); margin-bottom: 16px;
+}
+.compare-card.highlight .compare-card-city { color: var(--rust); }
+.compare-metric { margin-bottom: 16px; }
+.compare-metric-label { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 4px; }
+.compare-metric-value {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 700;
+  color: rgba(255,255,255,0.85); letter-spacing: -0.5px;
+}
+.compare-card.highlight .compare-metric-value { color: var(--white); }
+.compare-bar-wrap { margin-top: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; height: 4px; }
+.compare-bar { height: 4px; border-radius: 2px; background: rgba(255,255,255,0.25); }
+.compare-card.highlight .compare-bar { background: var(--rust); }
+.compare-advantage {
+  margin-top: 16px; padding-top: 16px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.5;
+}
+.compare-card.highlight .compare-advantage { color: rgba(255,200,180,0.7); }
+
+/* ═══════════════════════════════════════
+   ANALYTICS PAGE
+═══════════════════════════════════════ */
+.analytics-header {
+  background: var(--ink); padding: 56px 80px 0;
+}
+.analytics-header-inner {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.analytics-tabs {
+  display: flex; gap: 0; margin-top: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.atab {
+  padding: 16px 24px; font-size: 13.5px; font-weight: 500;
+  color: rgba(255,255,255,0.4); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all 0.2s;
+  white-space: nowrap;
+}
+.atab:hover { color: rgba(255,255,255,0.7); }
+.atab.active { color: var(--white); border-bottom-color: var(--rust); }
+
+.analytics-body { padding: 40px 80px; background: var(--parchment); }
+
+.kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 32px; }
+.kpi {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 24px 22px;
+}
+.kpi-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-bottom: 10px; }
+.kpi-value {
+  font-family: 'Fraunces', serif;
+  font-size: 32px; font-weight: 700; letter-spacing: -1px;
+  color: var(--ink); line-height: 1;
+}
+.kpi-change {
+  font-size: 12px; margin-top: 6px;
+  display: flex; align-items: center; gap: 4px;
+}
+.kpi-up { color: var(--green); }
+.kpi-down { color: var(--rust); }
+
+.analytics-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 20px; }
+.analytics-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.chart-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px;
+}
+.chart-title {
+  font-family: 'Fraunces', serif;
+  font-size: 17px; font-weight: 700; letter-spacing: -0.3px;
+  margin-bottom: 4px;
+}
+.chart-subtitle { font-size: 12px; color: var(--ink-3); margin-bottom: 24px; }
+
+/* Bar chart simulation */
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 140px; }
+.bar-group { display: flex; align-items: flex-end; gap: 3px; flex: 1; }
+.bar {
+  flex: 1; border-radius: 3px 3px 0 0;
+  transition: opacity 0.2s;
+  min-width: 8px;
+}
+.bar:hover { opacity: 0.75; }
+.bar-rust { background: var(--rust); }
+.bar-teal { background: var(--teal); }
+.bar-gold { background: var(--gold); }
+.bar-labels {
+  display: flex; gap: 8px; margin-top: 8px;
+  border-top: 1px solid var(--border); padding-top: 8px;
+}
+.bar-label { flex: 1; font-size: 10px; text-align: center; color: var(--ink-3); }
+
+/* Donut simulation */
+.donut-wrap { display: flex; align-items: center; gap: 24px; }
+.donut {
+  width: 120px; height: 120px; border-radius: 50%; flex-shrink: 0;
+  background: conic-gradient(
+    var(--rust) 0deg 130deg,
+    var(--teal) 130deg 220deg,
+    var(--gold) 220deg 290deg,
+    var(--green) 290deg 340deg,
+    #C0BDB8 340deg 360deg
+  );
+  position: relative;
+}
+.donut::after {
+  content: ''; position: absolute;
+  inset: 28px; border-radius: 50%; background: var(--white);
+}
+.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.donut-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.donut-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* Trend line simulation */
+.trend-line {
+  height: 80px; position: relative; margin-bottom: 8px;
+}
+.trend-svg { width: 100%; height: 100%; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  text-align: left; padding: 10px 14px;
+  font-size: 10.5px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--ink-3); border-bottom: 1.5px solid var(--border);
+  background: var(--parchment);
+}
+.data-table td {
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+  color: var(--ink-2);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--parchment); }
+.td-badge {
+  display: inline-block; padding: 3px 8px; border-radius: 3px;
+  font-size: 10.5px; font-weight: 600; text-transform: uppercase;
+}
+.td-growth { color: var(--green); font-weight: 600; }
+.td-risk { color: var(--rust); font-weight: 600; }
+
+/* Heat map simulation */
+.heatmap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.heatmap-cell {
+  aspect-ratio: 1; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: rgba(255,255,255,0.8); font-weight: 600;
+}
+
+/* ═══════════════════════════════════════
+   WORKFORCE & EDUCATION PAGE
+═══════════════════════════════════════ */
+.workforce-header { background: var(--teal); padding: 64px 80px; }
+.workforce-header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(40px, 5vw, 64px); font-weight: 700;
+  letter-spacing: -2px; color: var(--white); margin-bottom: 16px;
+}
+.workforce-header p { font-size: 18px; color: rgba(255,255,255,0.65); max-width: 540px; }
+
+.workforce-body { padding: 56px 80px; background: var(--parchment); }
+
+.workforce-tabs { display: flex; gap: 8px; margin-bottom: 40px; }
+.wtab {
+  padding: 10px 22px; border-radius: 6px;
+  font-size: 13.5px; font-weight: 500;
+  cursor: pointer; border: 1.5px solid var(--border);
+  background: var(--white); color: var(--ink-3);
+  transition: all 0.2s;
+}
+.wtab:hover { border-color: var(--teal); color: var(--teal); }
+.wtab.active { background: var(--teal); color: var(--white); border-color: var(--teal); }
+
+.edu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.edu-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  transition: all 0.25s; cursor: pointer;
+}
+.edu-card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,0.08); border-color: var(--teal); }
+.edu-card-top {
+  padding: 6px 16px;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--white);
+}
+.edu-top-university { background: var(--teal); }
+.edu-top-college { background: var(--gold); }
+.edu-top-trades { background: var(--rust); }
+.edu-top-cert { background: var(--green); }
+.edu-card-body { padding: 24px 22px; }
+.edu-card-name { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.edu-card-location { font-size: 12px; color: var(--ink-3); margin-bottom: 14px; }
+.edu-programs { display: flex; flex-direction: column; gap: 6px; }
+.edu-program {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; background: var(--parchment); border-radius: 6px;
+  font-size: 12.5px;
+}
+.edu-program-name { font-weight: 500; }
+.edu-program-jobs { font-size: 11px; color: var(--green); font-weight: 600; }
+.edu-card-footer { padding: 16px 22px; border-top: 1px solid var(--border); display: flex; gap: 8px; align-items: center; }
+.edu-stat { font-size: 12px; color: var(--ink-3); }
+.edu-stat strong { color: var(--ink); font-weight: 600; }
+
+.skills-gap { margin-top: 40px; }
+.skills-gap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.skills-gap-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px;
+}
+.skills-gap-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+.skill-row { margin-bottom: 16px; }
+.skill-row-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+.skill-name { font-weight: 500; }
+.skill-gap-pct { font-size: 12px; color: var(--rust); font-weight: 600; }
+.skill-available-pct { font-size: 12px; color: var(--green); font-weight: 600; }
+.skill-bar-bg { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.skill-bar-fill { height: 100%; border-radius: 3px; }
+.fill-rust { background: var(--rust); }
+.fill-green { background: var(--green); }
+.fill-teal { background: var(--teal); }
+.fill-gold { background: var(--gold); }
+
+.pathways-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; }
+.pathway {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 24px 20px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.pathway:hover { border-color: var(--teal); transform: translateY(-2px); }
+.pathway-icon { font-size: 28px; margin-bottom: 12px; }
+.pathway-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.pathway-desc { font-size: 12px; color: var(--ink-3); line-height: 1.6; margin-bottom: 12px; }
+.pathway-salary { font-size: 13px; font-weight: 600; color: var(--green); }
+
+/* ═══════════════════════════════════════
+   DIRECTORY PAGE
+═══════════════════════════════════════ */
+.dir-header { background: var(--ink); padding: 56px 80px 0; }
+.dir-header-inner { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 40px; padding-bottom: 32px; }
+.dir-search-bar {
+  display: grid; grid-template-columns: 1fr auto auto auto auto;
+  gap: 10px; padding: 0 80px 32px;
+  background: var(--ink); border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.dir-input {
+  padding: 11px 18px; border-radius: var(--r);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  color: var(--white); font-family: inherit; font-size: 14px;
+  transition: border-color 0.2s;
+}
+.dir-input::placeholder { color: rgba(255,255,255,0.3); }
+.dir-input:focus { outline: none; border-color: rgba(255,255,255,0.4); }
+.dir-select {
+  padding: 11px 14px; border-radius: var(--r);
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.7);
+  font-family: inherit; font-size: 13px; cursor: pointer;
+  min-width: 130px;
+}
+.dir-body { padding: 32px 80px; background: var(--parchment); }
+
+.dir-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.dir-count { font-size: 13.5px; color: var(--ink-3); }
+.dir-count strong { color: var(--ink); }
+.dir-view-toggle { display: flex; gap: 4px; }
+.view-btn {
+  padding: 7px 10px; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--white);
+  cursor: pointer; color: var(--ink-3); font-size: 14px;
+  transition: all 0.2s;
+}
+.view-btn.active { background: var(--ink); color: var(--white); border-color: var(--ink); }
+
+.dir-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.company-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 24px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.company-card:hover { border-color: var(--rust); box-shadow: 0 6px 24px rgba(0,0,0,0.07); transform: translateY(-2px); }
+.company-card-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.company-avatar {
+  width: 44px; height: 44px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; flex-shrink: 0;
+  font-family: 'Fraunces', serif;
+}
+.company-ready-indicator {
+  width: 10px; height: 10px; border-radius: 50%;
+  margin-top: 4px;
+}
+.ready-yes { background: var(--green); box-shadow: 0 0 0 3px rgba(42,107,67,0.15); }
+.ready-no { background: var(--border); }
+.company-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+.company-location { font-size: 12px; color: var(--ink-3); }
+.company-desc { font-size: 13px; color: var(--ink-3); line-height: 1.6; margin-bottom: 14px; }
+.company-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.company-tag {
+  font-size: 11px; padding: 3px 9px; border-radius: 3px;
+  background: var(--parchment); color: var(--ink-3);
+  border: 1px solid var(--border); font-weight: 500;
+}
+.company-card-footer {
+  margin-top: 16px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.company-sector-badge {
+  font-size: 10.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--rust); background: var(--rust-light);
+  padding: 3px 8px; border-radius: 3px;
+}
+.company-contact { font-size: 12px; color: var(--teal); font-weight: 500; }
+
+/* ═══════════════════════════════════════
+   OPPORTUNITIES PAGE
+═══════════════════════════════════════ */
+.opp-header { background: var(--gold); padding: 64px 80px; }
+.opp-header h1 { font-family: 'Fraunces', serif; font-size: clamp(40px,5vw,64px); font-weight: 700; letter-spacing: -2px; color: var(--white); margin-bottom: 16px; }
+.opp-header p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 500px; }
+.opp-body { padding: 48px 80px; background: var(--parchment); }
+
+.opp-filter-row { display: flex; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+.opp-filter {
+  padding: 8px 18px; border-radius: 20px;
+  font-size: 13px; font-weight: 500;
+  border: 1.5px solid var(--border); background: var(--white);
+  cursor: pointer; color: var(--ink-3); transition: all 0.2s;
+}
+.opp-filter:hover { border-color: var(--gold); color: var(--gold); }
+.opp-filter.active { background: var(--gold); color: var(--white); border-color: var(--gold); }
+
+.opp-list { display: flex; flex-direction: column; gap: 14px; }
+.opp-item {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 28px 28px 28px 32px;
+  cursor: pointer; transition: all 0.2s;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 24px; align-items: start;
+  position: relative;
+}
+.opp-item::before {
+  content: ''; position: absolute;
+  left: 0; top: 16px; bottom: 16px;
+  width: 3px; border-radius: 0 2px 2px 0;
+  background: var(--border);
+  transition: background 0.2s;
+}
+.opp-item:hover { border-color: var(--gold); box-shadow: 0 4px 20px rgba(0,0,0,0.07); }
+.opp-item:hover::before { background: var(--gold); }
+.opp-item-type {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--gold); margin-bottom: 8px;
+}
+.opp-item-title { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 700; letter-spacing: -0.4px; margin-bottom: 8px; }
+.opp-item-desc { font-size: 13.5px; color: var(--ink-3); line-height: 1.6; margin-bottom: 14px; }
+.opp-item-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+.opp-meta-item { font-size: 12px; color: var(--ink-3); display: flex; align-items: center; gap: 5px; }
+.opp-item-right { text-align: right; }
+.opp-deadline-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-bottom: 4px; }
+.opp-deadline-date { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 16px; }
+.opp-match-count {
+  font-size: 12px; color: var(--green); font-weight: 600;
+  background: var(--green-light); padding: 6px 12px;
+  border-radius: 20px; white-space: nowrap;
+}
+.btn-apply {
+  margin-top: 12px; padding: 10px 22px;
+  background: var(--gold); color: var(--white);
+  border: none; border-radius: var(--r);
+  font-size: 13.5px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: all 0.2s; width: 100%;
+}
+.btn-apply:hover { background: #9B6C12; }
+
+/* ═══════════════════════════════════════
+   LOGIN / SIGNUP MODAL
+═══════════════════════════════════════ */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgba(15,15,14,0.75); backdrop-filter: blur(8px);
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white); border-radius: 16px;
+  width: 440px; max-width: calc(100vw - 40px);
+  padding: 48px; position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from{opacity:0;transform:scale(0.94) translateY(16px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border); background: transparent;
+  cursor: pointer; font-size: 16px; color: var(--ink-3);
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--parchment); }
+.modal-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--ink); margin-bottom: 6px;
+}
+.modal-title { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 6px; }
+.modal-sub { font-size: 14px; color: var(--ink-3); margin-bottom: 32px; }
+.modal-tabs { display: flex; gap: 0; border-bottom: 1.5px solid var(--border); margin-bottom: 28px; }
+.mtab {
+  padding: 10px 20px; font-size: 14px; font-weight: 500;
+  cursor: pointer; color: var(--ink-3);
+  border-bottom: 2px solid transparent; margin-bottom: -1.5px;
+  transition: all 0.2s;
+}
+.mtab:hover { color: var(--ink); }
+.mtab.active { color: var(--rust); border-bottom-color: var(--rust); }
+.form-group { margin-bottom: 18px; }
+.form-label { font-size: 12.5px; font-weight: 600; color: var(--ink-2); margin-bottom: 7px; display: block; }
+.form-input {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: inherit; font-size: 14px; color: var(--ink);
+  background: var(--white); transition: border-color 0.2s;
+}
+.form-input:focus { outline: none; border-color: var(--rust); }
+.form-select {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: inherit; font-size: 14px; color: var(--ink);
+  background: var(--white); cursor: pointer;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.btn-submit {
+  width: 100%; padding: 13px;
+  background: var(--rust); color: var(--white);
+  border: none; border-radius: var(--r);
+  font-family: inherit; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-top: 8px;
+}
+.btn-submit:hover { background: var(--rust-2); }
+.modal-divider { text-align: center; font-size: 12px; color: var(--ink-3); margin: 18px 0; position: relative; }
+.modal-divider::before, .modal-divider::after {
+  content: ''; position: absolute; top: 50%;
+  width: 38%; height: 1px; background: var(--border);
+}
+.modal-divider::before { left: 0; }
+.modal-divider::after { right: 0; }
+.user-types { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 20px; }
+.user-type {
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 12px 8px; text-align: center; cursor: pointer;
+  transition: all 0.2s;
+}
+.user-type:hover { border-color: var(--rust); }
+.user-type.selected { border-color: var(--rust); background: var(--rust-light); }
+.user-type-icon { font-size: 20px; margin-bottom: 5px; }
+.user-type-label { font-size: 11px; font-weight: 600; color: var(--ink-2); }
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+footer {
+  background: var(--ink);
+  padding: 64px 80px 32px;
+}
+.footer-top {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 60px; padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 32px;
+}
+.footer-brand {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--white); margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+.footer-desc { font-size: 14px; color: rgba(255,255,255,0.4); line-height: 1.7; margin-bottom: 20px; max-width: 280px; }
+.footer-col-title { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 16px; }
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-links a { font-size: 14px; color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--white); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; }
+.footer-copy { font-size: 12.5px; color: rgba(255,255,255,0.25); }
+.footer-badges { display: flex; gap: 12px; }
+.footer-badge {
+  font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+  padding: 5px 10px; border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.35);
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+/* ── TABLET ── */
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-right { display: none; }
+  .hero-content { padding: 56px 40px; }
+  .section, .section-sm { padding: 64px 32px; }
+  .analytics-body, .workforce-body, .dir-body, .opp-body { padding: 32px; }
+  .dir-search-bar { grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 32px; }
+  .kpi-row { grid-template-columns: repeat(3, 1fr); }
+  .compare-grid { grid-template-columns: repeat(2, 1fr); }
+  .region-grid, .pillars-grid { grid-template-columns: 1fr 1fr; }
+  .edu-grid, .dir-grid { grid-template-columns: 1fr 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+  .analytics-grid { grid-template-columns: 1fr; }
+  .analytics-grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  /* Hide clutter */
+  .topbar { display: none; }
+  .nav-menu { display: none; }
+
+  /* Nav */
+  nav { padding: 0 16px; height: 56px; }
+  .nav-brand { font-size: 20px; margin-right: 0; }
+  .nav-actions { gap: 8px; }
+  .btn-ghost { padding: 7px 14px; font-size: 12px; }
+  .btn-fill  { padding: 7px 14px; font-size: 12px; }
+
+  /* Hero */
+  .hero { min-height: auto; }
+  .hero-right { display: none; }
+  .hero-content { padding: 36px 20px 40px; }
+  .hero-eyebrow { font-size: 9px; letter-spacing: 0.12em; margin-bottom: 16px; }
+  h1.hero-title {
+    font-size: 38px !important;
+    letter-spacing: -1px;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  h1.hero-title em { font-size: 38px !important; }
+  .hero-desc { font-size: 15px; margin-bottom: 24px; color: var(--ink-2) !important; }
+  .hero-cta-row { flex-direction: column; align-items: stretch; gap: 10px; }
+  .btn-lg { padding: 14px 20px; font-size: 15px; justify-content: center; }
+  .hero-trust {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 16px; margin-top: 28px; padding-top: 24px;
+  }
+  .trust-item { border-right: none !important; padding-right: 0 !important; margin-right: 0 !important; }
+  .trust-num { font-size: 26px; }
+  .trust-label { font-size: 10px; }
+
+  /* Sections */
+  .section, .section-sm { padding: 44px 20px; }
+  h2.section-title { font-size: 26px !important; letter-spacing: -0.5px; }
+  .section-subtitle { font-size: 15px; }
+
+  /* Analytics */
+  .analytics-header { padding: 36px 20px 0; }
+  .analytics-header-inner { flex-direction: column; gap: 16px; align-items: flex-start; }
+  .analytics-body { padding: 20px; }
+  .kpi-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi { padding: 16px 14px; }
+  .kpi-value { font-size: 24px; }
+  .analytics-grid { grid-template-columns: 1fr; }
+  .analytics-grid-3 { grid-template-columns: 1fr; }
+  .atab { padding: 12px 14px; font-size: 12px; }
+  .bar-chart { height: 100px; }
+
+  /* Workforce */
+  .workforce-header { padding: 36px 20px; }
+  .workforce-header h1 { font-size: 32px !important; }
+  .workforce-header p { font-size: 14px; }
+  .workforce-body { padding: 20px; }
+  .workforce-tabs { flex-wrap: wrap; gap: 6px; }
+  .wtab { font-size: 12px; padding: 8px 14px; }
+  .edu-grid { grid-template-columns: 1fr; }
+  .skills-gap-grid { grid-template-columns: 1fr; }
+  .pathways-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pathway { padding: 18px 14px; }
+  .pathway-icon { font-size: 22px; }
+  .pathway-title { font-size: 13px; }
+  .pathway-desc { font-size: 11px; }
+  .pathway-salary { font-size: 12px; }
+
+  /* Directory */
+  .dir-header { padding: 36px 20px 0; }
+  .dir-header h1 { font-size: 28px !important; }
+  .dir-search-bar {
+    grid-template-columns: 1fr;
+    gap: 8px; padding: 14px 20px;
+  }
+  .dir-body { padding: 16px 20px; }
+  .dir-grid { grid-template-columns: 1fr; }
+  .dir-toolbar { flex-direction: column; align-items: flex-start; gap: 8px; }
+
+  /* Opportunities */
+  .opp-header { padding: 36px 20px; }
+  .opp-header h1 { font-size: 28px !important; }
+  .opp-body { padding: 20px; }
+  .opp-filter-row { gap: 6px; }
+  .opp-filter { font-size: 12px; padding: 6px 12px; }
+  .opp-item { grid-template-columns: 1fr; gap: 16px; }
+  .opp-item-right { text-align: left; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .opp-deadline-label, .opp-deadline-date { display: inline; }
+  .btn-apply { width: auto; }
+
+  /* Region grid */
+  .region-grid { grid-template-columns: 1fr 1fr; }
+  .region-stat { padding: 20px 16px; }
+  .region-stat-num { font-size: 32px; }
+
+  /* Pillars */
+  .pillars-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 28px; }
+  .pillar { padding: 24px 20px; }
+  .pillar-title { font-size: 18px; }
+
+  /* Compare */
+  .compare-section { padding: 48px 20px; }
+  .compare-header { grid-template-columns: 1fr; gap: 16px; }
+  .compare-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .compare-metric-value { font-size: 20px; }
+  .compare-card { padding: 18px 14px; }
+
+  /* Footer */
+  .footer-top { grid-template-columns: 1fr; gap: 28px; padding: 0 0 32px; }
+  footer { padding: 40px 20px 24px; }
+  .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+
+  /* Modals */
+  .modal { padding: 32px 24px; width: calc(100vw - 32px); }
+  .user-types { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  .user-type { padding: 10px 6px; }
+  .user-type-icon { font-size: 18px; }
+  .user-type-label { font-size: 10px; }
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Intake banner */
+  .intake-banner { margin: 0 20px; padding: 28px 24px; grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* ── MOBILE NAV FIX ── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: auto;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--ink);
+  z-index: 300;
+  padding: 32px 24px;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav-item {
+  padding: 14px 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+  border-radius: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-family: 'Instrument Sans', sans-serif;
+  text-decoration: none;
+  display: block;
+}
+.mobile-nav-item:hover { background: rgba(255,255,255,0.07); color: white; }
+.mobile-nav-item.active { color: var(--rust); }
+.mobile-nav-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.mobile-nav-btn {
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+}
+@media (max-width: 768px) {
+  .hamburger { display: flex; }
+  .nav-menu { display: none !important; }
+  .nav-actions { display: none !important; }
+  nav { padding: 0 20px; }
+}
+
+</style>
+
+<!-- ═══ RIODATA SUPABASE CONNECTION ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://knbtwcxwdhyjvgncnzjo.supabase.co';
+const SUPA_KEY = 'sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+});
+
+async function rdSignUp(email, password, fullName, userType, org) {
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: fullName, user_type: userType, organization: org } }
+  });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignOut() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+async function rdSubmitCompany(formData) {
+  const { data, error } = await sb.from('companies').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdLoadCompanies(filters) {
+  filters = filters || {};
+  let query = sb.from('companies').select('*').eq('status', 'active');
+  if (filters.sector) query = query.eq('sector', filters.sector);
+  if (filters.city) query = query.ilike('city', '%' + filters.city + '%');
+  if (filters.ready) query = query.eq('ready_to_work', true);
+  if (filters.search) query = query.or('legal_name.ilike.%' + filters.search + '%,description.ilike.%' + filters.search + '%');
+  const { data, error } = await query.order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdLoadProjects() {
+  const { data, error } = await sb.from('projects').select('*').eq('status', 'active').order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdSubmitProject(formData) {
+  const { data, error } = await sb.from('projects').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdTrack(page) {
+  await sb.from('analytics_events').insert([{ event_type: 'page_view', page: page, user_id: currentUser?.id || null }]);
+}
+
+window.addEventListener('load', () => rdTrack(window.location.pathname || '/'));
+</script>
+<!-- ═══════════════════════════════════════════ -->
+
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span><span class="topbar-dot"></span>Platform is live — free for all regional businesses</span>
+    <span>South Texas · Northern Mexico Corridor</span>
+  </div>
+  <div>
+    <a href="#">Laredo · McAllen · Brownsville · Nuevo Laredo · Monterrey · Matamoros</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-brand" style="letter-spacing:-0.5px" onclick="showPage('home')">
+    <span class="nav-brand-dot"></span>RioData
+  </a>
+  <ul class="nav-menu">
+    <li><a href="#" onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a href="#" onclick="showPage('analytics')" id="nav-analytics">Analytics</a></li>
+    <li><a href="#" onclick="showPage('workforce')" id="nav-workforce">Workforce & Education</a></li>
+    <li><a href="#" onclick="showPage('directory')" id="nav-directory">Company Directory</a></li>
+    <li><a href="#" onclick="showPage('opportunities')" id="nav-opportunities">Opportunities</a></li>
+    <li><a href="#" id="nav-about">About</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-ghost" onclick="openModal('login')">Sign In</button>
+    <button class="btn-fill" onclick="openModal('signup')">Join Free →</button>
+  </div>
+
+  <!-- HAMBURGER -->
+  <div class="hamburger" id="hamburger" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobile-nav">
+  <a class="mobile-nav-item active" onclick="showPage('home');closeMobileNav()">🏠 Home</a>
+  <a class="mobile-nav-item" onclick="showPage('analytics');closeMobileNav()">📊 Analytics</a>
+  <a class="mobile-nav-item" onclick="showPage('workforce');closeMobileNav()">🎓 Workforce & Education</a>
+  <a class="mobile-nav-item" onclick="showPage('directory');closeMobileNav()">🏢 Company Directory</a>
+  <a class="mobile-nav-item" onclick="showPage('opportunities');closeMobileNav()">🔗 Opportunities</a>
+  <a class="mobile-nav-item" onclick="showPage('home');closeMobileNav()">ℹ️ About</a>
+  <div class="mobile-nav-actions">
+    <button class="mobile-nav-btn" style="background:transparent;color:white;border:1.5px solid rgba(255,255,255,0.3);" onclick="openModal('login');closeMobileNav()">Sign In</button>
+    <button class="mobile-nav-btn" style="background:var(--rust);color:white;" onclick="openModal('signup');closeMobileNav()">Join Free →</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     HOME PAGE
+═══════════════════════════════════════ -->
+<div class="page active" id="page-home">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="hero-eyebrow-line"></span>
+        Free Regional Platform · South Texas + Northern Mexico
+      </div>
+      <h1 class="hero-title">
+        Building the<br>next great
+        <em>American metro.</em>
+      </h1>
+      <p class="hero-desc">
+        From Laredo to Brownsville and across Northern Mexico — one free platform to connect businesses, develop the workforce, and compete with the biggest cities in the country.
+      </p>
+      <div class="hero-cta-row">
+        <button class="btn-lg btn-lg-primary" onclick="openModal('signup')">Get Started Free →</button>
+        <button class="btn-lg btn-lg-outline" onclick="showPage('analytics')">View Regional Data</button>
+      </div>
+      <div class="hero-trust">
+        <div class="trust-item">
+          <div class="trust-num">2.1<span>M</span></div>
+          <div class="trust-label">Regional Population</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">$48<span>B</span></div>
+          <div class="trust-label">Regional GDP</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">340<span>+</span></div>
+          <div class="trust-label">Listed Companies</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-num">58</div>
+          <div class="trust-label">Active Projects</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-grid-bg"></div>
+      <div class="hero-glow"></div>
+      <div class="hero-panel">
+        <div class="panel-label">Live Regional Activity</div>
+        <div class="live-feed">
+          <div class="feed-card">
+            <div>
+              <div class="feed-name">Falcon Industrial Services</div>
+              <div class="feed-sub">Laredo, TX · Construction</div>
+            </div>
+            <div class="feed-badges">
+              <span class="badge badge-ready">Ready</span>
+              <span class="badge badge-cert">HUBZone</span>
+            </div>
+          </div>
+          <div class="feed-card">
+            <div>
+              <div class="feed-name">TAMIU Engineering Program</div>
+              <div class="feed-sub">Education · 240 grads/yr</div>
+            </div>
+            <div class="feed-badges"><span class="badge badge-edu">Education</span></div>
+          </div>
+          <div class="feed-card">
+            <div>
+              <div class="feed-name">Port of Brownsville LNG — Ph 3</div>
+              <div class="feed-sub">$420M opportunity · Open</div>
+            </div>
+            <div class="feed-badges"><span class="badge badge-sector">Energy</span></div>
+          </div>
+          <div class="feed-card">
+            <div>
+              <div class="feed-name">NorMex Manufacturing</div>
+              <div class="feed-sub">Monterrey · Manufacturing</div>
+            </div>
+            <div class="feed-badges">
+              <span class="badge badge-ready">Ready</span>
+            </div>
+          </div>
+          <div class="feed-card">
+            <div>
+              <div class="feed-name">Workforce Gap: Welders</div>
+              <div class="feed-sub">Region needs 340+ by Q3</div>
+            </div>
+            <div class="feed-badges"><span class="badge badge-cert">Alert</span></div>
+          </div>
+        </div>
+        <div class="hero-map-label">
+          <span class="map-region">Covering 12 counties · 3 metro areas · 2 countries</span>
+          <span class="map-dot"><span class="dot-green"></span>Live</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY THIS REGION -->
+  <div class="section section-white">
+    <div class="section-eyebrow">The Opportunity</div>
+    <h2 class="section-title">We have everything it takes.<br>We just need the infrastructure.</h2>
+    <p class="section-subtitle">The Laredo–Brownsville corridor is one of the fastest-growing, most strategically positioned regions in North America. It's time to operate like it.</p>
+    <div class="region-grid">
+      <div class="region-stat">
+        <div class="region-stat-num">$2.8<span>T</span></div>
+        <div class="region-stat-title">Annual Cross-Border Trade</div>
+        <div class="region-stat-desc">More trade crosses through this corridor than any other U.S. land border crossing.</div>
+      </div>
+      <div class="region-stat">
+        <div class="region-stat-num">38<span>%</span></div>
+        <div class="region-stat-title">Younger Than 25</div>
+        <div class="region-stat-desc">One of the youngest regional workforces in the nation — a massive long-term competitive advantage.</div>
+      </div>
+      <div class="region-stat">
+        <div class="region-stat-num">$180<span>B</span></div>
+        <div class="region-stat-title">In Active Development</div>
+        <div class="region-stat-desc">LNG, data centers, manufacturing, energy — billions in active projects seeking local execution capacity.</div>
+      </div>
+      <div class="region-stat">
+        <div class="region-stat-num">94<span>%</span></div>
+        <div class="region-stat-title">Bilingual Workforce</div>
+        <div class="region-stat-desc">Unique cultural and linguistic advantage for cross-border business operations unmatched elsewhere.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TO BIG METROS -->
+  <div class="compare-section">
+    <div class="compare-header">
+      <div>
+        <div class="section-eyebrow">Regional Benchmarking</div>
+        <h2 class="section-title">Where we stand vs. major metros</h2>
+      </div>
+      <p class="section-subtitle">We're behind in some metrics — and that's the opportunity. With the right infrastructure, talent pipeline, and data, we close the gap fast.</p>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="compare-card-city">Dallas–Fort Worth</div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">GDP</div>
+          <div class="compare-metric-value">$614B</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:100%"></div></div>
+        </div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">Pop. Growth (5yr)</div>
+          <div class="compare-metric-value">18.2%</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:75%"></div></div>
+        </div>
+        <div class="compare-advantage">Major tech, finance, and logistics hub. Mature business infrastructure, deep talent pool.</div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-city">Los Angeles</div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">GDP</div>
+          <div class="compare-metric-value">$1.1T</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:100%"></div></div>
+        </div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">Pop. Growth (5yr)</div>
+          <div class="compare-metric-value">-1.4%</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:10%"></div></div>
+        </div>
+        <div class="compare-advantage">High cost of living driving out-migration. Opportunity to attract businesses and talent seeking lower costs.</div>
+      </div>
+      <div class="compare-card highlight">
+        <div class="compare-card-city">🌵 Our Region</div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">GDP (growing)</div>
+          <div class="compare-metric-value">$48B</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:100%"></div></div>
+        </div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">Pop. Growth (5yr)</div>
+          <div class="compare-metric-value">+12.8%</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:88%"></div></div>
+        </div>
+        <div class="compare-advantage">Fastest growing trade corridor, youngest workforce, $180B in incoming projects. Massive upside. This is where we build.</div>
+      </div>
+      <div class="compare-card">
+        <div class="compare-card-city">New York City</div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">GDP</div>
+          <div class="compare-metric-value">$2.0T</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:100%"></div></div>
+        </div>
+        <div class="compare-metric">
+          <div class="compare-metric-label">Pop. Growth (5yr)</div>
+          <div class="compare-metric-value">-3.1%</div>
+          <div class="compare-bar-wrap"><div class="compare-bar" style="width:8%"></div></div>
+        </div>
+        <div class="compare-advantage">Financial capital. Declining population. Infrastructure constrained. Exporting talent and businesses to Sun Belt.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLATFORM PILLARS -->
+  <div class="section section-parchment">
+    <div class="section-eyebrow">What RioData Does</div>
+    <h2 class="section-title">Four pillars. One free platform.</h2>
+    <p class="section-subtitle">Everything a growing metro needs — business intelligence, workforce data, education pathways, and project opportunities — built for our region.</p>
+    <div class="pillars-grid">
+      <a href="#" onclick="showPage('directory')" class="pillar">
+        <div class="pillar-icon pillar-icon-rust">🏢</div>
+        <div class="pillar-title">Business Directory</div>
+        <div class="pillar-desc">Verified company profiles with real-time "ready to work" status for every sector in the region.</div>
+        <ul class="pillar-features">
+          <li>Verified contact & capacity data</li>
+          <li>Certification tracking (SAM, HUBZone)</li>
+          <li>Cross-border coverage (TX + MX)</li>
+          <li>Smart project matching</li>
+        </ul>
+      </a>
+      <a href="#" onclick="showPage('analytics')" class="pillar">
+        <div class="pillar-icon pillar-icon-teal">📊</div>
+        <div class="pillar-title">Regional Analytics</div>
+        <div class="pillar-desc">Live economic data, sector dashboards, and growth benchmarks to guide investment decisions.</div>
+        <ul class="pillar-features">
+          <li>Employment by sector & county</li>
+          <li>Industry growth tracking</li>
+          <li>Metro comparison benchmarks</li>
+          <li>Investment opportunity maps</li>
+        </ul>
+      </a>
+      <a href="#" onclick="showPage('workforce')" class="pillar">
+        <div class="pillar-icon pillar-icon-gold">🎓</div>
+        <div class="pillar-title">Workforce & Education</div>
+        <div class="pillar-desc">Skills gap analysis, school pipelines, training programs, and career pathways matched to regional demand.</div>
+        <ul class="pillar-features">
+          <li>Skills demand vs. supply tracking</li>
+          <li>University & trade school data</li>
+          <li>Career pathway mapping</li>
+          <li>Employer-to-school connections</li>
+        </ul>
+      </a>
+      <a href="#" onclick="showPage('opportunities')" class="pillar">
+        <div class="pillar-icon pillar-icon-green">🔗</div>
+        <div class="pillar-title">Project Opportunities</div>
+        <div class="pillar-desc">Active project listings — from LNG to data centers — matched directly to verified local businesses.</div>
+        <ul class="pillar-features">
+          <li>Construction, energy, industrial leads</li>
+          <li>Government contract listings</li>
+          <li>Automatic company matching</li>
+          <li>Direct contact process</li>
+        </ul>
+      </a>
+    </div>
+    <!-- Extra pillar for free/community -->
+    <div style="margin-top: 20px; background: var(--ink); border-radius: 12px; padding: 40px 48px; display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center;">
+      <div>
+        <div style="font-size: 10.5px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(232,120,80,0.8); margin-bottom: 10px;">100% Free. Always.</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; color: white; letter-spacing: -0.5px; margin-bottom: 8px;">No fees, no paywalls, no premium tiers.</div>
+        <div style="font-size: 15px; color: rgba(255,255,255,0.5); max-width: 560px; line-height: 1.7;">RioData is a public resource for the region. Every company listing, every piece of economic data, every workforce insight, and every project opportunity is free to access. This is infrastructure, not a product.</div>
+      </div>
+      <button class="btn-lg btn-lg-primary" onclick="openModal('signup')" style="white-space: nowrap;">Create Free Account →</button>
+    </div>
+  </div>
+
+</div><!-- end home page -->
+
+<!-- ═══════════════════════════════════════
+     ANALYTICS PAGE
+═══════════════════════════════════════ -->
+<div class="page" id="page-analytics">
+  <div class="analytics-header">
+    <div class="analytics-header-inner">
+      <div>
+        <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(232,120,80,0.8); margin-bottom: 12px;">Regional Intelligence</div>
+        <h1 style="font-family: 'Fraunces', serif; font-size: clamp(36px, 4vw, 54px); font-weight: 700; letter-spacing: -1.5px; color: white; margin-bottom: 8px;">Economic Dashboard</h1>
+        <p style="font-size: 16px; color: rgba(255,255,255,0.5);">South Texas + Northern Mexico Corridor · Updated monthly</p>
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn-ghost" style="color: rgba(255,255,255,0.6); border-color: rgba(255,255,255,0.15);">↓ Download Report</button>
+        <button class="btn-fill">Share Dashboard</button>
+      </div>
+    </div>
+    <div class="analytics-tabs">
+      <div class="atab active">Overview</div>
+      <div class="atab">Employment</div>
+      <div class="atab">Industry Sectors</div>
+      <div class="atab">Education</div>
+      <div class="atab">Investment</div>
+      <div class="atab">Cross-Border Trade</div>
+    </div>
+  </div>
+
+  <div class="analytics-body">
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Regional GDP</div>
+        <div class="kpi-value">$48.2B</div>
+        <div class="kpi-change kpi-up">↑ 7.4% vs last year</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Total Employment</div>
+        <div class="kpi-value">612K</div>
+        <div class="kpi-change kpi-up">↑ 3.1% YoY</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">New Businesses (YTD)</div>
+        <div class="kpi-value">1,847</div>
+        <div class="kpi-change kpi-up">↑ 14.2% YoY</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Active Projects ($)</div>
+        <div class="kpi-value">$9.3B</div>
+        <div class="kpi-change kpi-up">↑ 31% YoY</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Workforce Gap</div>
+        <div class="kpi-value">4,200</div>
+        <div class="kpi-change kpi-down">↑ 8% unfilled roles</div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 1 -->
+    <div class="analytics-grid">
+      <div class="chart-card">
+        <div class="chart-title">GDP Growth — Regional vs. National</div>
+        <div class="chart-subtitle">Annual growth rate comparison, 2018–2024</div>
+        <div class="bar-chart">
+          <div class="bar-group"><div class="bar bar-rust" style="height:55%"></div><div class="bar bar-teal" style="height:40%"></div></div>
+          <div class="bar-group"><div class="bar bar-rust" style="height:60%"></div><div class="bar bar-teal" style="height:44%"></div></div>
+          <div class="bar-group"><div class="bar bar-rust" style="height:48%"></div><div class="bar bar-teal" style="height:50%"></div></div>
+          <div class="bar-group"><div class="bar bar-rust" style="height:38%"></div><div class="bar bar-teal" style="height:32%"></div></div>
+          <div class="bar-group"><div class="bar bar-rust" style="height:70%"></div><div class="bar bar-teal" style="height:54%"></div></div>
+          <div class="bar-group"><div class="bar bar-rust" style="height:78%"></div><div class="bar bar-teal" style="height:58%"></div></div>
+          <div class="bar-group"><div class="bar bar-rust" style="height:90%"></div><div class="bar bar-teal" style="height:62%"></div></div>
+        </div>
+        <div class="bar-labels">
+          <div class="bar-label">2018</div><div class="bar-label">2019</div><div class="bar-label">2020</div>
+          <div class="bar-label">2021</div><div class="bar-label">2022</div><div class="bar-label">2023</div>
+          <div class="bar-label">2024</div>
+        </div>
+        <div style="display: flex; gap: 20px; margin-top: 12px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3);"><div style="width: 10px; height: 10px; background: var(--rust); border-radius: 2px;"></div>Our Region</div>
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3);"><div style="width: 10px; height: 10px; background: var(--teal); border-radius: 2px;"></div>National Avg.</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Employment by Sector</div>
+        <div class="chart-subtitle">Share of regional workforce</div>
+        <div class="donut-wrap">
+          <div class="donut"></div>
+          <div class="donut-legend">
+            <div class="donut-item"><div class="donut-dot" style="background: var(--rust)"></div><div><div style="font-size:12px;font-weight:600">Construction</div><div style="font-size:11px;color:var(--ink-3)">36% · 220K jobs</div></div></div>
+            <div class="donut-item"><div class="donut-dot" style="background: var(--teal)"></div><div><div style="font-size:12px;font-weight:600">Energy/LNG</div><div style="font-size:11px;color:var(--ink-3)">25% · 153K jobs</div></div></div>
+            <div class="donut-item"><div class="donut-dot" style="background: var(--gold)"></div><div><div style="font-size:12px;font-weight:600">Manufacturing</div><div style="font-size:11px;color:var(--ink-3)">19% · 116K jobs</div></div></div>
+            <div class="donut-item"><div class="donut-dot" style="background: var(--green)"></div><div><div style="font-size:12px;font-weight:600">Logistics</div><div style="font-size:11px;color:var(--ink-3)">13% · 80K jobs</div></div></div>
+            <div class="donut-item"><div class="donut-dot" style="background: #C0BDB8"></div><div><div style="font-size:12px;font-weight:600">Other</div><div style="font-size:11px;color:var(--ink-3)">7% · 43K jobs</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="analytics-grid-3">
+      <div class="chart-card">
+        <div class="chart-title">Job Growth by County</div>
+        <div class="chart-subtitle">12-month change</div>
+        <table class="data-table">
+          <thead><tr><th>County</th><th>Jobs</th><th>Growth</th></tr></thead>
+          <tbody>
+            <tr><td>Webb (Laredo)</td><td>142K</td><td class="td-growth">+6.2%</td></tr>
+            <tr><td>Hidalgo (McAllen)</td><td>238K</td><td class="td-growth">+4.8%</td></tr>
+            <tr><td>Cameron (Brownsville)</td><td>112K</td><td class="td-growth">+5.1%</td></tr>
+            <tr><td>Starr</td><td>18K</td><td class="td-growth">+9.4%</td></tr>
+            <tr><td>Zapata</td><td>7K</td><td class="td-growth">+2.1%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Wage Growth Trend</div>
+        <div class="chart-subtitle">Median hourly, 2020–2024</div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Construction</span><span style="font-weight:600">$28.40/hr</span></div><div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:72%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Energy/LNG</span><span style="font-weight:600">$38.20/hr</span></div><div class="skill-bar-bg"><div class="skill-bar-fill fill-teal" style="width:96%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Manufacturing</span><span style="font-weight:600">$22.80/hr</span></div><div class="skill-bar-bg"><div class="skill-bar-fill fill-gold" style="width:58%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Logistics</span><span style="font-weight:600">$24.60/hr</span></div><div class="skill-bar-bg"><div class="skill-bar-fill fill-green" style="width:62%"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span>Tech/IT</span><span style="font-weight:600">$46.00/hr</span></div><div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:100%"></div></div></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Active Projects Pipeline</div>
+        <div class="chart-subtitle">By total value</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="padding: 12px; background: var(--rust-light); border-radius: 6px; border-left: 3px solid var(--rust);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--rust); font-weight: 700;">Energy/LNG</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;">$4.2B</div>
+          </div>
+          <div style="padding: 12px; background: var(--teal-light); border-radius: 6px; border-left: 3px solid var(--teal);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal); font-weight: 700;">Construction</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;">$2.8B</div>
+          </div>
+          <div style="padding: 12px; background: var(--gold-light); border-radius: 6px; border-left: 3px solid var(--gold);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 700;">Data Centers</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;">$1.4B</div>
+          </div>
+          <div style="padding: 12px; background: var(--green-light); border-radius: 6px; border-left: 3px solid var(--green);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--green); font-weight: 700;">Industrial Mfg</div>
+            <div style="font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700;">$880M</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CROSS BORDER TRADE TABLE -->
+    <div class="chart-card">
+      <div class="chart-title">Cross-Border Trade Intelligence</div>
+      <div class="chart-subtitle">Top commodity flows — South Texas ports of entry</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Commodity</th><th>Port</th><th>Monthly Volume</th><th>YoY Change</th><th>Top Employers</th><th>Risk</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Auto Parts & Vehicles</strong></td><td>Laredo</td><td>$8.4B</td><td class="td-growth">+12%</td><td>GM, Ford, BMW</td><td style="color: var(--green)">Low</td></tr>
+          <tr><td><strong>Petroleum Products</strong></td><td>Brownsville</td><td>$2.1B</td><td class="td-growth">+31%</td><td>Cheniere, NextDecade</td><td style="color: var(--gold)">Medium</td></tr>
+          <tr><td><strong>Electronics / Maquiladora</strong></td><td>Laredo/McAllen</td><td>$1.8B</td><td class="td-growth">+8%</td><td>Samsung, LG, Foxconn</td><td style="color: var(--green)">Low</td></tr>
+          <tr><td><strong>Fresh Produce</strong></td><td>Hidalgo</td><td>$680M</td><td class="td-growth">+4%</td><td>Multiple</td><td style="color: var(--green)">Low</td></tr>
+          <tr><td><strong>Steel & Metals</strong></td><td>Laredo</td><td>$420M</td><td class="td-risk">-6%</td><td>Ternium, AHMSA</td><td style="color: var(--rust)">High</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div><!-- end analytics page -->
+
+<!-- ═══════════════════════════════════════
+     WORKFORCE & EDUCATION PAGE
+═══════════════════════════════════════ -->
+<div class="page" id="page-workforce">
+  <div class="workforce-header">
+    <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 12px;">Human Capital</div>
+    <h1>Workforce &amp; Education Hub</h1>
+    <p>Track skills gaps, connect employers to schools, map career pathways, and build the talent pipeline our region's projects demand.</p>
+  </div>
+
+  <div class="workforce-body">
+    <div class="workforce-tabs">
+      <div class="wtab active">Skills Gap Analysis</div>
+      <div class="wtab">Schools & Programs</div>
+      <div class="wtab">Career Pathways</div>
+      <div class="wtab">Employer Connections</div>
+    </div>
+
+    <!-- SKILLS GAP -->
+    <div class="skills-gap">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="kpi" style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 24px;">
+          <div class="kpi-label">Critical Skill Gaps Now</div>
+          <div class="kpi-value" style="color: var(--rust);">14</div>
+          <div class="kpi-change" style="color: var(--ink-3);">Occupations with demand exceeding supply</div>
+        </div>
+        <div class="kpi" style="background: white; border: 1px solid var(--border); border-radius: 10px; padding: 24px;">
+          <div class="kpi-label">Total Unfilled Positions</div>
+          <div class="kpi-value">4,240</div>
+          <div class="kpi-change kpi-down">Region-wide as of this month</div>
+        </div>
+      </div>
+      <div class="skills-gap-grid">
+        <div class="skills-gap-card">
+          <div class="skills-gap-title">🔴 High-Demand Skills (Gaps)</div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Certified Welders</span><span class="skill-gap-pct">780 needed · 340 short</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:43%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Electricians (Licensed)</span><span class="skill-gap-pct">540 needed · 220 short</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:59%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">CDL Truck Drivers</span><span class="skill-gap-pct">1,200 needed · 480 short</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:40%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">IT / Cybersecurity</span><span class="skill-gap-pct">320 needed · 290 short</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:9%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Civil Engineers</span><span class="skill-gap-pct">180 needed · 140 short</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-rust" style="width:22%"></div></div>
+          </div>
+        </div>
+        <div class="skills-gap-card">
+          <div class="skills-gap-title">🟢 Available Workforce Strengths</div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Bilingual Customer Service</span><span class="skill-available-pct">Surplus — 2,400 available</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-green" style="width:95%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">General Labor / Construction</span><span class="skill-available-pct">Strong — 3,200 available</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-green" style="width:88%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Customs & Trade Compliance</span><span class="skill-available-pct">Strong — 680 available</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-green" style="width:78%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Spanish/English Interpreters</span><span class="skill-available-pct">Surplus — 1,100 available</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-green" style="width:92%"></div></div>
+          </div>
+          <div class="skill-row">
+            <div class="skill-row-top"><span class="skill-name">Agricultural Workers</span><span class="skill-available-pct">Strong — 4,400 available</span></div>
+            <div class="skill-bar-bg"><div class="skill-bar-fill fill-green" style="width:85%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHOOLS -->
+    <div style="margin-top: 48px;">
+      <h3 style="font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px;">Schools &amp; Training Programs</h3>
+      <p style="font-size: 14px; color: var(--ink-3); margin-bottom: 24px;">Regional institutions producing workforce talent — with real employment outcome data.</p>
+      <div class="edu-grid">
+        <div class="edu-card">
+          <div class="edu-card-top edu-top-university">University</div>
+          <div class="edu-card-body">
+            <div class="edu-card-name">Texas A&M International</div>
+            <div class="edu-card-location">📍 Laredo, TX · 9,200 students</div>
+            <div class="edu-programs">
+              <div class="edu-program"><span class="edu-program-name">Engineering</span><span class="edu-program-jobs">240 grads/yr → 94% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Business / International Trade</span><span class="edu-program-jobs">380 grads/yr → 89% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Nursing / Health Sciences</span><span class="edu-program-jobs">180 grads/yr → 98% hired</span></div>
+            </div>
+          </div>
+          <div class="edu-card-footer">
+            <span class="edu-stat"><strong>88%</strong> employment rate</span>
+            <span class="edu-stat"><strong>$42K</strong> avg starting salary</span>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-card-top edu-top-university">University</div>
+          <div class="edu-card-body">
+            <div class="edu-card-name">UT Rio Grande Valley</div>
+            <div class="edu-card-location">📍 Edinburg, TX · 32,000 students</div>
+            <div class="edu-programs">
+              <div class="edu-program"><span class="edu-program-name">Computer Science / IT</span><span class="edu-program-jobs">420 grads/yr → 91% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Civil & Mech Engineering</span><span class="edu-program-jobs">310 grads/yr → 96% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Supply Chain Management</span><span class="edu-program-jobs">190 grads/yr → 87% hired</span></div>
+            </div>
+          </div>
+          <div class="edu-card-footer">
+            <span class="edu-stat"><strong>86%</strong> employment rate</span>
+            <span class="edu-stat"><strong>$44K</strong> avg starting salary</span>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-card-top edu-top-college">Community College</div>
+          <div class="edu-card-body">
+            <div class="edu-card-name">Laredo College</div>
+            <div class="edu-card-location">📍 Laredo, TX · 14,000 students</div>
+            <div class="edu-programs">
+              <div class="edu-program"><span class="edu-program-name">Welding Technology</span><span class="edu-program-jobs">120 grads/yr → 97% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">CDL / Transportation</span><span class="edu-program-jobs">200 grads/yr → 99% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Electrical Technology</span><span class="edu-program-jobs">90 grads/yr → 96% hired</span></div>
+            </div>
+          </div>
+          <div class="edu-card-footer">
+            <span class="edu-stat"><strong>95%</strong> employment rate</span>
+            <span class="edu-stat"><strong>$34K</strong> avg starting salary</span>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-card-top edu-top-college">Community College</div>
+          <div class="edu-card-body">
+            <div class="edu-card-name">South Texas College</div>
+            <div class="edu-card-location">📍 McAllen, TX · 33,000 students</div>
+            <div class="edu-programs">
+              <div class="edu-program"><span class="edu-program-name">Industrial Technology</span><span class="edu-program-jobs">280 grads/yr → 93% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">HVAC / Refrigeration</span><span class="edu-program-jobs">110 grads/yr → 98% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Construction Management</span><span class="edu-program-jobs">160 grads/yr → 91% hired</span></div>
+            </div>
+          </div>
+          <div class="edu-card-footer">
+            <span class="edu-stat"><strong>92%</strong> employment rate</span>
+            <span class="edu-stat"><strong>$36K</strong> avg starting salary</span>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-card-top edu-top-trades">Trade School</div>
+          <div class="edu-card-body">
+            <div class="edu-card-name">Rio Grande Valley Trades Institute</div>
+            <div class="edu-card-location">📍 Brownsville, TX · 2,400 students</div>
+            <div class="edu-programs">
+              <div class="edu-program"><span class="edu-program-name">Pipefitting & Plumbing</span><span class="edu-program-jobs">80 grads/yr → 100% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Industrial Maintenance</span><span class="edu-program-jobs">60 grads/yr → 99% hired</span></div>
+              <div class="edu-program"><span class="edu-program-name">Ironworking / Steel</span><span class="edu-program-jobs">45 grads/yr → 100% hired</span></div>
+            </div>
+          </div>
+          <div class="edu-card-footer">
+            <span class="edu-stat"><strong>99%</strong> employment rate</span>
+            <span class="edu-stat"><strong>$38K</strong> avg starting salary</span>
+          </div>
+        </div>
+        <div class="edu-card">
+          <div class="edu-card-top edu-top-cert">Certification Program</div>
+          <div class="edu-card-body">
+            <div class="edu-card-name">Border Workforce Accelerator</div>
+            <div class="edu-card-location">📍 Regional (multiple sites) · Online + in-person</div>
+            <div class="edu-programs">
+              <div class="edu-program"><span class="edu-program-name">Customs Broker License (CBP)</span><span class="edu-program-jobs">6-week program · $58K avg salary</span></div>
+              <div class="edu-program"><span class="edu-program-name">OSHA 30 / Safety Cert.</span><span class="edu-program-jobs">4-day program · +$8K salary bump</span></div>
+              <div class="edu-program"><span class="edu-program-name">SAM / HUBZone Certification</span><span class="edu-program-jobs">Free workshop · Unlocks gov contracts</span></div>
+            </div>
+          </div>
+          <div class="edu-card-footer">
+            <span class="edu-stat"><strong>Free</strong> for region residents</span>
+            <span class="edu-stat"><strong>Fast-track</strong> programs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAREER PATHWAYS -->
+    <div style="margin-top: 48px;">
+      <h3 style="font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 8px;">High-Demand Career Pathways</h3>
+      <p style="font-size: 14px; color: var(--ink-3); margin-bottom: 24px;">Jobs the region needs most, with clear paths to get there.</p>
+      <div class="pathways-grid">
+        <div class="pathway">
+          <div class="pathway-icon">🔧</div>
+          <div class="pathway-title">Industrial Welder</div>
+          <div class="pathway-desc">6–12 month trade cert → immediate hire in LNG, construction, manufacturing</div>
+          <div class="pathway-salary">$38–58K/yr · 340 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">⚡</div>
+          <div class="pathway-title">Licensed Electrician</div>
+          <div class="pathway-desc">2-yr apprenticeship + license → data centers, industrial, commercial</div>
+          <div class="pathway-salary">$48–72K/yr · 220 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">🚛</div>
+          <div class="pathway-title">CDL Driver / Logistics</div>
+          <div class="pathway-desc">6-week CDL school → immediate employment, cross-border routes</div>
+          <div class="pathway-salary">$52–68K/yr · 480 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">💻</div>
+          <div class="pathway-title">IT / Cybersecurity</div>
+          <div class="pathway-desc">4-yr degree or bootcamp → data center ops, government, healthcare</div>
+          <div class="pathway-salary">$55–90K/yr · 290 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">🏗️</div>
+          <div class="pathway-title">Project Manager</div>
+          <div class="pathway-desc">Business/engineering degree + PMP cert → construction, energy, industrial</div>
+          <div class="pathway-salary">$72–110K/yr · 85 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">📦</div>
+          <div class="pathway-title">Customs Broker</div>
+          <div class="pathway-desc">CBP license exam + 1-yr exp → import/export, trade compliance</div>
+          <div class="pathway-salary">$54–78K/yr · 120 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">🔬</div>
+          <div class="pathway-title">Civil Engineer</div>
+          <div class="pathway-desc">4-yr BS + PE license → infrastructure, water, transportation projects</div>
+          <div class="pathway-salary">$68–95K/yr · 140 openings</div>
+        </div>
+        <div class="pathway">
+          <div class="pathway-icon">🛢️</div>
+          <div class="pathway-title">Pipeline Technician</div>
+          <div class="pathway-desc">Trade cert + NCCER → LNG, oil & gas, water treatment</div>
+          <div class="pathway-salary">$44–62K/yr · 195 openings</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     DIRECTORY PAGE
+═══════════════════════════════════════ -->
+<div class="page" id="page-directory">
+  <div class="dir-header">
+    <div class="dir-header-inner">
+      <div>
+        <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(232,120,80,0.8); margin-bottom: 12px;">Business Directory</div>
+        <h1 style="font-family: 'Fraunces', serif; font-size: clamp(36px,4vw,54px); font-weight: 700; letter-spacing: -1.5px; color: white; margin-bottom: 8px;">Find Who's Ready to Work</h1>
+        <p style="font-size: 16px; color: rgba(255,255,255,0.5);">340+ verified businesses across South Texas and Northern Mexico</p>
+      </div>
+      <button class="btn-fill" onclick="openModal('signup')">List Your Business</button>
+    </div>
+  </div>
+  <div class="dir-search-bar">
+    <input class="dir-input" placeholder="Search companies, services, keywords..." style="grid-column: 1;">
+    <select class="dir-select"><option>All Sectors</option><option>Construction</option><option>Energy/LNG</option><option>Manufacturing</option><option>Logistics</option><option>Data Centers</option><option>Environmental</option><option>Gov. Contracting</option></select>
+    <select class="dir-select"><option>All Locations</option><option>Laredo, TX</option><option>McAllen, TX</option><option>Brownsville, TX</option><option>Nuevo Laredo</option><option>Monterrey</option><option>Matamoros</option></select>
+    <select class="dir-select"><option>All Certifications</option><option>SAM Registered</option><option>HUBZone</option><option>SBA 8(a)</option><option>Woman-Owned</option><option>Veteran-Owned</option></select>
+    <button class="btn-fill">Search</button>
+  </div>
+  <div class="dir-body">
+    <div class="dir-toolbar">
+      <div class="dir-count">Showing <strong>18 of 340+</strong> companies · <strong style="color: var(--green)">214 Ready to Work</strong></div>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <div style="width: 10px; height: 10px; background: var(--green); border-radius: 50%;"></div>
+          <span style="font-size: 12px; color: var(--ink-3);">= Ready to Work</span>
+        </div>
+      </div>
+    </div>
+    <div class="dir-grid">
+      <!-- Company cards -->
+      <div class="company-card">
+        <div class="company-card-head">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="company-avatar" style="background: var(--rust-light); color: var(--rust);">F</div>
+            <div>
+              <div class="company-name">Falcon Industrial Services</div>
+              <div class="company-location">📍 Laredo, TX</div>
+            </div>
+          </div>
+          <div class="company-ready-indicator ready-yes"></div>
+        </div>
+        <div class="company-desc">Full-service industrial contractor specializing in welding, structural steel fabrication, and pipeline support.</div>
+        <div class="company-tags">
+          <span class="company-tag">HUBZone</span>
+          <span class="company-tag">SAM</span>
+          <span class="company-tag">Welding</span>
+          <span class="company-tag">Pipeline</span>
+        </div>
+        <div class="company-card-footer">
+          <span class="company-sector-badge">Construction</span>
+          <span class="company-contact">View Profile →</span>
+        </div>
+      </div>
+      <div class="company-card">
+        <div class="company-card-head">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="company-avatar" style="background: var(--teal-light); color: var(--teal);">B</div>
+            <div>
+              <div class="company-name">Border Energy Solutions</div>
+              <div class="company-location">📍 Matamoros, MX</div>
+            </div>
+          </div>
+          <div class="company-ready-indicator ready-yes"></div>
+        </div>
+        <div class="company-desc">LNG facility mechanical contracting, inspection services, and plant maintenance across the border region.</div>
+        <div class="company-tags">
+          <span class="company-tag">LNG</span>
+          <span class="company-tag">Mechanical</span>
+          <span class="company-tag">Inspection</span>
+        </div>
+        <div class="company-card-footer">
+          <span class="company-sector-badge">Energy</span>
+          <span class="company-contact">View Profile →</span>
+        </div>
+      </div>
+      <div class="company-card">
+        <div class="company-card-head">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="company-avatar" style="background: var(--gold-light); color: var(--gold);">R</div>
+            <div>
+              <div class="company-name">Rio Grande Logistics</div>
+              <div class="company-location">📍 McAllen, TX</div>
+            </div>
+          </div>
+          <div class="company-ready-indicator ready-no"></div>
+        </div>
+        <div class="company-desc">Cross-border freight brokerage, customs clearance, and last-mile distribution throughout South Texas.</div>
+        <div class="company-tags">
+          <span class="company-tag">SAM</span>
+          <span class="company-tag">Customs</span>
+          <span class="company-tag">Freight</span>
+        </div>
+        <div class="company-card-footer">
+          <span class="company-sector-badge">Logistics</span>
+          <span class="company-contact">View Profile →</span>
+        </div>
+      </div>
+      <div class="company-card">
+        <div class="company-card-head">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="company-avatar" style="background: var(--green-light); color: var(--green);">N</div>
+            <div>
+              <div class="company-name">NorMex Manufacturing Co.</div>
+              <div class="company-location">📍 Monterrey, NL</div>
+            </div>
+          </div>
+          <div class="company-ready-indicator ready-yes"></div>
+        </div>
+        <div class="company-desc">CNC machining, metal fabrication, and OEM component manufacturing. IMMEX certified maquiladora.</div>
+        <div class="company-tags">
+          <span class="company-tag">IMMEX</span>
+          <span class="company-tag">CNC</span>
+          <span class="company-tag">Fabrication</span>
+        </div>
+        <div class="company-card-footer">
+          <span class="company-sector-badge">Manufacturing</span>
+          <span class="company-contact">View Profile →</span>
+        </div>
+      </div>
+      <div class="company-card">
+        <div class="company-card-head">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="company-avatar" style="background: var(--rust-light); color: var(--rust);">V</div>
+            <div>
+              <div class="company-name">Valley Civil Contractors</div>
+              <div class="company-location">📍 Brownsville, TX</div>
+            </div>
+          </div>
+          <div class="company-ready-indicator ready-yes"></div>
+        </div>
+        <div class="company-desc">Site preparation, grading, drainage, and underground utilities. Active on multiple county projects.</div>
+        <div class="company-tags">
+          <span class="company-tag">HUBZone</span>
+          <span class="company-tag">Site Prep</span>
+          <span class="company-tag">Utilities</span>
+        </div>
+        <div class="company-card-footer">
+          <span class="company-sector-badge">Construction</span>
+          <span class="company-contact">View Profile →</span>
+        </div>
+      </div>
+      <div class="company-card">
+        <div class="company-card-head">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <div class="company-avatar" style="background: var(--teal-light); color: var(--teal);">S</div>
+            <div>
+              <div class="company-name">Sendero Electric LLC</div>
+              <div class="company-location">📍 Corpus Christi, TX</div>
+            </div>
+          </div>
+          <div class="company-ready-indicator ready-yes"></div>
+        </div>
+        <div class="company-desc">Commercial and industrial electrical contractor. Substation construction, switchgear, high-voltage work.</div>
+        <div class="company-tags">
+          <span class="company-tag">SAM</span>
+          <span class="company-tag">Electrical</span>
+          <span class="company-tag">High-Voltage</span>
+        </div>
+        <div class="company-card-footer">
+          <span class="company-sector-badge">Energy</span>
+          <span class="company-contact">View Profile →</span>
+        </div>
+      </div>
+    </div>
+    <div style="text-align: center; margin-top: 32px;">
+      <button class="btn-ghost" style="font-size: 14px; padding: 12px 32px;">Load More Companies</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     OPPORTUNITIES PAGE
+═══════════════════════════════════════ -->
+<div class="page" id="page-opportunities">
+  <div class="opp-header">
+    <div style="font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.55); margin-bottom: 12px;">Project Pipeline</div>
+    <h1>Project Opportunities</h1>
+    <p>Active projects seeking qualified local businesses. Free to view and apply.</p>
+  </div>
+  <div class="opp-body">
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px;">
+      <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; text-align: center;">
+        <div style="font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--ink);">58</div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-top: 4px;">Active Projects</div>
+      </div>
+      <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; text-align: center;">
+        <div style="font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--gold);">$9.3B</div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-top: 4px;">Total Value</div>
+      </div>
+      <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; text-align: center;">
+        <div style="font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--green);">214</div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-top: 4px;">Matched Companies</div>
+      </div>
+      <div style="background: white; border: 1px solid var(--border); border-radius: 8px; padding: 18px; text-align: center;">
+        <div style="font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--rust);">12</div>
+        <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); margin-top: 4px;">Closing This Month</div>
+      </div>
+    </div>
+    <div class="opp-filter-row">
+      <div class="opp-filter active">All Projects</div>
+      <div class="opp-filter">Energy / LNG</div>
+      <div class="opp-filter">Construction</div>
+      <div class="opp-filter">Data Centers</div>
+      <div class="opp-filter">Government</div>
+      <div class="opp-filter">Manufacturing</div>
+      <div class="opp-filter">Ready to Apply</div>
+    </div>
+    <div class="opp-list">
+      <div class="opp-item">
+        <div>
+          <div class="opp-item-type">⚡ Energy / LNG</div>
+          <div class="opp-item-title">Port of Brownsville LNG Export Terminal — Phase 3 Civil Works</div>
+          <div class="opp-item-desc">NextDecade seeking qualified civil, structural, and mechanical subcontractors for earthwork, concrete, and piping installation at the Rio Grande LNG facility. Approx. 22-month engagement, full-time on-site.</div>
+          <div class="opp-item-meta">
+            <span class="opp-meta-item">📍 Brownsville, TX</span>
+            <span class="opp-meta-item">💰 $420M total</span>
+            <span class="opp-meta-item">👥 200–400 workers</span>
+            <span class="opp-meta-item">📋 HUBZone preferred</span>
+          </div>
+        </div>
+        <div class="opp-item-right">
+          <div class="opp-deadline-label">Deadline</div>
+          <div class="opp-deadline-date">May 15</div>
+          <div class="opp-match-count">✓ 22 matching companies</div>
+          <button class="btn-apply">Apply / Inquire</button>
+        </div>
+      </div>
+      <div class="opp-item">
+        <div>
+          <div class="opp-item-type">💻 Data Center</div>
+          <div class="opp-item-title">Starr County AI Data Campus — Electrical, HVAC & Mechanical</div>
+          <div class="opp-item-desc">120MW hyperscale campus seeking licensed electrical and mechanical subcontractors. Strong preference for local South Texas businesses. Multiple phases available through 2027.</div>
+          <div class="opp-item-meta">
+            <span class="opp-meta-item">📍 Rio Grande City, TX</span>
+            <span class="opp-meta-item">💰 $280M total</span>
+            <span class="opp-meta-item">👥 150–250 workers</span>
+            <span class="opp-meta-item">📋 SAM required</span>
+          </div>
+        </div>
+        <div class="opp-item-right">
+          <div class="opp-deadline-label">Deadline</div>
+          <div class="opp-deadline-date">Apr 28</div>
+          <div class="opp-match-count">✓ 14 matching companies</div>
+          <button class="btn-apply">Apply / Inquire</button>
+        </div>
+      </div>
+      <div class="opp-item">
+        <div>
+          <div class="opp-item-type">🏛️ Government Contract</div>
+          <div class="opp-item-title">Webb County Road & Infrastructure Maintenance — 3-Year Contract</div>
+          <div class="opp-item-desc">Annual RFQ for paving, signage, drainage, and road maintenance county-wide. HUBZone, SDVOSB, and woman-owned certifications eligible for set-asides. Recurring work, reliable schedule.</div>
+          <div class="opp-item-meta">
+            <span class="opp-meta-item">📍 Laredo / Webb County</span>
+            <span class="opp-meta-item">💰 $18M/yr</span>
+            <span class="opp-meta-item">👥 30–80 workers</span>
+            <span class="opp-meta-item">📋 Certifications eligible</span>
+          </div>
+        </div>
+        <div class="opp-item-right">
+          <div class="opp-deadline-label">Deadline</div>
+          <div class="opp-deadline-date">Jun 1</div>
+          <div class="opp-match-count">✓ 31 matching companies</div>
+          <button class="btn-apply">Apply / Inquire</button>
+        </div>
+      </div>
+      <div class="opp-item">
+        <div>
+          <div class="opp-item-type">🏭 Manufacturing / Industrial</div>
+          <div class="opp-item-title">Monterrey Tier-1 Auto Supplier — Cross-Border Logistics Partner</div>
+          <div class="opp-item-desc">Major Toyota/GM supplier seeking long-term logistics and customs brokerage partner for daily cross-border shipments between Monterrey plants and U.S. distribution. Multi-year contract, high volume.</div>
+          <div class="opp-item-meta">
+            <span class="opp-meta-item">📍 Monterrey ↔ Laredo</span>
+            <span class="opp-meta-item">💰 $4M/yr contract</span>
+            <span class="opp-meta-item">📦 Daily shipments</span>
+            <span class="opp-meta-item">📋 C-TPAT preferred</span>
+          </div>
+        </div>
+        <div class="opp-item-right">
+          <div class="opp-deadline-label">Deadline</div>
+          <div class="opp-deadline-date">Open</div>
+          <div class="opp-match-count">✓ 8 matching companies</div>
+          <button class="btn-apply">Apply / Inquire</button>
+        </div>
+      </div>
+      <div class="opp-item">
+        <div>
+          <div class="opp-item-type">🏗️ Construction</div>
+          <div class="opp-item-title">Hidalgo County Medical District Expansion — General Construction</div>
+          <div class="opp-item-desc">New outpatient care campus including three buildings, parking structure, and utilities. Seeking masonry, MEP, and site work subcontractors. Funded. Design complete. Breaking ground Q3.</div>
+          <div class="opp-item-meta">
+            <span class="opp-meta-item">📍 McAllen, TX</span>
+            <span class="opp-meta-item">💰 $94M total</span>
+            <span class="opp-meta-item">👥 100–180 workers</span>
+            <span class="opp-meta-item">📋 Licensed TX contractors</span>
+          </div>
+        </div>
+        <div class="opp-item-right">
+          <div class="opp-deadline-label">Deadline</div>
+          <div class="opp-deadline-date">May 30</div>
+          <div class="opp-match-count">✓ 19 matching companies</div>
+          <button class="btn-apply">Apply / Inquire</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     FOOTER (shows on all pages)
+═══════════════════════════════════════ -->
+<footer id="site-footer">
+  <div class="footer-top">
+    <div>
+      <div class="footer-brand">RioData</div>
+      <div class="footer-desc">A free public platform connecting South Texas and Northern Mexico businesses, workforce, and project opportunities. Built for the region's future.</div>
+      <div style="display: flex; gap: 10px;">
+        <span class="footer-badge">Free Forever</span>
+        <span class="footer-badge">No Paywalls</span>
+        <span class="footer-badge">Open to All</span>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Platform</div>
+      <ul class="footer-links">
+        <li><a href="#" onclick="showPage('analytics')">Regional Analytics</a></li>
+        <li><a href="#" onclick="showPage('workforce')">Workforce & Education</a></li>
+        <li><a href="#" onclick="showPage('directory')">Company Directory</a></li>
+        <li><a href="#" onclick="showPage('opportunities')">Project Opportunities</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Region</div>
+      <ul class="footer-links">
+        <li><a href="#">Laredo, TX</a></li>
+        <li><a href="#">McAllen / RGV</a></li>
+        <li><a href="#">Brownsville, TX</a></li>
+        <li><a href="#">Nuevo Laredo, Tamps</a></li>
+        <li><a href="#">Monterrey, NL</a></li>
+        <li><a href="#">Matamoros, Tamps</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Resources</div>
+      <ul class="footer-links">
+        <li><a href="#">Get SAM Certified</a></li>
+        <li><a href="#">HUBZone Guide</a></li>
+        <li><a href="#">Submit Your Business</a></li>
+        <li><a href="#">Post a Project</a></li>
+        <li><a href="#">Partner With Us</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 RioData Regional Platform · South Texas + Northern Mexico · Free Public Resource</div>
+    <div class="footer-badges">
+      <span class="footer-badge">Privacy Policy</span>
+      <span class="footer-badge">Terms of Use</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     LOGIN / SIGNUP MODAL
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-brand">🌵 RioData</div>
+    <div class="modal-title" id="modal-title">Welcome back</div>
+    <div class="modal-sub" id="modal-sub">Free access to the full platform</div>
+    <div class="modal-tabs">
+      <div class="mtab active" onclick="switchModalTab('login')" id="mtab-login">Sign In</div>
+      <div class="mtab" onclick="switchModalTab('signup')" id="mtab-signup">Create Account</div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div id="modal-login-form">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="you@company.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input class="form-input" type="password" placeholder="••••••••">
+      </div>
+      <div style="text-align: right; font-size: 12.5px; margin-top: -8px; margin-bottom: 18px;">
+        <a href="#" style="color: var(--rust); text-decoration: none;">Forgot password?</a>
+      </div>
+      <button class="btn-submit">Sign In →</button>
+      <div class="modal-divider">or continue with</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button class="btn-ghost" style="text-align: center; font-size: 13px;">🔵 Google</button>
+        <button class="btn-ghost" style="text-align: center; font-size: 13px;">🔷 LinkedIn</button>
+      </div>
+    </div>
+
+    <!-- SIGNUP FORM -->
+    <div id="modal-signup-form" style="display: none;">
+      <div style="margin-bottom: 20px;">
+        <div class="form-label">I am a...</div>
+        <div class="user-types">
+          <div class="user-type selected" onclick="selectType(this)">
+            <div class="user-type-icon">🏢</div>
+            <div class="user-type-label">Business Owner</div>
+          </div>
+          <div class="user-type" onclick="selectType(this)">
+            <div class="user-type-icon">🏗️</div>
+            <div class="user-type-label">Developer / GC</div>
+          </div>
+          <div class="user-type" onclick="selectType(this)">
+            <div class="user-type-icon">🎓</div>
+            <div class="user-type-label">Job Seeker</div>
+          </div>
+          <div class="user-type" onclick="selectType(this)">
+            <div class="user-type-icon">🏛️</div>
+            <div class="user-type-label">Economic Dev</div>
+          </div>
+          <div class="user-type" onclick="selectType(this)">
+            <div class="user-type-icon">📊</div>
+            <div class="user-type-label">Researcher</div>
+          </div>
+          <div class="user-type" onclick="selectType(this)">
+            <div class="user-type-icon">💼</div>
+            <div class="user-type-label">Investor</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input class="form-input" type="text" placeholder="Maria">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input class="form-input" type="text" placeholder="Garcia">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input class="form-input" type="email" placeholder="you@company.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Organization (optional)</label>
+        <input class="form-input" type="text" placeholder="Your company or school">
+      </div>
+      <button class="btn-submit">Create Free Account →</button>
+      <div style="font-size: 11.5px; color: var(--ink-3); text-align: center; margin-top: 12px;">
+        Free forever. No credit card. No spam.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+function toggleMobileNav() {
+  const nav = document.getElementById('mobile-nav');
+  const burger = document.getElementById('hamburger');
+  nav.classList.toggle('open');
+  burger.style.opacity = nav.classList.contains('open') ? '0.6' : '1';
+}
+function closeMobileNav() {
+  document.getElementById('mobile-nav').classList.remove('open');
+}
+
+// ─── PAGE ROUTING ───
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-menu a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) navEl.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── MODAL ───
+function openModal(type) {
+  document.getElementById('modal-overlay').classList.add('open');
+  switchModalTab(type);
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+function switchModalTab(tab) {
+  document.getElementById('modal-login-form').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('modal-signup-form').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('mtab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('mtab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('modal-title').textContent = tab === 'login' ? 'Welcome back' : 'Join RioData';
+  document.getElementById('modal-sub').textContent = tab === 'login' ? 'Sign in to your free account' : '100% free · No credit card needed';
+}
+
+// ─── USER TYPE SELECT ───
+function selectType(el) {
+  document.querySelectorAll('.user-type').forEach(u => u.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ─── ANALYTICS TABS ───
+document.querySelectorAll('.atab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.atab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// ─── WORKFORCE TABS ───
+document.querySelectorAll('.wtab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.wtab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+  });
+});
+
+// ─── OPPORTUNITY FILTERS ───
+document.querySelectorAll('.opp-filter').forEach(f => {
+  f.addEventListener('click', () => {
+    document.querySelectorAll('.opp-filter').forEach(x => x.classList.remove('active'));
+    f.classList.add('active');
+  });
+});
+
+// ─── SCROLL ANIMATIONS ───
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.08 });
+
+function animateEls() {
+  document.querySelectorAll('.pillar, .region-stat, .compare-card, .edu-card, .pathway, .company-card, .opp-item, .kpi, .chart-card').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 0.55s ease ${i * 0.04}s, transform 0.55s ease ${i * 0.04}s`;
+    observer.observe(el);
+  });
+}
+animateEls();
+
+// ─── KEYBOARD ───
+
+// ── REAL AUTH WIRED TO SUPABASE ─────────────────
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Sign In button
+  const signInBtn = document.querySelector('#modal-login-form .btn-submit');
+  if (signInBtn) {
+    signInBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const email = document.querySelector('#modal-login-form input[type="email"]').value;
+      const password = document.querySelector('#modal-login-form input[type="password"]').value;
+      if (!email || !password) { alert('Please enter email and password'); return; }
+      signInBtn.textContent = 'Signing in...';
+      signInBtn.disabled = true;
+      const result = await rdSignIn(email, password);
+      if (result.error) {
+        alert('Error: ' + result.error);
+        signInBtn.textContent = 'Sign In →';
+        signInBtn.disabled = false;
+      } else {
+        closeModal();
+        window.location.href = 'dashboard.html';
+      }
+    });
+  }
+
+  // Sign Up button
+  const signUpBtn = document.querySelector('#modal-signup-form .btn-submit');
+  if (signUpBtn) {
+    signUpBtn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      const inputs = document.querySelectorAll('#modal-signup-form input');
+      const firstName = inputs[0]?.value || '';
+      const lastName = inputs[1]?.value || '';
+      const email = inputs[2]?.value || '';
+      const org = inputs[3]?.value || '';
+      const userType = document.querySelector('.user-type.selected .user-type-label')?.textContent || 'user';
+      if (!email) { alert('Please enter your email'); return; }
+      const password = Math.random().toString(36).slice(-10) + 'Rd1!';
+      signUpBtn.textContent = 'Creating account...';
+      signUpBtn.disabled = true;
+      const result = await rdSignUp(email, password, firstName + ' ' + lastName, userType, org);
+      if (result.error) {
+        alert('Error: ' + result.error);
+        signUpBtn.textContent = 'Create Free Account →';
+        signUpBtn.disabled = false;
+      } else {
+        closeModal();
+        alert('Account created! Check your email to confirm then sign in.');
+      }
+    });
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>
