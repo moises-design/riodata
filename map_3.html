@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — Regional Map</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient}=supabase;
+const sb=createClient('https://knbtwcxwdhyjvgncnzjo.supabase.co','sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw');
+</script>
+<style>
+:root{--ink:#0F0F0E;--ink2:#2A2A27;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--green:#2A6B43;--greenl:#E4F0EA;--r:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--ink);color:var(--white);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+nav{background:rgba(15,15,14,.96);border-bottom:1px solid rgba(255,255,255,.08);height:52px;display:flex;align-items:center;padding:0 20px;gap:14px;flex-shrink:0;z-index:200;}
+.brand{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:white;cursor:pointer;text-decoration:none;}
+.brand span{color:var(--teal);}
+.back{font-size:12px;color:rgba(255,255,255,.4);cursor:pointer;text-decoration:none;}
+.back:hover{color:white;}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.filter-row{background:rgba(15,15,14,.9);border-bottom:1px solid rgba(255,255,255,.07);padding:8px 16px;display:flex;gap:8px;align-items:center;flex-shrink:0;flex-wrap:wrap;z-index:100;}
+.filter-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);font-family:inherit;transition:all .12s;}
+.filter-btn:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.8);}
+.filter-btn.active{background:var(--teal);color:white;border-color:var(--teal);}
+.filter-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);margin-right:4px;}
+.map-layout{display:flex;flex:1;overflow:hidden;}
+/* MAP CANVAS */
+.map-area{flex:1;position:relative;background:#1a2635;overflow:hidden;}
+.map-bg{position:absolute;inset:0;}
+/* SVG MAP */
+#map-svg{width:100%;height:100%;position:absolute;inset:0;}
+/* GRID OVERLAY */
+.grid-overlay{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03)1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03)1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+/* CITY DOTS */
+.city-dot{position:absolute;cursor:pointer;transform:translate(-50%,-50%);z-index:10;}
+.city-ring{width:20px;height:20px;border-radius:50%;border:2px solid var(--teal);position:relative;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.city-ring::after{content:'';position:absolute;inset:3px;border-radius:50%;background:var(--teal);opacity:.7;}
+.city-dot:hover .city-ring{transform:scale(1.3);border-color:white;}
+.city-name{position:absolute;white-space:nowrap;font-size:10px;font-weight:600;color:rgba(255,255,255,.7);top:-18px;left:50%;transform:translateX(-50%);pointer-events:none;}
+/* COMPANY MARKERS */
+.co-marker{position:absolute;transform:translate(-50%,-50%);z-index:20;cursor:pointer;}
+.co-pin{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:11px;font-weight:700;border:2px solid rgba(255,255,255,.3);transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.co-pin:hover{transform:scale(1.25);border-color:white;z-index:30;}
+.co-pin.ready{border-color:rgba(42,107,67,.8);box-shadow:0 0 0 3px rgba(42,107,67,.2),0 2px 8px rgba(0,0,0,.4);}
+/* SIDEBAR */
+.map-sidebar{width:300px;background:rgba(15,15,14,.97);border-left:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;}
+.sidebar-header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sidebar-title{font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:white;margin-bottom:3px;}
+.sidebar-count{font-size:11px;color:rgba(255,255,255,.38);}
+.sidebar-search{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sidebar-input{width:100%;padding:8px 11px;border:1px solid rgba(255,255,255,.12);border-radius:6px;font-family:inherit;font-size:12.5px;color:white;background:rgba(255,255,255,.06);}
+.sidebar-input:focus{outline:none;border-color:var(--teal);}
+.sidebar-input::placeholder{color:rgba(255,255,255,.3);}
+.co-list{flex:1;overflow-y:auto;}
+.co-list::-webkit-scrollbar{width:4px;}
+.co-list::-webkit-scrollbar-track{background:transparent;}
+.co-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.co-item{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .12s;}
+.co-item:hover,.co-item.active{background:rgba(255,255,255,.05);}
+.co-item-head{display:flex;align-items:center;gap:9px;margin-bottom:4px;}
+.co-av{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:11px;font-weight:700;flex-shrink:0;}
+.co-item-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.88);}
+.co-item-loc{font-size:10.5px;color:rgba(255,255,255,.35);}
+.co-item-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.co-tag{font-size:9.5px;padding:1px 6px;border-radius:3px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);}
+.co-tag-ready{background:rgba(42,107,67,.25);color:#6FCF97;}
+.co-tag-sector{background:rgba(26,107,114,.25);color:#80D4DA;}
+/* POPUP */
+.map-popup{position:absolute;z-index:100;background:var(--white);border-radius:10px;padding:16px;width:240px;box-shadow:0 8px 32px rgba(0,0,0,.4);display:none;pointer-events:auto;}
+.map-popup.visible{display:block;}
+.mp-name{font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:3px;color:var(--ink);}
+.mp-loc{font-size:11.5px;color:var(--ink3);margin-bottom:9px;}
+.mp-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px;}
+.mp-tag{font-size:9.5px;padding:2px 7px;border-radius:3px;font-weight:600;}
+.mp-contact{font-size:12px;color:var(--teal);font-weight:600;text-decoration:none;display:block;padding:7px 10px;border:1.5px solid var(--teal);border-radius:6px;text-align:center;margin-top:8px;}
+.mp-contact:hover{background:var(--teal);color:white;}
+.mp-close{position:absolute;top:8px;right:8px;font-size:14px;color:var(--ink3);cursor:pointer;background:none;border:none;padding:3px;}
+/* LEGEND */
+.legend{position:absolute;bottom:16px;left:16px;background:rgba(15,15,14,.9);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:11px 14px;z-index:50;}
+.legend-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:8px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:rgba(255,255,255,.55);margin-bottom:5px;}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+/* STATS BAR */
+.stats-bar{position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(15,15,14,.88);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 16px;display:flex;gap:20px;z-index:50;}
+.sb-stat{text-align:center;}
+.sb-num{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:white;line-height:1;}
+.sb-lbl{font-size:9.5px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em;margin-top:2px;}
+/* LOADING */
+.loading-overlay{position:absolute;inset:0;background:rgba(26,38,53,.8);display:flex;align-items:center;justify-content:center;z-index:200;pointer-events:none;transition:opacity .4s;}
+.loading-overlay.hidden{opacity:0;pointer-events:none;}
+.spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.12);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){.map-sidebar{display:none;}.filter-row{overflow-x:auto;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/">Rio<span>Data</span></a>
+  <span style="color:rgba(255,255,255,.2)">·</span>
+  <a class="back" href="/">← Back</a>
+  <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);margin-left:4px;">Regional Map</span>
+  <div class="nav-right">
+    <span style="font-size:12px;color:rgba(255,255,255,.3);" id="map-status">Loading...</span>
+    <a href="/onboarding.html" style="padding:6px 14px;border-radius:6px;background:var(--teal);color:white;text-decoration:none;font-size:12px;font-weight:600;">+ Add Business</a>
+  </div>
+</nav>
+
+<div class="filter-row">
+  <span class="filter-label">Filter:</span>
+  <button class="filter-btn active" onclick="setFilter(this,'')">All</button>
+  <button class="filter-btn" onclick="setFilter(this,'ready')">✅ Ready to Work</button>
+  <button class="filter-btn" onclick="setFilter(this,'US')">🇺🇸 Texas</button>
+  <button class="filter-btn" onclick="setFilter(this,'MX')">🇲🇽 Mexico</button>
+  <button class="filter-btn" onclick="setFilter(this,'Construction')">Construction</button>
+  <button class="filter-btn" onclick="setFilter(this,'Energy')">Energy</button>
+  <button class="filter-btn" onclick="setFilter(this,'Logistics')">Logistics</button>
+  <button class="filter-btn" onclick="setFilter(this,'Manufacturing')">Manufacturing</button>
+</div>
+
+<div class="map-layout">
+  <div class="map-area" id="map-area">
+    <!-- SVG MAP OF REGION -->
+    <svg id="map-svg" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet">
+      <!-- Ocean / Background -->
+      <rect width="900" height="600" fill="#1a2635"/>
+      <!-- Gulf of Mexico -->
+      <path d="M700,0 L900,0 L900,600 L700,600 Q750,500 780,400 Q800,300 760,200 Q730,100 700,0Z" fill="#1e3a4a" opacity=".7"/>
+      <!-- Mexico terrain -->
+      <path d="M0,600 L0,200 Q100,180 200,200 Q300,220 400,210 Q500,200 600,220 Q700,240 800,260 L800,600Z" fill="#16211a" opacity=".8"/>
+      <!-- Texas / US terrain -->
+      <path d="M0,0 L900,0 L900,260 Q800,240 700,220 Q600,200 500,190 Q400,180 300,200 Q200,220 100,200 Q50,190 0,200Z" fill="#1a1f2e" opacity=".9"/>
+      <!-- Rio Grande / Border River -->
+      <path d="M0,230 Q50,220 120,215 Q200,205 280,215 Q360,225 440,220 Q520,215 600,225 Q680,235 750,250 Q800,260 850,270 Q880,280 900,290" stroke="rgba(26,107,114,.6)" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+      <!-- Roads / corridors -->
+      <line x1="120" y1="0" x2="120" y2="600" stroke="rgba(255,255,255,.04)" stroke-width="2"/>
+      <line x1="440" y1="0" x2="440" y2="600" stroke="rgba(255,255,255,.04)" stroke-width="2"/>
+      <line x1="680" y1="0" x2="680" y2="600" stroke="rgba(255,255,255,.04)" stroke-width="2"/>
+      <line x1="0" y1="200" x2="900" y2="250" stroke="rgba(255,255,255,.04)" stroke-width="1.5"/>
+    </svg>
+    <div class="grid-overlay"></div>
+
+    <!-- CITY LABELS (static) -->
+    <div class="city-dot" style="left:12%;top:35%">
+      <div class="city-name">Laredo</div>
+      <div class="city-ring" style="width:16px;height:16px;border-color:rgba(255,255,255,.3)"></div>
+    </div>
+    <div class="city-dot" style="left:47%;top:70%">
+      <div class="city-name">McAllen/RGV</div>
+      <div class="city-ring" style="width:18px;height:18px;border-color:rgba(255,255,255,.3)"></div>
+    </div>
+    <div class="city-dot" style="left:72%;top:75%">
+      <div class="city-name">Brownsville</div>
+      <div class="city-ring" style="width:14px;height:14px;border-color:rgba(255,255,255,.3)"></div>
+    </div>
+    <div class="city-dot" style="left:13%;top:56%" style="opacity:.6">
+      <div class="city-name" style="color:rgba(255,255,255,.4)">Nuevo Laredo</div>
+      <div class="city-ring" style="width:12px;height:12px;border-color:rgba(255,255,255,.18)"></div>
+    </div>
+    <div class="city-dot" style="left:30%;top:78%">
+      <div class="city-name" style="color:rgba(255,255,255,.4)">Monterrey</div>
+      <div class="city-ring" style="width:22px;height:22px;border-color:rgba(255,255,255,.2)"></div>
+    </div>
+    <div class="city-dot" style="left:57%;top:56%">
+      <div class="city-name" style="color:rgba(255,255,255,.4)">Matamoros</div>
+      <div class="city-ring" style="width:12px;height:12px;border-color:rgba(255,255,255,.18)"></div>
+    </div>
+
+    <!-- COMPANY MARKERS (injected by JS) -->
+    <div id="markers"></div>
+
+    <!-- POPUP -->
+    <div class="map-popup" id="map-popup">
+      <button class="mp-close" onclick="closePopup()">✕</button>
+      <div class="mp-name" id="mp-name"></div>
+      <div class="mp-loc" id="mp-loc"></div>
+      <div class="mp-tags" id="mp-tags"></div>
+      <div id="mp-desc" style="font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:6px;"></div>
+      <div id="mp-contact-wrap"></div>
+    </div>
+
+    <!-- LEGEND -->
+    <div class="legend">
+      <div class="legend-title">Map Legend</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Company — Active</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green);box-shadow:0 0 0 3px rgba(42,107,67,.2)"></div>Ready to Work</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Energy / LNG</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3)"></div>🇲🇽 Mexico</div>
+      <div class="legend-item" style="border-top:1px solid rgba(255,255,255,.07);padding-top:7px;margin-top:2px;"><span style="font-size:10px;color:rgba(255,255,255,.3)">--- Rio Grande / Border</span></div>
+    </div>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar" id="stats-bar">
+      <div class="sb-stat"><div class="sb-num" id="stat-total">—</div><div class="sb-lbl">Companies</div></div>
+      <div class="sb-stat"><div class="sb-num" id="stat-ready" style="color:#6FCF97">—</div><div class="sb-lbl">Ready</div></div>
+      <div class="sb-stat"><div class="sb-num" id="stat-tx">—</div><div class="sb-lbl">Texas</div></div>
+      <div class="sb-stat"><div class="sb-num" id="stat-mx">—</div><div class="sb-lbl">Mexico</div></div>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading-overlay" id="loading">
+      <div style="text-align:center"><div class="spinner"></div><div style="margin-top:12px;font-size:12px;color:rgba(255,255,255,.4)">Loading companies...</div></div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="map-sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">Company Directory</div>
+      <div class="sidebar-count" id="sb-count">Loading...</div>
+    </div>
+    <div class="sidebar-search">
+      <input class="sidebar-input" id="sb-search" placeholder="Search companies..." oninput="filterSidebar()">
+    </div>
+    <div class="co-list" id="co-list"></div>
+  </div>
+</div>
+
+<script>
+let allCos=[];
+let activeFilter='';
+let activeCoId=null;
+
+// City coords (% of map area)
+const CITY_COORDS={
+  'Laredo':{x:12,y:33},'Nuevo Laredo':{x:12,y:52},'Eagle Pass':{x:6,y:26},
+  'McAllen':{x:46,y:65},'Edinburg':{x:48,y:67},'Mission':{x:44,y:64},'Pharr':{x:47,y:68},
+  'Hidalgo':{x:48,y:70},'Weslaco':{x:52,y:68},'Harlingen':{x:60,y:70},
+  'Brownsville':{x:71,y:73},'Matamoros':{x:57,y:54},
+  'Rio Grande City':{x:30,y:60},'Zapata':{x:20,y:47},
+  'Monterrey':{x:29,y:75},'Saltillo':{x:22,y:80},'Reynosa':{x:50,y:55},
+};
+
+function getCoords(city,state,country){
+  // Lookup by city
+  if(CITY_COORDS[city])return CITY_COORDS[city];
+  // Fallback by region
+  if(country==='MX')return{x:25+Math.random()*30,y:55+Math.random()*25};
+  if(state==='TX')return{x:20+Math.random()*60,y:30+Math.random()*35};
+  return{x:40+Math.random()*20,y:40+Math.random()*20};
+}
+
+const SECTOR_COLORS={
+  'Construction':'#1A6B72','Energy':'#B07D1A','Manufacturing':'#5B3FA6',
+  'Logistics':'#2A6B43','Technology':'#1A5CB8','Healthcare':'#B8431E',
+  'Government':'#5C5C54','Environmental':'#2A6B43','Engineering':'#1A6B72',
+  'default':'#5C5C54'
+};
+
+async function loadMap(){
+  const {data}=await sb.from('companies').select('*').eq('status','active').order('ready_to_work',{ascending:false});
+  if(!data||!data.length){
+    allCos=getDemoCos();
+  } else {
+    allCos=data;
+  }
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('map-status').textContent=allCos.length+' companies mapped';
+  updateStats(allCos);
+  renderMarkers(allCos);
+  renderSidebar(allCos);
+}
+
+function updateStats(cos){
+  document.getElementById('stat-total').textContent=cos.length;
+  document.getElementById('stat-ready').textContent=cos.filter(c=>c.ready_to_work).length;
+  document.getElementById('stat-tx').textContent=cos.filter(c=>c.country==='US').length;
+  document.getElementById('stat-mx').textContent=cos.filter(c=>c.country==='MX').length;
+  document.getElementById('sb-count').textContent=cos.length+' companies';
+}
+
+function renderMarkers(cos){
+  const area=document.getElementById('markers');
+  area.innerHTML='';
+  cos.forEach(c=>{
+    const coords=getCoords(c.city||'',c.state_province||'',c.country||'US');
+    const color=SECTOR_COLORS[c.sector]||SECTOR_COLORS.default;
+    const init=(c.legal_name||'C')[0].toUpperCase();
+    const marker=document.createElement('div');
+    marker.className='co-marker';
+    marker.style.cssText=`left:${coords.x}%;top:${coords.y}%;`;
+    marker.innerHTML=`<div class="co-pin ${c.ready_to_work?'ready':''}" style="background:${color};color:white;" title="${c.legal_name}">${init}</div>`;
+    marker.onclick=(e)=>{e.stopPropagation();showPopup(c,coords);};
+    area.appendChild(marker);
+  });
+}
+
+function showPopup(c,coords){
+  const popup=document.getElementById('map-popup');
+  const area=document.getElementById('map-area');
+  const areaW=area.clientWidth;const areaH=area.clientHeight;
+  const px=coords.x/100*areaW;const py=coords.y/100*areaH;
+  let left=px+16;let top=py-16;
+  if(left+250>areaW)left=px-266;
+  if(top+200>areaH)top=py-200;
+  popup.style.left=left+'px';popup.style.top=top+'px';
+  document.getElementById('mp-name').textContent=c.legal_name;
+  document.getElementById('mp-loc').textContent='📍 '+(c.city||'')+(c.state_province?', '+c.state_province:'')+(c.country==='MX'?' 🇲🇽':' 🇺🇸');
+  const tags=[];
+  if(c.ready_to_work)tags.push({t:'✅ Ready',bg:'#E4F0EA',fg:'#2A6B43'});
+  if(c.sector)tags.push({t:c.sector,bg:'#E3F0F1',fg:'#1A6B72'});
+  if(c.cert_hubzone)tags.push({t:'HUBZone',bg:'#FBF4E3',fg:'#B07D1A'});
+  if(c.cert_sam)tags.push({t:'SAM',bg:'#FBF4E3',fg:'#B07D1A'});
+  document.getElementById('mp-tags').innerHTML=tags.map(t=>`<span class="mp-tag" style="background:${t.bg};color:${t.fg}">${t.t}</span>`).join('');
+  const desc=document.getElementById('mp-desc');
+  desc.textContent=(c.description||'').substring(0,100)+((c.description||'').length>100?'...':'');
+  const cw=document.getElementById('mp-contact-wrap');
+  cw.innerHTML=c.contact_email?`<a class="mp-contact" href="mailto:${c.contact_email}">📧 Contact</a>`:c.website?`<a class="mp-contact" href="${c.website}" target="_blank">🌐 Website</a>`:'';
+  popup.classList.add('visible');
+  // Highlight sidebar item
+  document.querySelectorAll('.co-item').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`[data-id="${c.id||c.legal_name}"]`)?.classList.add('active');
+}
+
+function closePopup(){document.getElementById('map-popup').classList.remove('visible');}
+document.getElementById('map-area').addEventListener('click',closePopup);
+
+function renderSidebar(cos){
+  const list=document.getElementById('co-list');
+  const q=(document.getElementById('sb-search')?.value||'').toLowerCase();
+  const filtered=q?cos.filter(c=>(c.legal_name||'').toLowerCase().includes(q)||(c.city||'').toLowerCase().includes(q)):cos;
+  document.getElementById('sb-count').textContent=filtered.length+' companies';
+  if(!filtered.length){list.innerHTML='<div style="text-align:center;padding:32px;color:rgba(255,255,255,.3)"><div style="font-size:24px;margin-bottom:8px">🔍</div>No results</div>';return;}
+  const pal=['#E3F0F1,#1A6B72','#F2E8E3,#B8431E','#FBF4E3,#B07D1A','#E4F0EA,#2A6B43'];
+  list.innerHTML=filtered.map(c=>{
+    const [bg,fg]=pal[(c.legal_name||'').charCodeAt(0)%pal.length].split(',');
+    const init=(c.legal_name||'C')[0].toUpperCase();
+    const id=c.id||c.legal_name;
+    return `<div class="co-item" data-id="${id}" onclick="clickSidebarItem('${id}')">
+      <div class="co-item-head">
+        <div class="co-av" style="background:${bg};color:${fg}">${init}</div>
+        <div style="min-width:0"><div class="co-item-name" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.legal_name}</div><div class="co-item-loc">📍 ${c.city||''}${c.state_province?', '+c.state_province:''}</div></div>
+      </div>
+      <div class="co-item-tags">
+        ${c.ready_to_work?'<span class="co-tag co-tag-ready">✅ Ready</span>':''}
+        <span class="co-tag co-tag-sector">${c.sector||'General'}</span>
+        ${c.cert_hubzone?'<span class="co-tag">HUBZone</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function clickSidebarItem(id){
+  const c=allCos.find(c=>(c.id||c.legal_name)===id);
+  if(!c)return;
+  const coords=getCoords(c.city||'',c.state_province||'',c.country||'US');
+  showPopup(c,coords);
+}
+
+function filterSidebar(){renderSidebar(allCos);}
+
+function setFilter(el,type){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  activeFilter=type;
+  let filtered=allCos;
+  if(type==='ready')filtered=allCos.filter(c=>c.ready_to_work);
+  else if(type==='US')filtered=allCos.filter(c=>c.country==='US');
+  else if(type==='MX')filtered=allCos.filter(c=>c.country==='MX');
+  else if(type)filtered=allCos.filter(c=>c.sector===type);
+  updateStats(filtered);
+  renderMarkers(filtered);
+  renderSidebar(filtered);
+  closePopup();
+}
+
+function getDemoCos(){
+  return [
+    {id:'d1',legal_name:'Falcon Industrial Services',city:'Laredo',state_province:'TX',country:'US',sector:'Construction',ready_to_work:true,cert_hubzone:true,cert_sam:true,description:'Structural welding, pipeline support, steel fabrication.',contact_email:'bids@falconind.com'},
+    {id:'d2',legal_name:'Border Energy Solutions',city:'Matamoros',state_province:'TAM',country:'MX',sector:'Energy',ready_to_work:true,cert_iso9001:true,description:'LNG facility mechanical contracting and inspection.',contact_email:'info@borderenergy.mx'},
+    {id:'d3',legal_name:'Valley Civil Contractors',city:'Brownsville',state_province:'TX',country:'US',sector:'Construction',ready_to_work:true,cert_hubzone:true,description:'Site prep, grading, drainage, underground utilities.',contact_email:null},
+    {id:'d4',legal_name:'Rio Grande Logistics',city:'McAllen',state_province:'TX',country:'US',sector:'Logistics',ready_to_work:false,cert_sam:true,description:'Cross-border freight, customs clearance, distribution.',contact_email:null},
+    {id:'d5',legal_name:'NorMex Manufacturing',city:'Monterrey',state_province:'NL',country:'MX',sector:'Manufacturing',ready_to_work:true,cert_immex:true,description:'CNC machining, metal fabrication, OEM manufacturing.',contact_email:'sales@normexmfg.mx'},
+    {id:'d6',legal_name:'Sendero Electric LLC',city:'Brownsville',state_province:'TX',country:'US',sector:'Energy',ready_to_work:true,cert_sam:true,description:'Commercial electrical, high-voltage, substation work.',contact_email:null},
+    {id:'d7',legal_name:'Webb County Paving',city:'Laredo',state_province:'TX',country:'US',sector:'Construction',ready_to_work:false,cert_hubzone:true,description:'Asphalt paving, road construction, maintenance.',contact_email:null},
+    {id:'d8',legal_name:'Starr County Staffing',city:'Rio Grande City',state_province:'TX',country:'US',sector:'Staffing',ready_to_work:true,description:'Bilingual workforce placement, construction and industrial.',contact_email:null},
+  ];
+}
+
+window.addEventListener('load',loadMap);
+</script>
+</body>
+</html>

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — Register Your Business</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient}=supabase;
+const sb=createClient('https://knbtwcxwdhyjvgncnzjo.supabase.co','sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw');
+</script>
+<style>
+:root{--ink:#0F0F0E;--ink2:#2A2A27;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--goldl:#FBF4E3;--green:#2A6B43;--greenl:#E4F0EA;--r:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--parch);color:var(--ink);min-height:100vh;}
+nav{background:var(--ink);height:56px;display:flex;align-items:center;padding:0 32px;gap:12px;}
+.nav-brand{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:white;cursor:pointer;text-decoration:none;}
+.nav-brand span{color:var(--teal);}
+.nav-back{font-size:12.5px;color:rgba(255,255,255,.45);cursor:pointer;text-decoration:none;}
+.nav-back:hover{color:white;}
+.page{max-width:720px;margin:0 auto;padding:40px 20px 60px;}
+/* PROGRESS */
+.progress-bar{display:flex;gap:0;margin-bottom:36px;position:relative;}
+.progress-bar::before{content:'';position:absolute;top:14px;left:0;right:0;height:2px;background:var(--border);z-index:0;}
+.prog-step{flex:1;text-align:center;position:relative;z-index:1;}
+.ps-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin:0 auto 6px;border:2px solid var(--border);background:var(--parch);color:var(--ink3);transition:all .2s;}
+.ps-label{font-size:10px;color:var(--ink3);font-weight:500;}
+.prog-step.active .ps-circle{border-color:var(--teal);background:var(--teal);color:white;}
+.prog-step.active .ps-label{color:var(--teal);font-weight:600;}
+.prog-step.done .ps-circle{border-color:var(--green);background:var(--green);color:white;}
+.prog-step.done .ps-label{color:var(--green);}
+/* FORM CARD */
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:36px;}
+.step-header{margin-bottom:24px;}
+.step-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:var(--teal);margin-bottom:6px;}
+.step-title{font-family:'Fraunces',serif;font-size:24px;font-weight:700;letter-spacing:-.4px;margin-bottom:5px;}
+.step-desc{font-size:13.5px;color:var(--ink3);line-height:1.65;}
+/* FORM */
+.fgroup{margin-bottom:14px;}
+.flabel{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:5px;}
+.flabel .req{color:var(--rust);}
+.finput,.fselect{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;color:var(--ink);background:var(--white);transition:border-color .15s;}
+.finput:focus,.fselect:focus{outline:none;border-color:var(--teal);}
+.ftextarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:14px;color:var(--ink);background:var(--white);min-height:90px;resize:vertical;}
+.ftextarea:focus{outline:none;border-color:var(--teal);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.frow-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.fhint{font-size:11.5px;color:var(--ink3);margin-top:4px;line-height:1.5;}
+/* CHECKBOXES */
+.check-group{display:flex;flex-direction:column;gap:7px;margin-top:4px;}
+.check-item{display:flex;align-items:flex-start;gap:9px;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;}
+.check-item:hover{border-color:var(--teal);}
+.check-item.checked{border-color:var(--teal);background:var(--teall);}
+.check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;accent-color:var(--teal);flex-shrink:0;cursor:pointer;}
+.check-label{font-size:13px;font-weight:500;}
+.check-sub{font-size:11px;color:var(--ink3);margin-top:1px;}
+/* CERT GRID */
+.cert-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.cert-item{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .15s;}
+.cert-item:hover{border-color:var(--teal);}
+.cert-item.checked{border-color:var(--green);background:var(--greenl);}
+.cert-item input{accent-color:var(--green);cursor:pointer;}
+.cert-label{font-size:12.5px;font-weight:600;}
+.cert-sub{font-size:11px;color:var(--ink3);}
+/* SERVICE CHIPS */
+.service-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px;}
+.chip{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;background:var(--white);}
+.chip:hover{border-color:var(--teal);}
+.chip.sel{border-color:var(--teal);background:var(--teall);color:var(--teal);font-weight:600;}
+/* READY TOGGLE */
+.ready-toggle{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--border);border-radius:var(--r);cursor:pointer;transition:all .2s;}
+.ready-toggle:hover{border-color:var(--teal);}
+.ready-toggle.on{border-color:var(--green);background:var(--greenl);}
+.rt-dot{width:20px;height:20px;border-radius:50%;background:var(--border);transition:all .2s;flex-shrink:0;}
+.ready-toggle.on .rt-dot{background:var(--green);box-shadow:0 0 0 4px rgba(42,107,67,.15);}
+.rt-text .rt-title{font-size:14px;font-weight:600;}
+.rt-text .rt-sub{font-size:12px;color:var(--ink3);margin-top:2px;}
+/* BUTTONS */
+.btn-nav{display:flex;justify-content:space-between;margin-top:24px;align-items:center;}
+.btn-back{padding:10px 20px;border-radius:var(--r);border:1.5px solid var(--border);background:transparent;font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;color:var(--ink3);}
+.btn-back:hover{border-color:var(--ink);}
+.btn-next{padding:11px 28px;border-radius:var(--r);border:none;background:var(--teal);color:white;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-next:hover{background:#155960;}
+.btn-next:disabled{background:#aaa;cursor:not-allowed;}
+.btn-submit-final{padding:13px 36px;border-radius:var(--r);border:none;background:var(--green);color:white;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all .15s;}
+.btn-submit-final:hover{background:#1F5232;}
+.btn-submit-final:disabled{background:#aaa;cursor:not-allowed;}
+/* REVIEW */
+.review-section{margin-bottom:18px;}
+.review-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:9px;padding-bottom:5px;border-bottom:1px solid var(--border);}
+.review-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13.5px;border-bottom:1px solid var(--parch);}
+.review-row:last-child{border-bottom:none;}
+.rr-key{color:var(--ink3);}
+.rr-val{font-weight:600;text-align:right;max-width:60%;}
+/* SUCCESS */
+.success-state{text-align:center;padding:24px 0;}
+/* MSG */
+.msg{padding:11px 14px;border-radius:var(--r);font-size:13px;margin-top:14px;display:none;line-height:1.5;}
+.msg.show{display:block;}
+.msg-err{background:#F2E8E3;color:#B8431E;border:1px solid rgba(184,67,30,.15);}
+.msg-ok{background:#E4F0EA;color:#2A6B43;border:1px solid rgba(42,107,67,.15);}
+@media(max-width:600px){.frow,.frow-3,.cert-grid{grid-template-columns:1fr;}.form-card{padding:22px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-brand" href="/">Rio<span>Data</span></a>
+  <span style="color:rgba(255,255,255,.2);margin:0 4px">·</span>
+  <a class="nav-back" href="/">← Back to Platform</a>
+  <span style="margin-left:auto;font-size:12px;color:rgba(255,255,255,.3);">Free · 8 minutes · No fees ever</span>
+</nav>
+
+<div class="page">
+  <!-- PROGRESS -->
+  <div class="progress-bar">
+    <div class="prog-step active" id="ps1"><div class="ps-circle">1</div><div class="ps-label">Your Info</div></div>
+    <div class="prog-step" id="ps2"><div class="ps-circle">2</div><div class="ps-label">Business</div></div>
+    <div class="prog-step" id="ps3"><div class="ps-circle">3</div><div class="ps-label">Services</div></div>
+    <div class="prog-step" id="ps4"><div class="ps-circle">4</div><div class="ps-label">Certifications</div></div>
+    <div class="prog-step" id="ps5"><div class="ps-circle">5</div><div class="ps-label">Capacity</div></div>
+    <div class="prog-step" id="ps6"><div class="ps-circle">6</div><div class="ps-label">Review</div></div>
+  </div>
+
+  <div class="form-card">
+
+    <!-- ═══ STEP 1: YOUR INFO ═══ -->
+    <div id="step1">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 1 of 6</div>
+        <div class="step-title">Your Contact Info</div>
+        <div class="step-desc">How we'll reach you about your listing. This won't be shown publicly unless you choose.</div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">First Name <span class="req">*</span></label><input class="finput" id="s1-first" placeholder="Maria"></div>
+        <div class="fgroup"><label class="flabel">Last Name <span class="req">*</span></label><input class="finput" id="s1-last" placeholder="Garcia"></div>
+      </div>
+      <div class="fgroup"><label class="flabel">Email Address <span class="req">*</span></label><input class="finput" id="s1-email" type="email" placeholder="maria@company.com"></div>
+      <div class="fgroup"><label class="flabel">Phone Number</label><input class="finput" id="s1-phone" type="tel" placeholder="+1 (956) 555-0100"></div>
+      <div class="fgroup"><label class="flabel">Your Role at This Company</label>
+        <select class="fselect" id="s1-role">
+          <option value="">Select your role...</option>
+          <option value="owner">Owner / Founder</option>
+          <option value="ceo">CEO / President</option>
+          <option value="operations">Operations Manager</option>
+          <option value="sales">Sales / Business Development</option>
+          <option value="admin">Administrator</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="msg msg-err" id="s1-err"></div>
+      <div class="btn-nav">
+        <div></div>
+        <button class="btn-next" onclick="nextStep(1)">Continue → Business Info</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 2: BUSINESS ═══ -->
+    <div id="step2" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 2 of 6</div>
+        <div class="step-title">Your Business</div>
+        <div class="step-desc">Basic information about your company.</div>
+      </div>
+      <div class="fgroup"><label class="flabel">Legal Business Name <span class="req">*</span></label><input class="finput" id="s2-name" placeholder="Falcon Industrial Services LLC"></div>
+      <div class="fgroup"><label class="flabel">DBA / Trade Name (if different)</label><input class="finput" id="s2-dba" placeholder="Falcon Industrial"></div>
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">Country <span class="req">*</span></label>
+          <select class="fselect" id="s2-country" onchange="updateStateLabel()">
+            <option value="US">United States (Texas)</option>
+            <option value="MX">Mexico</option>
+          </select>
+        </div>
+        <div class="fgroup"><label class="flabel" id="state-label">State <span class="req">*</span></label>
+          <select class="fselect" id="s2-state">
+            <option value="TX">Texas</option>
+            <option value="NL">Nuevo León</option>
+            <option value="TAM">Tamaulipas</option>
+            <option value="COAH">Coahuila</option>
+          </select>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">City <span class="req">*</span></label><input class="finput" id="s2-city" placeholder="Laredo"></div>
+        <div class="fgroup"><label class="flabel">ZIP / Postal Code</label><input class="finput" id="s2-zip" placeholder="78040"></div>
+      </div>
+      <div class="fgroup"><label class="flabel">Industry Sector <span class="req">*</span></label>
+        <select class="fselect" id="s2-sector">
+          <option value="">Select sector...</option>
+          <option value="Construction">Construction</option>
+          <option value="Energy">Energy / LNG / Oil & Gas</option>
+          <option value="Manufacturing">Manufacturing / Maquiladora</option>
+          <option value="Logistics">Logistics / Transportation / Customs</option>
+          <option value="Technology">Technology / IT</option>
+          <option value="Healthcare">Healthcare / Medical</option>
+          <option value="Government">Government Contracting</option>
+          <option value="Environmental">Environmental / Remediation</option>
+          <option value="Engineering">Engineering / Design</option>
+          <option value="Staffing">Staffing / Workforce</option>
+          <option value="Agriculture">Agriculture / Food</option>
+          <option value="Finance">Finance / Banking</option>
+          <option value="Legal">Legal / Compliance</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">Year Founded</label><input class="finput" id="s2-year" type="number" placeholder="2018" min="1900" max="2025"></div>
+        <div class="fgroup"><label class="flabel">Number of Employees</label>
+          <select class="fselect" id="s2-employees">
+            <option value="">Select range...</option>
+            <option value="1-5">1–5</option>
+            <option value="6-15">6–15</option>
+            <option value="16-50">16–50</option>
+            <option value="51-100">51–100</option>
+            <option value="101-250">101–250</option>
+            <option value="251-500">251–500</option>
+            <option value="500+">500+</option>
+          </select>
+        </div>
+      </div>
+      <div class="fgroup"><label class="flabel">Business Description <span class="req">*</span></label><textarea class="ftextarea" id="s2-desc" placeholder="Describe what your company does, your specialties, and your experience. (2-4 sentences)"></textarea></div>
+      <div class="fgroup"><label class="flabel">Website</label><input class="finput" id="s2-website" type="url" placeholder="https://yourcompany.com"></div>
+      <div class="msg msg-err" id="s2-err"></div>
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(1)">← Back</button>
+        <button class="btn-next" onclick="nextStep(2)">Continue → Services</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 3: SERVICES ═══ -->
+    <div id="step3" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 3 of 6</div>
+        <div class="step-title">Services & Capabilities</div>
+        <div class="step-desc">Select all that apply. This helps match you to the right projects.</div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Select Your Services <span class="req">*</span></label>
+        <div class="service-chips" id="service-chips">
+          <div class="chip" onclick="toggleChip(this)">Structural Welding</div>
+          <div class="chip" onclick="toggleChip(this)">Pipeline Construction</div>
+          <div class="chip" onclick="toggleChip(this)">Site Preparation</div>
+          <div class="chip" onclick="toggleChip(this)">Concrete / Foundations</div>
+          <div class="chip" onclick="toggleChip(this)">Electrical / High-Voltage</div>
+          <div class="chip" onclick="toggleChip(this)">HVAC / Refrigeration</div>
+          <div class="chip" onclick="toggleChip(this)">Mechanical / Piping</div>
+          <div class="chip" onclick="toggleChip(this)">Civil / Earthwork</div>
+          <div class="chip" onclick="toggleChip(this)">Grading / Drainage</div>
+          <div class="chip" onclick="toggleChip(this)">Roofing / Waterproofing</div>
+          <div class="chip" onclick="toggleChip(this)">Insulation</div>
+          <div class="chip" onclick="toggleChip(this)">Scaffolding / Rigging</div>
+          <div class="chip" onclick="toggleChip(this)">Equipment Rental</div>
+          <div class="chip" onclick="toggleChip(this)">CDL / Heavy Transport</div>
+          <div class="chip" onclick="toggleChip(this)">Cross-Border Freight</div>
+          <div class="chip" onclick="toggleChip(this)">Customs Brokerage</div>
+          <div class="chip" onclick="toggleChip(this)">Warehousing / 3PL</div>
+          <div class="chip" onclick="toggleChip(this)">CNC Machining</div>
+          <div class="chip" onclick="toggleChip(this)">Metal Fabrication</div>
+          <div class="chip" onclick="toggleChip(this)">NDT / Inspection</div>
+          <div class="chip" onclick="toggleChip(this)">Environmental Compliance</div>
+          <div class="chip" onclick="toggleChip(this)">Surveying</div>
+          <div class="chip" onclick="toggleChip(this)">IT / Cybersecurity</div>
+          <div class="chip" onclick="toggleChip(this)">Project Management</div>
+          <div class="chip" onclick="toggleChip(this)">Staffing / Labor</div>
+          <div class="chip" onclick="toggleChip(this)">Healthcare Services</div>
+          <div class="chip" onclick="toggleChip(this)">Legal / Compliance</div>
+          <div class="chip" onclick="toggleChip(this)">Accounting / Finance</div>
+        </div>
+      </div>
+      <div class="fgroup" style="margin-top:16px"><label class="flabel">Other Services Not Listed</label><input class="finput" id="s3-other" placeholder="e.g. Drone inspection, specialty coating..."></div>
+      <div class="msg msg-err" id="s3-err"></div>
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(2)">← Back</button>
+        <button class="btn-next" onclick="nextStep(3)">Continue → Certifications</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 4: CERTIFICATIONS ═══ -->
+    <div id="step4" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 4 of 6</div>
+        <div class="step-title">Certifications & Compliance</div>
+        <div class="step-desc">Certifications dramatically increase your project matches. Check all that apply.</div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">US Federal / SBA Certifications</label>
+        <div class="cert-grid">
+          <div class="cert-item" onclick="toggleCert(this,'cert-sam')"><input type="checkbox" id="cert-sam"><div><div class="cert-label">SAM Registered</div><div class="cert-sub">System for Award Mgmt</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-hubzone')"><input type="checkbox" id="cert-hubzone"><div><div class="cert-label">HUBZone</div><div class="cert-sub">SBA HUBZone certified</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-8a')"><input type="checkbox" id="cert-8a"><div><div class="cert-label">SBA 8(a)</div><div class="cert-sub">Disadvantaged business</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-sdvosb')"><input type="checkbox" id="cert-sdvosb"><div><div class="cert-label">SDVOSB</div><div class="cert-sub">Service-disabled veteran</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-wosb')"><input type="checkbox" id="cert-wosb"><div><div class="cert-label">WOSB</div><div class="cert-sub">Women-owned small biz</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-mbe')"><input type="checkbox" id="cert-mbe"><div><div class="cert-label">MBE</div><div class="cert-sub">Minority business enterprise</div></div></div>
+        </div>
+      </div>
+      <div class="fgroup" style="margin-top:16px">
+        <label class="flabel">Cross-Border / Mexico Certifications</label>
+        <div class="cert-grid">
+          <div class="cert-item" onclick="toggleCert(this,'cert-ctpat')"><input type="checkbox" id="cert-ctpat"><div><div class="cert-label">C-TPAT</div><div class="cert-sub">CBP Trade Partnership</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-immex')"><input type="checkbox" id="cert-immex"><div><div class="cert-label">IMMEX</div><div class="cert-sub">Mexican maquiladora</div></div></div>
+        </div>
+      </div>
+      <div class="fgroup" style="margin-top:16px">
+        <label class="flabel">Industry Certifications</label>
+        <div class="cert-grid">
+          <div class="cert-item" onclick="toggleCert(this,'cert-iso9001')"><input type="checkbox" id="cert-iso9001"><div><div class="cert-label">ISO 9001</div><div class="cert-sub">Quality management</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-nccer')"><input type="checkbox" id="cert-nccer"><div><div class="cert-label">NCCER</div><div class="cert-sub">Construction craft training</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-osha30')"><input type="checkbox" id="cert-osha30"><div><div class="cert-label">OSHA 30</div><div class="cert-sub">Safety certification</div></div></div>
+          <div class="cert-item" onclick="toggleCert(this,'cert-twic')"><input type="checkbox" id="cert-twic"><div><div class="cert-label">TWIC</div><div class="cert-sub">Transportation Worker ID</div></div></div>
+        </div>
+      </div>
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(3)">← Back</button>
+        <button class="btn-next" onclick="nextStep(4)">Continue → Capacity</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 5: CAPACITY ═══ -->
+    <div id="step5" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 5 of 6</div>
+        <div class="step-title">Capacity & Availability</div>
+        <div class="step-desc">Help project owners understand your scale and availability.</div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">Min. Project Value</label><input class="finput" id="s5-min" placeholder="$50K"></div>
+        <div class="fgroup"><label class="flabel">Max. Project Value</label><input class="finput" id="s5-max" placeholder="$5M"></div>
+      </div>
+      <div class="fgroup"><label class="flabel">Workforce Capacity (field workers you can deploy)</label>
+        <select class="fselect" id="s5-workers">
+          <option value="">Select range...</option>
+          <option value="1-10">1–10 workers</option>
+          <option value="11-25">11–25 workers</option>
+          <option value="26-50">26–50 workers</option>
+          <option value="51-100">51–100 workers</option>
+          <option value="100+">100+ workers</option>
+        </select>
+      </div>
+      <div class="fgroup"><label class="flabel">Public Contact Email</label><input class="finput" id="s5-pub-email" type="email" placeholder="bids@yourcompany.com"><div class="fhint">This is the email shown on your public profile for project inquiries.</div></div>
+      <div class="fgroup"><label class="flabel">Public Phone Number</label><input class="finput" id="s5-pub-phone" type="tel" placeholder="+1 (956) 555-0100"></div>
+      <div class="fgroup" style="margin-top:6px">
+        <label class="flabel">Ready to Work Status</label>
+        <div class="ready-toggle" id="ready-toggle" onclick="toggleReady()">
+          <div class="rt-dot"></div>
+          <div class="rt-text">
+            <div class="rt-title">Mark as "Ready to Work"</div>
+            <div class="rt-sub">Shows a green indicator on your listing. Turn on when you have capacity for new projects.</div>
+          </div>
+        </div>
+      </div>
+      <div class="msg msg-err" id="s5-err"></div>
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(4)">← Back</button>
+        <button class="btn-next" onclick="nextStep(5)">Review My Listing →</button>
+      </div>
+    </div>
+
+    <!-- ═══ STEP 6: REVIEW ═══ -->
+    <div id="step6" style="display:none">
+      <div class="step-header">
+        <div class="step-eyebrow">Step 6 of 6 · Final Step</div>
+        <div class="step-title">Review & Submit</div>
+        <div class="step-desc">Everything looks good? Submit and we'll have your listing live within 24 hours — for free, forever.</div>
+      </div>
+      <div id="review-content"></div>
+      <div class="msg msg-err" id="s6-err"></div>
+      <div class="btn-nav">
+        <button class="btn-back" onclick="goStep(5)">← Edit</button>
+        <button class="btn-submit-final" id="submit-btn" onclick="submitListing()">🚀 Submit Listing — It's Free!</button>
+      </div>
+    </div>
+
+    <!-- ═══ SUCCESS ═══ -->
+    <div id="step-success" style="display:none">
+      <div class="success-state">
+        <div style="font-size:56px;margin-bottom:18px">🌵</div>
+        <h2 style="font-family:'Fraunces',serif;font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:-.4px;">You're in!</h2>
+        <p style="font-size:15px;color:var(--ink3);line-height:1.7;max-width:400px;margin:0 auto 24px">Your listing is under review. We'll approve it within 24 hours and you'll be live on the RioData platform — free forever.</p>
+        <div style="background:var(--parch);border-radius:var(--r);padding:18px 20px;max-width:360px;margin:0 auto 24px;text-align:left;">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--ink3);margin-bottom:10px;">What happens next</div>
+          <div style="font-size:13px;color:var(--ink2);display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:9px;"><span>✅</span><span>Listing submitted — under review</span></div>
+            <div style="display:flex;gap:9px;"><span>📧</span><span>Confirmation email sent to you</span></div>
+            <div style="display:flex;gap:9px;"><span>🟢</span><span>Live on RioData within 24 hours</span></div>
+            <div style="display:flex;gap:9px;"><span>🔗</span><span>Matched to active project opportunities</span></div>
+          </div>
+        </div>
+        <a href="/" style="display:inline-block;padding:13px 28px;background:var(--teal);color:white;border-radius:var(--r);text-decoration:none;font-size:15px;font-weight:600;">Back to RioData →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+let currentStep=1;
+let readyToWork=false;
+
+function goStep(n){
+  document.getElementById('step'+currentStep).style.display='none';
+  document.getElementById('ps'+currentStep)?.classList.remove('active');
+  document.getElementById('ps'+currentStep)?.classList.add('done');
+  currentStep=n;
+  document.getElementById('step'+n).style.display='block';
+  document.getElementById('ps'+n)?.classList.add('active');
+  document.getElementById('ps'+n)?.classList.remove('done');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function nextStep(from){
+  // Validation
+  if(from===1){
+    const first=document.getElementById('s1-first').value.trim();
+    const last=document.getElementById('s1-last').value.trim();
+    const email=document.getElementById('s1-email').value.trim();
+    if(!first||!last){showErr('s1-err','Please enter your first and last name.');return;}
+    if(!email||!email.includes('@')){showErr('s1-err','Please enter a valid email address.');return;}
+    clearErr('s1-err');
+  }
+  if(from===2){
+    const name=document.getElementById('s2-name').value.trim();
+    const city=document.getElementById('s2-city').value.trim();
+    const sector=document.getElementById('s2-sector').value;
+    const desc=document.getElementById('s2-desc').value.trim();
+    if(!name){showErr('s2-err','Please enter your legal business name.');return;}
+    if(!city){showErr('s2-err','Please enter your city.');return;}
+    if(!sector){showErr('s2-err','Please select your industry sector.');return;}
+    if(!desc||desc.length<20){showErr('s2-err','Please enter a business description (at least 20 characters).');return;}
+    clearErr('s2-err');
+  }
+  if(from===3){
+    const selected=document.querySelectorAll('#service-chips .chip.sel');
+    const other=document.getElementById('s3-other').value.trim();
+    if(!selected.length&&!other){showErr('s3-err','Please select at least one service.');return;}
+    clearErr('s3-err');
+  }
+  if(from===5){
+    const pubEmail=document.getElementById('s5-pub-email').value.trim();
+    if(!pubEmail||!pubEmail.includes('@')){showErr('s5-err','Please enter a public contact email.');return;}
+    clearErr('s5-err');
+    buildReview();
+  }
+  if(from===4){clearErr('s3-err');}
+  goStep(from+1);
+}
+
+function showErr(id,msg){
+  const el=document.getElementById(id);
+  if(el){el.textContent=msg;el.classList.add('show');}
+}
+function clearErr(id){
+  const el=document.getElementById(id);
+  if(el)el.classList.remove('show');
+}
+
+function toggleChip(el){el.classList.toggle('sel');}
+
+function toggleCert(el,id){
+  el.classList.toggle('checked');
+  const cb=document.getElementById(id);
+  if(cb)cb.checked=!cb.checked;
+}
+
+function toggleReady(){
+  readyToWork=!readyToWork;
+  document.getElementById('ready-toggle').classList.toggle('on',readyToWork);
+}
+
+function updateStateLabel(){
+  const country=document.getElementById('s2-country').value;
+  document.getElementById('state-label').innerHTML=(country==='MX'?'State (Mexico)':'State')+' <span class="req">*</span>';
+}
+
+function getServices(){
+  const chips=Array.from(document.querySelectorAll('#service-chips .chip.sel')).map(c=>c.textContent);
+  const other=document.getElementById('s3-other').value.trim();
+  if(other)other.split(',').forEach(s=>{const t=s.trim();if(t)chips.push(t);});
+  return chips;
+}
+
+function getCerts(){
+  const ids=['cert-sam','cert-hubzone','cert-8a','cert-sdvosb','cert-wosb','cert-mbe','cert-ctpat','cert-immex','cert-iso9001','cert-nccer','cert-osha30','cert-twic'];
+  return ids.filter(id=>document.getElementById(id)?.checked);
+}
+
+function buildReview(){
+  const certNames={'cert-sam':'SAM Registered','cert-hubzone':'HUBZone','cert-8a':'SBA 8(a)','cert-sdvosb':'SDVOSB','cert-wosb':'WOSB','cert-mbe':'MBE','cert-ctpat':'C-TPAT','cert-immex':'IMMEX','cert-iso9001':'ISO 9001','cert-nccer':'NCCER','cert-osha30':'OSHA 30','cert-twic':'TWIC'};
+  const certs=getCerts().map(c=>certNames[c]||c);
+  const services=getServices();
+  document.getElementById('review-content').innerHTML=`
+    <div class="review-section">
+      <div class="review-section-title">Contact</div>
+      <div class="review-row"><span class="rr-key">Name</span><span class="rr-val">${document.getElementById('s1-first').value} ${document.getElementById('s1-last').value}</span></div>
+      <div class="review-row"><span class="rr-key">Email</span><span class="rr-val">${document.getElementById('s1-email').value}</span></div>
+      ${document.getElementById('s1-phone').value?`<div class="review-row"><span class="rr-key">Phone</span><span class="rr-val">${document.getElementById('s1-phone').value}</span></div>`:''}
+    </div>
+    <div class="review-section">
+      <div class="review-section-title">Business</div>
+      <div class="review-row"><span class="rr-key">Legal Name</span><span class="rr-val">${document.getElementById('s2-name').value}</span></div>
+      <div class="review-row"><span class="rr-key">Sector</span><span class="rr-val">${document.getElementById('s2-sector').value}</span></div>
+      <div class="review-row"><span class="rr-key">Location</span><span class="rr-val">${document.getElementById('s2-city').value}, ${document.getElementById('s2-state').value} ${document.getElementById('s2-country').value==='MX'?'🇲🇽':'🇺🇸'}</span></div>
+      <div class="review-row"><span class="rr-key">Employees</span><span class="rr-val">${document.getElementById('s2-employees').value||'—'}</span></div>
+    </div>
+    <div class="review-section">
+      <div class="review-section-title">Services (${services.length})</div>
+      <div class="review-row"><span class="rr-val" style="flex-wrap:wrap;display:flex;gap:4px;justify-content:flex-start;max-width:100%">${services.map(s=>`<span style="background:var(--teall);color:var(--teal);padding:2px 8px;border-radius:3px;font-size:11.5px;font-weight:600">${s}</span>`).join('')}</span></div>
+    </div>
+    ${certs.length?`<div class="review-section">
+      <div class="review-section-title">Certifications (${certs.length})</div>
+      <div class="review-row"><span class="rr-val" style="flex-wrap:wrap;display:flex;gap:4px;justify-content:flex-start;max-width:100%">${certs.map(c=>`<span style="background:var(--greenl);color:var(--green);padding:2px 8px;border-radius:3px;font-size:11.5px;font-weight:600">✓ ${c}</span>`).join('')}</span></div>
+    </div>`:''}
+    <div class="review-section">
+      <div class="review-section-title">Capacity</div>
+      <div class="review-row"><span class="rr-key">Project Range</span><span class="rr-val">${document.getElementById('s5-min').value||'—'} – ${document.getElementById('s5-max').value||'—'}</span></div>
+      <div class="review-row"><span class="rr-key">Workforce</span><span class="rr-val">${document.getElementById('s5-workers').value||'—'}</span></div>
+      <div class="review-row"><span class="rr-key">Ready to Work</span><span class="rr-val" style="color:${readyToWork?'var(--green)':'var(--ink3)'}">${readyToWork?'✅ Yes':'Not yet'}</span></div>
+      <div class="review-row"><span class="rr-key">Contact Email</span><span class="rr-val">${document.getElementById('s5-pub-email').value}</span></div>
+    </div>
+    <div style="background:var(--goldl);border:1px solid rgba(176,125,26,.2);border-radius:var(--r);padding:12px 14px;margin-bottom:4px;font-size:13px;color:var(--gold);">
+      💛 <strong>100% Free.</strong> Your listing will be live within 24 hours. No fees, no subscriptions, ever.
+    </div>`;
+}
+
+async function submitListing(){
+  const btn=document.getElementById('submit-btn');
+  btn.textContent='Submitting...';btn.disabled=true;
+  const certMap={
+    'cert-sam':'cert_sam','cert-hubzone':'cert_hubzone','cert-8a':'cert_8a',
+    'cert-sdvosb':'cert_sdvosb','cert-wosb':'cert_wosb','cert-mbe':'cert_mbe',
+    'cert-ctpat':'cert_ctpat','cert-immex':'cert_immex','cert-iso9001':'cert_iso9001',
+    'cert-nccer':'cert_nccer','cert-osha30':'cert_osha30','cert-twic':'cert_twic'
+  };
+  const certObj={};
+  Object.entries(certMap).forEach(([id,field])=>{certObj[field]=document.getElementById(id)?.checked||false;});
+  const payload={
+    legal_name:document.getElementById('s2-name').value.trim(),
+    dba_name:document.getElementById('s2-dba').value.trim()||null,
+    country:document.getElementById('s2-country').value,
+    state_province:document.getElementById('s2-state').value,
+    city:document.getElementById('s2-city').value.trim(),
+    zip_code:document.getElementById('s2-zip').value.trim()||null,
+    sector:document.getElementById('s2-sector').value,
+    year_founded:document.getElementById('s2-year').value?parseInt(document.getElementById('s2-year').value):null,
+    employee_range:document.getElementById('s2-employees').value||null,
+    description:document.getElementById('s2-desc').value.trim(),
+    website:document.getElementById('s2-website').value.trim()||null,
+    services:getServices(),
+    ...certObj,
+    min_project_value:document.getElementById('s5-min').value.trim()||null,
+    max_project_value:document.getElementById('s5-max').value.trim()||null,
+    workforce_capacity:document.getElementById('s5-workers').value||null,
+    contact_name:document.getElementById('s1-first').value.trim()+' '+document.getElementById('s1-last').value.trim(),
+    contact_email:document.getElementById('s5-pub-email').value.trim(),
+    contact_phone:document.getElementById('s5-pub-phone').value.trim()||null,
+    ready_to_work:readyToWork,
+    status:'pending'
+  };
+  const {error}=await sb.from('companies').insert([payload]);
+  btn.textContent='🚀 Submit Listing — It\'s Free!';btn.disabled=false;
+  if(error){
+    document.getElementById('s6-err').textContent='Error submitting: '+error.message+' — Please try again or contact hello@riodata.org';
+    document.getElementById('s6-err').classList.add('show');
+    console.error(error);
+    return;
+  }
+  // Success!
+  document.getElementById('step6').style.display='none';
+  document.getElementById('step-success').style.display='block';
+  document.getElementById('ps6').classList.add('done');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

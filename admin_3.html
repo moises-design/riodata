@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — Admin Dashboard</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL='https://knbtwcxwdhyjvgncnzjo.supabase.co';
+const SUPA_KEY='sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw';
+const {createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_KEY);
+let currentUser=null;
+</script>
+<style>
+:root{--ink:#0F0F0E;--ink2:#2A2A27;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--rustl:#F2E8E3;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--goldl:#FBF4E3;--green:#2A6B43;--greenl:#E4F0EA;--r:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--parch);color:var(--ink);min-height:100vh;}
+.topbar{background:var(--ink);height:54px;display:flex;align-items:center;padding:0 24px;gap:16px;}
+.tb-brand{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:white;cursor:pointer;}
+.tb-brand span{color:var(--teal);}
+.tb-badge{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--rust);color:white;text-transform:uppercase;letter-spacing:.07em;}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.tb-user{font-size:12.5px;color:rgba(255,255,255,.5);}
+.tb-signout{padding:6px 14px;border-radius:var(--r);border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.5);font-family:inherit;font-size:12.5px;cursor:pointer;}
+.tb-signout:hover{color:white;border-color:rgba(255,255,255,.4);}
+.page{max-width:1200px;margin:0 auto;padding:28px 24px;}
+/* TABS */
+.tab-nav{display:flex;gap:4px;margin-bottom:20px;border-bottom:1.5px solid var(--border);padding-bottom:0;}
+.tnav{padding:10px 18px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .12s;position:relative;}
+.tnav:hover{color:var(--ink);}
+.tnav.active{color:var(--teal);border-bottom-color:var(--teal);}
+.tnav .badge{position:absolute;top:6px;right:6px;min-width:17px;height:17px;border-radius:9px;font-size:9px;font-weight:700;padding:0 4px;background:var(--rust);color:white;display:flex;align-items:center;justify-content:center;}
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:20px;}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.kpi-val{font-family:'Fraunces',serif;font-size:24px;font-weight:700;letter-spacing:-1px;margin-bottom:2px;}
+.kpi-label{font-size:11px;color:var(--ink3);}
+/* TABLE */
+.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;}
+.tbl-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.tbl-title{font-family:'Fraunces',serif;font-size:14px;font-weight:700;}
+.tbl-meta{font-size:12px;color:var(--ink3);}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+th{text-align:left;padding:8px 13px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:1.5px solid var(--border);background:var(--parch);}
+td{padding:11px 13px;border-bottom:1px solid var(--border);color:var(--ink2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(247,243,238,.4);}
+.av{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:13px;font-weight:700;flex-shrink:0;}
+.name-cell{display:flex;align-items:center;gap:10px;}
+.name-cell strong{display:block;font-size:13px;}
+.name-cell small{font-size:11px;color:var(--ink3);}
+.status-pill{font-size:9.5px;font-weight:700;padding:3px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.05em;}
+.sp-pending{background:var(--goldl);color:var(--gold);}
+.sp-active{background:var(--greenl);color:var(--green);}
+.sp-rejected{background:var(--rustl);color:var(--rust);}
+.action-btns{display:flex;gap:5px;}
+.act-btn{padding:5px 12px;border-radius:5px;font-size:11.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .12s;}
+.act-approve{background:var(--greenl);color:var(--green);}
+.act-approve:hover{background:var(--green);color:white;}
+.act-reject{background:var(--rustl);color:var(--rust);}
+.act-reject:hover{background:var(--rust);color:white;}
+.act-view{background:var(--teall);color:var(--teal);}
+.act-view:hover{background:var(--teal);color:white;}
+/* PANEL */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--ink);color:white;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-ok{border-left:3px solid var(--green);}
+.toast-err{border-left:3px solid var(--rust);}
+/* EMPTY STATE */
+.empty{text-align:center;padding:48px 24px;color:var(--ink3);}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+.empty-title{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:5px;}
+.empty-sub{font-size:13px;}
+/* ACCESS DENIED */
+.access-denied{text-align:center;padding:80px 24px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tb-brand" onclick="window.location.href='/'">Rio<span>Data</span></div>
+  <span class="tb-badge">Admin Dashboard</span>
+  <div class="tb-right">
+    <span class="tb-user" id="tb-user"></span>
+    <button class="tb-signout" onclick="doSignOut()">Sign Out</button>
+    <button class="tb-signout" onclick="window.location.href='/dashboard.html'" style="color:rgba(255,255,255,.7)">← My Dashboard</button>
+  </div>
+</div>
+
+<div class="page" id="main-page">
+  <!-- ACCESS CHECK -->
+  <div id="access-denied" style="display:none" class="access-denied">
+    <div style="font-size:48px;margin-bottom:16px">🔒</div>
+    <h2 style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;margin-bottom:8px">Admin Access Required</h2>
+    <p style="color:var(--ink3);margin-bottom:20px">You need super_admin or admin role to access this dashboard.</p>
+    <a href="/dashboard.html" style="color:var(--teal);text-decoration:none;font-weight:600">← Back to Dashboard</a>
+  </div>
+
+  <div id="admin-content" style="display:none">
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi"><div class="kpi-val" id="kp-total">—</div><div class="kpi-label">Total Companies</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--gold)" id="kp-pending">—</div><div class="kpi-label">Pending Review</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:var(--green)" id="kp-active">—</div><div class="kpi-label">Active Companies</div></div>
+      <div class="kpi"><div class="kpi-val" id="kp-projects">—</div><div class="kpi-label">Total Projects</div></div>
+      <div class="kpi"><div class="kpi-val" id="kp-users">—</div><div class="kpi-label">Total Users</div></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-nav">
+      <div class="tnav active" onclick="switchTab(this,'tab-pending')">Pending Review <span class="badge" id="pending-badge">0</span></div>
+      <div class="tnav" onclick="switchTab(this,'tab-active')">Active Companies</div>
+      <div class="tnav" onclick="switchTab(this,'tab-projects')">Projects</div>
+      <div class="tnav" onclick="switchTab(this,'tab-users')">Users</div>
+    </div>
+
+    <!-- PENDING -->
+    <div class="tab-panel active" id="tab-pending">
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><div class="tbl-title">Pending Company Submissions</div><div class="tbl-meta" id="pending-meta">Loading...</div></div>
+        <div id="pending-body">
+          <div style="text-align:center;padding:32px;color:var(--ink3)">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="tab-panel" id="tab-active">
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><div class="tbl-title">Active Companies</div><div class="tbl-meta" id="active-meta">Loading...</div></div>
+        <div id="active-body">
+          <div style="text-align:center;padding:32px;color:var(--ink3)">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="tab-panel" id="tab-projects">
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><div class="tbl-title">All Projects</div><div class="tbl-meta" id="projects-meta">Loading...</div></div>
+        <div id="projects-body">
+          <div style="text-align:center;padding:32px;color:var(--ink3)">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="tab-panel" id="tab-users">
+      <div class="tbl-wrap">
+        <div class="tbl-hdr"><div class="tbl-title">Registered Users</div><div class="tbl-meta" id="users-meta">Loading...</div></div>
+        <div id="users-body">
+          <div style="text-align:center;padding:32px;color:var(--ink3)">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// UTILS
+function toast(msg,type='ok'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast toast-'+type+' show';setTimeout(()=>t.classList.remove('show'),3500);}
+async function doSignOut(){await sb.auth.signOut();window.location.href='/';}
+function switchTab(el,id){
+  document.querySelectorAll('.tnav').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(id)?.classList.add('active');
+}
+function coAv(name){
+  const init=(name||'C')[0].toUpperCase();
+  const pal=['#E3F0F1,#1A6B72','#F2E8E3,#B8431E','#FBF4E3,#B07D1A','#E4F0EA,#2A6B43'];
+  const [bg,fg]=pal[(name||'').charCodeAt(0)%pal.length].split(',');
+  return `<div class="av" style="background:${bg};color:${fg}">${init}</div>`;
+}
+
+// INIT
+async function init(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){window.location.href='/';return;}
+  currentUser=session.user;
+  document.getElementById('tb-user').textContent=session.user.email;
+
+  // Check admin role
+  const {data:profile}=await sb.from('profiles').select('role').eq('id',session.user.id).single();
+  if(!profile||!['admin','super_admin'].includes(profile.role)){
+    document.getElementById('access-denied').style.display='block';
+    return;
+  }
+  document.getElementById('admin-content').style.display='block';
+  loadAll();
+}
+
+async function loadAll(){
+  await Promise.all([loadKPIs(),loadPending(),loadActive(),loadProjects(),loadUsers()]);
+}
+
+async function loadKPIs(){
+  const [{count:tc},{count:pc},{count:ac},{count:projs},{count:users}]=await Promise.all([
+    sb.from('companies').select('*',{count:'exact',head:true}),
+    sb.from('companies').select('*',{count:'exact',head:true}).eq('status','pending'),
+    sb.from('companies').select('*',{count:'exact',head:true}).eq('status','active'),
+    sb.from('projects').select('*',{count:'exact',head:true}),
+    sb.from('profiles').select('*',{count:'exact',head:true}),
+  ]);
+  document.getElementById('kp-total').textContent=tc||0;
+  document.getElementById('kp-pending').textContent=pc||0;
+  document.getElementById('kp-active').textContent=ac||0;
+  document.getElementById('kp-projects').textContent=projs||0;
+  document.getElementById('kp-users').textContent=users||0;
+  document.getElementById('pending-badge').textContent=pc||0;
+  document.getElementById('pending-meta').textContent=(pc||0)+' companies awaiting review';
+  document.getElementById('active-meta').textContent=(ac||0)+' active listings';
+  document.getElementById('projects-meta').textContent=(projs||0)+' total projects';
+  document.getElementById('users-meta').textContent=(users||0)+' registered users';
+}
+
+async function loadPending(){
+  const {data}=await sb.from('companies').select('*').eq('status','pending').order('created_at',{ascending:false});
+  const body=document.getElementById('pending-body');
+  if(!data||!data.length){
+    body.innerHTML='<div class="empty"><div class="empty-icon">✅</div><div class="empty-title">All caught up!</div><div class="empty-sub">No pending submissions right now.</div></div>';
+    return;
+  }
+  body.innerHTML=`<table><thead><tr><th>Company</th><th>Sector</th><th>Location</th><th>Submitted</th><th>Certs</th><th>Ready</th><th>Actions</th></tr></thead><tbody>
+    ${data.map(c=>`<tr id="row-${c.id}">
+      <td><div class="name-cell">${coAv(c.legal_name)}<div><strong>${c.legal_name}</strong><small>${c.contact_email||''}</small></div></div></td>
+      <td>${c.sector||'—'}</td>
+      <td>${c.city||''}${c.state_province?', '+c.state_province:''} ${c.country==='MX'?'🇲🇽':'🇺🇸'}</td>
+      <td>${new Date(c.created_at).toLocaleDateString()}</td>
+      <td>${[c.cert_hubzone&&'HUBZone',c.cert_sam&&'SAM',c.cert_ctpat&&'C-TPAT',c.cert_immex&&'IMMEX'].filter(Boolean).map(s=>`<span style="font-size:9px;background:var(--greenl);color:var(--green);padding:1px 5px;border-radius:2px;margin-right:3px">${s}</span>`).join('')||'—'}</td>
+      <td>${c.ready_to_work?'<span style="color:var(--green);font-weight:700">✅</span>':'—'}</td>
+      <td>
+        <div class="action-btns">
+          <button class="act-btn act-approve" onclick="approveCompany('${c.id}')">Approve</button>
+          <button class="act-btn act-reject" onclick="rejectCompany('${c.id}')">Reject</button>
+        </div>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function loadActive(){
+  const {data}=await sb.from('companies').select('*').eq('status','active').order('created_at',{ascending:false}).limit(50);
+  const body=document.getElementById('active-body');
+  if(!data||!data.length){
+    body.innerHTML='<div class="empty"><div class="empty-icon">🏢</div><div class="empty-title">No active companies yet</div><div class="empty-sub">Approve pending submissions to see them here.</div></div>';
+    return;
+  }
+  body.innerHTML=`<table><thead><tr><th>Company</th><th>Sector</th><th>Location</th><th>Ready</th><th>Listed</th><th>Actions</th></tr></thead><tbody>
+    ${data.map(c=>`<tr id="arow-${c.id}">
+      <td><div class="name-cell">${coAv(c.legal_name)}<div><strong>${c.legal_name}</strong><small>${c.contact_email||''}</small></div></div></td>
+      <td>${c.sector||'—'}</td>
+      <td>${c.city||''}${c.state_province?', '+c.state_province:''} ${c.country==='MX'?'🇲🇽':'🇺🇸'}</td>
+      <td>${c.ready_to_work?'<span style="color:var(--green);font-weight:700">✅ Yes</span>':'<span style="color:var(--ink3)">—</span>'}</td>
+      <td>${new Date(c.created_at).toLocaleDateString()}</td>
+      <td>
+        <div class="action-btns">
+          <button class="act-btn act-reject" onclick="archiveCompany('${c.id}')">Archive</button>
+        </div>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function loadProjects(){
+  const {data}=await sb.from('projects').select('*').order('created_at',{ascending:false}).limit(50);
+  const body=document.getElementById('projects-body');
+  if(!data||!data.length){
+    body.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-title">No projects yet</div><div class="empty-sub">Projects submitted via the platform will appear here.</div></div>';
+    return;
+  }
+  body.innerHTML=`<table><thead><tr><th>Project</th><th>Type</th><th>Location</th><th>Value</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+    ${data.map(p=>`<tr id="prow-${p.id}">
+      <td><strong>${p.title}</strong><div style="font-size:11px;color:var(--ink3)">${p.contact_email||''}</div></td>
+      <td>${p.project_type||'—'}</td>
+      <td>${p.city||''}${p.state_province?', '+p.state_province:''}</td>
+      <td style="font-weight:600;color:var(--green)">${p.total_value||'—'}</td>
+      <td><span class="status-pill ${p.status==='active'?'sp-active':p.status==='pending'?'sp-pending':'sp-rejected'}">${p.status}</span></td>
+      <td>
+        <div class="action-btns">
+          ${p.status==='pending'?`<button class="act-btn act-approve" onclick="approveProject('${p.id}')">Approve</button>`:''}
+          ${p.status==='active'?`<button class="act-btn act-reject" onclick="rejectProject('${p.id}')">Archive</button>`:''}
+        </div>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+async function loadUsers(){
+  const {data}=await sb.from('profiles').select('*').order('created_at',{ascending:false}).limit(50);
+  const body=document.getElementById('users-body');
+  if(!data||!data.length){
+    body.innerHTML='<div class="empty"><div class="empty-icon">👥</div><div class="empty-title">No users yet</div></div>';
+    return;
+  }
+  body.innerHTML=`<table><thead><tr><th>User</th><th>Type</th><th>Organization</th><th>Role</th><th>Joined</th><th>Actions</th></tr></thead><tbody>
+    ${data.map(u=>`<tr>
+      <td><strong>${u.full_name||'—'}</strong><div style="font-size:11px;color:var(--ink3)">${u.email||''}</div></td>
+      <td>${(u.user_type||'user').replace('_',' ')}</td>
+      <td>${u.organization||'—'}</td>
+      <td><span class="status-pill ${u.role==='super_admin'?'sp-active':u.role==='admin'?'sp-pending':'sp-rejected'}">${u.role||'user'}</span></td>
+      <td>${u.created_at?new Date(u.created_at).toLocaleDateString():'—'}</td>
+      <td>
+        <div class="action-btns">
+          ${u.role!=='super_admin'?`<button class="act-btn act-view" onclick="makeAdmin('${u.id}')">Make Admin</button>`:'<span style="font-size:11px;color:var(--green)">✅ Super Admin</span>'}
+        </div>
+      </td>
+    </tr>`).join('')}
+  </tbody></table>`;
+}
+
+// ACTIONS
+async function approveCompany(id){
+  const {error}=await sb.from('companies').update({status:'active'}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  const row=document.getElementById('row-'+id);
+  if(row){row.querySelector('.action-btns').innerHTML='<span style="color:var(--green);font-weight:600;font-size:12px">✅ Approved</span>';row.style.opacity='.6';}
+  toast('✅ Company approved and live!');
+  loadKPIs();
+}
+
+async function rejectCompany(id){
+  if(!confirm('Reject and remove this submission?'))return;
+  const {error}=await sb.from('companies').update({status:'rejected'}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  document.getElementById('row-'+id)?.remove();
+  toast('Company rejected','err');
+  loadKPIs();
+}
+
+async function archiveCompany(id){
+  if(!confirm('Archive this company (remove from public listing)?'))return;
+  const {error}=await sb.from('companies').update({status:'archived'}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  document.getElementById('arow-'+id)?.remove();
+  toast('Company archived');
+  loadKPIs();
+}
+
+async function approveProject(id){
+  const {error}=await sb.from('projects').update({status:'active'}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  const row=document.getElementById('prow-'+id);
+  if(row)row.querySelector('.action-btns').innerHTML='<span style="color:var(--green);font-weight:600;font-size:12px">✅ Live</span>';
+  toast('✅ Project is now live!');
+  loadKPIs();
+}
+
+async function rejectProject(id){
+  const {error}=await sb.from('projects').update({status:'archived'}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('Project archived');
+  loadKPIs();
+}
+
+async function makeAdmin(id){
+  if(!confirm('Give this user admin access?'))return;
+  const {error}=await sb.from('profiles').update({role:'admin'}).eq('id',id);
+  if(error){toast('Error: '+error.message,'err');return;}
+  toast('User is now admin ✅');
+  loadUsers();
+}
+
+window.addEventListener('load',init);
+</script>
+</body>
+</html>
