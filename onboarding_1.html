@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — Register Your Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,800;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0F0F0E;
+  --ink-2: #2A2A27;
+  --ink-3: #5C5C54;
+  --border: #E2DDD6;
+  --parchment: #F7F3EE;
+  --white: #FDFCFB;
+  --rust: #B8431E;
+  --rust-2: #D4582E;
+  --rust-light: #F2E8E3;
+  --teal: #1A6B72;
+  --teal-light: #E3F0F1;
+  --gold: #B07D1A;
+  --green: #2A6B43;
+  --green-light: #E4F0EA;
+  --r: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Instrument Sans', sans-serif; background: var(--parchment); color: var(--ink); min-height: 100vh; }
+
+/* TOPNAV */
+.topnav {
+  background: var(--white); border-bottom: 1px solid var(--border);
+  padding: 0 48px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.brand { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--ink); text-decoration: none; }
+.brand span { color: var(--rust); }
+.back-link { font-size: 13.5px; color: var(--ink-3); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+.back-link:hover { color: var(--ink); }
+
+/* LAYOUT */
+.layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  min-height: calc(100vh - 60px);
+}
+
+/* SIDEBAR */
+.sidebar {
+  background: var(--ink);
+  padding: 48px 36px;
+  position: sticky; top: 60px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.sidebar-title {
+  font-family: 'Fraunces', serif;
+  font-size: 26px; font-weight: 700;
+  color: var(--white); letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+.sidebar-sub { font-size: 14px; color: rgba(255,255,255,0.45); line-height: 1.65; margin-bottom: 40px; }
+
+.steps { display: flex; flex-direction: column; gap: 0; }
+.step-item {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.step-item:last-child { border-bottom: none; }
+.step-item.locked { opacity: 0.35; cursor: not-allowed; }
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: rgba(255,255,255,0.4);
+  transition: all 0.3s;
+}
+.step-item.active .step-circle {
+  background: var(--rust); border-color: var(--rust);
+  color: var(--white);
+}
+.step-item.done .step-circle {
+  background: var(--green); border-color: var(--green);
+  color: var(--white);
+}
+.step-item.done .step-circle::after { content: '✓'; font-size: 14px; }
+.step-item.done .step-circle .step-num { display: none; }
+.step-text {}
+.step-label {
+  font-size: 13.5px; font-weight: 600;
+  color: rgba(255,255,255,0.45);
+  transition: color 0.2s;
+}
+.step-item.active .step-label { color: var(--white); }
+.step-item.done .step-label { color: rgba(255,255,255,0.6); }
+.step-desc { font-size: 12px; color: rgba(255,255,255,0.25); margin-top: 2px; }
+
+.sidebar-progress {
+  margin-top: 36px; padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.progress-label { font-size: 11px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; display: flex; justify-content: space-between; }
+.progress-bar-bg { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--rust); border-radius: 2px; transition: width 0.5s ease; }
+
+.sidebar-badges {
+  margin-top: 32px; display: flex; flex-direction: column; gap: 10px;
+}
+.sidebar-badge {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12.5px; color: rgba(255,255,255,0.4);
+}
+.sidebar-badge-icon { font-size: 16px; }
+
+/* MAIN FORM AREA */
+.form-main { padding: 56px 64px; }
+.form-header { margin-bottom: 40px; }
+.form-step-label {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.16em; color: var(--rust); margin-bottom: 10px;
+}
+.form-title {
+  font-family: 'Fraunces', serif;
+  font-size: 34px; font-weight: 700; letter-spacing: -1px;
+  color: var(--ink); margin-bottom: 8px;
+}
+.form-subtitle { font-size: 16px; color: var(--ink-3); line-height: 1.65; }
+
+/* FORM ELEMENTS */
+.form-section { margin-bottom: 40px; }
+.form-section-title {
+  font-size: 13px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink-3);
+  margin-bottom: 20px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.form-group { margin-bottom: 18px; }
+.form-label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--ink-2); margin-bottom: 7px;
+}
+.form-label .req { color: var(--rust); margin-left: 3px; }
+.form-label .opt { color: var(--ink-3); font-weight: 400; font-size: 11.5px; margin-left: 6px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 11px 14px;
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  font-family: inherit; font-size: 14px; color: var(--ink);
+  background: var(--white); transition: border-color 0.2s, box-shadow 0.2s;
+  line-height: 1.5;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none; border-color: var(--rust);
+  box-shadow: 0 0 0 3px rgba(184,67,30,0.1);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: rgba(92,92,84,0.45); }
+.form-textarea { resize: vertical; min-height: 100px; }
+.form-hint { font-size: 11.5px; color: var(--ink-3); margin-top: 5px; }
+
+/* SECTOR GRID */
+.sector-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  margin-bottom: 6px;
+}
+.sector-option {
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 14px 12px; text-align: center; cursor: pointer;
+  transition: all 0.2s; background: var(--white);
+  user-select: none;
+}
+.sector-option:hover { border-color: var(--rust); background: var(--rust-light); }
+.sector-option.selected { border-color: var(--rust); background: var(--rust-light); }
+.sector-option input { display: none; }
+.sector-icon { font-size: 22px; margin-bottom: 6px; }
+.sector-name { font-size: 12px; font-weight: 600; color: var(--ink-2); }
+
+/* CERT CHECKLIST */
+.cert-list { display: flex; flex-direction: column; gap: 10px; }
+.cert-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px; border: 1.5px solid var(--border);
+  border-radius: var(--r); cursor: pointer; background: var(--white);
+  transition: all 0.2s; user-select: none;
+}
+.cert-item:hover { border-color: var(--teal); }
+.cert-item.checked { border-color: var(--teal); background: var(--teal-light); }
+.cert-check {
+  width: 20px; height: 20px; border-radius: 4px;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; transition: all 0.2s;
+}
+.cert-item.checked .cert-check { background: var(--teal); border-color: var(--teal); color: white; }
+.cert-info {}
+.cert-name { font-size: 13.5px; font-weight: 600; }
+.cert-desc { font-size: 12px; color: var(--ink-3); }
+
+/* CAPACITY SLIDER */
+.capacity-options {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+}
+.cap-option {
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 14px 8px; text-align: center; cursor: pointer;
+  transition: all 0.2s; background: var(--white);
+}
+.cap-option:hover { border-color: var(--gold); }
+.cap-option.selected { border-color: var(--gold); background: var(--gold-light); }
+.cap-num { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--ink); }
+.cap-label { font-size: 11px; color: var(--ink-3); margin-top: 3px; }
+
+/* SERVICE TAGS */
+.service-tags-wrap { border: 1.5px solid var(--border); border-radius: var(--r); padding: 12px; background: var(--white); min-height: 80px; }
+.service-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.service-tag {
+  background: var(--rust-light); color: var(--rust);
+  border: 1px solid rgba(184,67,30,0.2);
+  padding: 5px 10px 5px 12px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+}
+.tag-remove { cursor: pointer; font-size: 14px; opacity: 0.6; }
+.tag-remove:hover { opacity: 1; }
+.service-tag-input {
+  border: none; outline: none; font-family: inherit;
+  font-size: 13.5px; color: var(--ink);
+  background: transparent; padding: 4px 8px;
+  min-width: 180px;
+}
+.service-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sug-tag {
+  font-size: 12px; padding: 4px 10px; border-radius: 20px;
+  border: 1px solid var(--border); cursor: pointer; color: var(--ink-3);
+  transition: all 0.15s; background: var(--white);
+}
+.sug-tag:hover { border-color: var(--rust); color: var(--rust); background: var(--rust-light); }
+
+/* LOCATION GRID */
+.location-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.loc-option {
+  border: 1.5px solid var(--border); border-radius: var(--r);
+  padding: 12px 14px; cursor: pointer; background: var(--white);
+  transition: all 0.2s; display: flex; align-items: center; gap: 10px;
+}
+.loc-option:hover { border-color: var(--rust); }
+.loc-option.selected { border-color: var(--rust); background: var(--rust-light); }
+.loc-flag { font-size: 18px; }
+.loc-name { font-size: 13px; font-weight: 600; }
+.loc-sub { font-size: 11px; color: var(--ink-3); }
+
+/* READY-TO-WORK PANEL */
+.ready-panel {
+  background: var(--green-light); border: 1.5px solid var(--green);
+  border-radius: 10px; padding: 24px; margin-top: 24px;
+}
+.ready-panel-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--green); }
+.ready-checklist { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.ready-check-item { display: flex; align-items: center; gap: 10px; font-size: 13.5px; }
+.rcheck { font-size: 16px; }
+
+/* REVIEW SECTION */
+.review-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.review-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 10px; padding: 22px;
+}
+.review-card-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--ink-3); margin-bottom: 14px;
+}
+.review-item { display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.review-item:last-child { border-bottom: none; }
+.review-key { color: var(--ink-3); }
+.review-val { font-weight: 600; color: var(--ink); text-align: right; max-width: 200px; }
+
+/* SUCCESS */
+.success-screen { display: none; text-align: center; padding: 80px 40px; }
+.success-icon { font-size: 64px; margin-bottom: 24px; }
+.success-title { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700; letter-spacing: -1px; margin-bottom: 12px; }
+.success-sub { font-size: 17px; color: var(--ink-3); max-width: 480px; margin: 0 auto 32px; line-height: 1.7; }
+.success-steps { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 28px; max-width: 480px; margin: 0 auto 32px; text-align: left; }
+.success-step { display: flex; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.success-step:last-child { border-bottom: none; }
+.ss-num { width: 28px; height: 28px; border-radius: 50%; background: var(--rust-light); color: var(--rust); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+.ss-text { font-size: 13.5px; line-height: 1.6; }
+.ss-text strong { display: block; margin-bottom: 2px; }
+
+/* FORM NAV */
+.form-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--border);
+}
+.btn-prev {
+  padding: 12px 24px; border-radius: var(--r);
+  font-family: inherit; font-size: 14px; font-weight: 500;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--ink-3); cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-prev:hover { border-color: var(--ink); color: var(--ink); }
+.btn-next {
+  padding: 13px 32px; border-radius: var(--r);
+  font-family: inherit; font-size: 15px; font-weight: 600;
+  border: none; background: var(--rust); color: var(--white);
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.btn-next:hover { background: var(--rust-2); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(184,67,30,0.3); }
+.step-counter { font-size: 13px; color: var(--ink-3); }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; }
+  .form-main { padding: 32px 24px; }
+  .form-row, .form-row-3 { grid-template-columns: 1fr; }
+  .sector-grid { grid-template-columns: repeat(3, 1fr); }
+  .capacity-options { grid-template-columns: repeat(3, 1fr); }
+  .location-grid { grid-template-columns: 1fr 1fr; }
+  .review-grid { grid-template-columns: 1fr; }
+}
+
+/* gold-light fallback */
+.cap-option.selected { background: #FBF4E3; }
+</style>
+
+<!-- ═══ RIODATA SUPABASE CONNECTION ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://knbtwcxwdhyjvgncnzjo.supabase.co';
+const SUPA_KEY = 'sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+});
+
+async function rdSignUp(email, password, fullName, userType, org) {
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: fullName, user_type: userType, organization: org } }
+  });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignOut() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+async function rdSubmitCompany(formData) {
+  const { data, error } = await sb.from('companies').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdLoadCompanies(filters) {
+  filters = filters || {};
+  let query = sb.from('companies').select('*').eq('status', 'active');
+  if (filters.sector) query = query.eq('sector', filters.sector);
+  if (filters.city) query = query.ilike('city', '%' + filters.city + '%');
+  if (filters.ready) query = query.eq('ready_to_work', true);
+  if (filters.search) query = query.or('legal_name.ilike.%' + filters.search + '%,description.ilike.%' + filters.search + '%');
+  const { data, error } = await query.order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdLoadProjects() {
+  const { data, error } = await sb.from('projects').select('*').eq('status', 'active').order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdSubmitProject(formData) {
+  const { data, error } = await sb.from('projects').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdTrack(page) {
+  await sb.from('analytics_events').insert([{ event_type: 'page_view', page: page, user_id: currentUser?.id || null }]);
+}
+
+window.addEventListener('load', () => rdTrack(window.location.pathname || '/'));
+</script>
+<!-- ═══════════════════════════════════════════ -->
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Rio<span style='color:var(--teal)'>Data</span></a>
+  <a href="index.html" class="back-link">← Back to platform</a>
+</nav>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Register Your Business</div>
+    <div class="sidebar-sub">Takes about 8 minutes. Free forever. Your listing goes live after admin review (24–48 hrs).</div>
+
+    <div class="steps" id="step-list">
+      <div class="step-item active" data-step="1">
+        <div class="step-circle"><span class="step-num">1</span></div>
+        <div class="step-text">
+          <div class="step-label">Business Info</div>
+          <div class="step-desc">Name, type, contact details</div>
+        </div>
+      </div>
+      <div class="step-item locked" data-step="2">
+        <div class="step-circle"><span class="step-num">2</span></div>
+        <div class="step-text">
+          <div class="step-label">Sector & Services</div>
+          <div class="step-desc">What you do, industry type</div>
+        </div>
+      </div>
+      <div class="step-item locked" data-step="3">
+        <div class="step-circle"><span class="step-num">3</span></div>
+        <div class="step-text">
+          <div class="step-label">Location & Reach</div>
+          <div class="step-desc">Where you operate</div>
+        </div>
+      </div>
+      <div class="step-item locked" data-step="4">
+        <div class="step-circle"><span class="step-num">4</span></div>
+        <div class="step-text">
+          <div class="step-label">Certifications</div>
+          <div class="step-desc">SAM, HUBZone, licenses</div>
+        </div>
+      </div>
+      <div class="step-item locked" data-step="5">
+        <div class="step-circle"><span class="step-num">5</span></div>
+        <div class="step-text">
+          <div class="step-label">Capacity & Experience</div>
+          <div class="step-desc">Team size, past projects</div>
+        </div>
+      </div>
+      <div class="step-item locked" data-step="6">
+        <div class="step-circle"><span class="step-num">6</span></div>
+        <div class="step-text">
+          <div class="step-label">Review & Submit</div>
+          <div class="step-desc">Confirm and go live</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-progress">
+      <div class="progress-label">
+        <span>Progress</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-badges">
+      <div class="sidebar-badge"><span class="sidebar-badge-icon">🔒</span> Your data is private until approved</div>
+      <div class="sidebar-badge"><span class="sidebar-badge-icon">✅</span> Free — no credit card ever</div>
+      <div class="sidebar-badge"><span class="sidebar-badge-icon">⚡</span> Live in 24–48 hours</div>
+      <div class="sidebar-badge"><span class="sidebar-badge-icon">🌎</span> US & Mexico businesses welcome</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="form-main">
+
+    <!-- ══ STEP 1: Business Info ══ -->
+    <div id="step-1" class="step-panel">
+      <div class="form-header">
+        <div class="form-step-label">Step 1 of 6</div>
+        <div class="form-title">Tell us about your business</div>
+        <div class="form-subtitle">Basic information so project owners and developers can find and contact you.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Company Identity</div>
+        <div class="form-group">
+          <label class="form-label">Legal Business Name <span class="req">*</span></label>
+          <input class="form-input" type="text" placeholder="e.g. Falcon Industrial Services LLC" id="f-company-name">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">DBA / Brand Name <span class="opt">optional</span></label>
+            <input class="form-input" type="text" placeholder="If different from legal name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Business Type <span class="req">*</span></label>
+            <select class="form-select">
+              <option value="">Select type...</option>
+              <option>LLC</option>
+              <option>Corporation (Inc.)</option>
+              <option>Sole Proprietorship</option>
+              <option>Partnership</option>
+              <option>S-Corp</option>
+              <option>Sociedad Anónima (S.A.)</option>
+              <option>SAPI de CV</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Year Founded <span class="req">*</span></label>
+            <input class="form-input" type="number" placeholder="e.g. 2012" min="1900" max="2025">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Number of Employees <span class="req">*</span></label>
+            <select class="form-select">
+              <option value="">Select range...</option>
+              <option>1–5 (Solo / Micro)</option>
+              <option>6–15 (Small)</option>
+              <option>16–50 (Growing)</option>
+              <option>51–200 (Mid-size)</option>
+              <option>201–500</option>
+              <option>500+</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Primary Contact</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Contact Name <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="Full name">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Title / Role</label>
+            <input class="form-input" type="text" placeholder="e.g. CEO, Operations Manager">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Business Email <span class="req">*</span></label>
+            <input class="form-input" type="email" placeholder="contact@yourcompany.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number <span class="req">*</span></label>
+            <input class="form-input" type="tel" placeholder="+1 (956) 555-0100">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Website <span class="opt">optional</span></label>
+          <input class="form-input" type="url" placeholder="https://www.yourcompany.com">
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Business Description</div>
+        <div class="form-group">
+          <label class="form-label">Describe what your company does <span class="req">*</span></label>
+          <textarea class="form-textarea" placeholder="In 2–4 sentences, describe your core services, who you serve, and what makes your business stand out in the region..."></textarea>
+          <div class="form-hint">This appears on your public profile. Be specific — mention key services, equipment, or capabilities.</div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <div class="step-counter">Step 1 of 6</div>
+        <button class="btn-next" onclick="nextStep(1)">Continue → Sector & Services</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 2: Sector & Services ══ -->
+    <div id="step-2" class="step-panel" style="display:none">
+      <div class="form-header">
+        <div class="form-step-label">Step 2 of 6</div>
+        <div class="form-title">Sector & Services</div>
+        <div class="form-subtitle">What industry do you work in, and what specific services do you offer? This is how project owners find you.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Primary Industry Sector</div>
+        <div class="sector-grid">
+          <div class="sector-option selected" onclick="toggleSector(this)">
+            <div class="sector-icon">🏗️</div>
+            <div class="sector-name">Construction</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">⚡</div>
+            <div class="sector-name">Energy / LNG</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🏭</div>
+            <div class="sector-name">Manufacturing</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🚛</div>
+            <div class="sector-name">Logistics</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">💻</div>
+            <div class="sector-name">Technology</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🌿</div>
+            <div class="sector-name">Environmental</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🏛️</div>
+            <div class="sector-name">Gov / Federal</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🔧</div>
+            <div class="sector-name">Support Services</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🏥</div>
+            <div class="sector-name">Healthcare</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">🏦</div>
+            <div class="sector-name">Finance / Legal</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">📦</div>
+            <div class="sector-name">Trade / Import-Export</div>
+          </div>
+          <div class="sector-option" onclick="toggleSector(this)">
+            <div class="sector-icon">➕</div>
+            <div class="sector-name">Other</div>
+          </div>
+        </div>
+        <div class="form-hint" style="margin-top: 8px;">Select all that apply. Your primary sector determines which project matches you receive.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Specific Services Offered</div>
+        <div class="form-group">
+          <label class="form-label">Add your services <span class="req">*</span></label>
+          <div class="service-tags-wrap" id="service-tags-wrap" onclick="document.getElementById('tag-input').focus()">
+            <div class="service-tags" id="service-tags">
+              <span class="service-tag">Structural Welding <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+              <span class="service-tag">Pipeline Support <span class="tag-remove" onclick="removeTag(this)">×</span></span>
+            </div>
+            <input class="service-tag-input" id="tag-input" placeholder="Type a service and press Enter..." onkeydown="handleTagInput(event)">
+          </div>
+          <div class="form-hint">Type each service and press Enter. Be specific — "Certified Welding" is better than "Fabrication."</div>
+          <div class="service-suggestions">
+            <span class="sug-tag" onclick="addSugTag(this)">Concrete Pouring</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Electrical Wiring</span>
+            <span class="sug-tag" onclick="addSugTag(this)">HVAC Installation</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Site Preparation</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Underground Utilities</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Cross-Border Freight</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Customs Brokerage</span>
+            <span class="sug-tag" onclick="addSugTag(this)">CNC Machining</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Steel Fabrication</span>
+            <span class="sug-tag" onclick="addSugTag(this)">Project Management</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">NAICS Code(s)</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Primary NAICS Code <span class="opt">optional but recommended</span></label>
+            <input class="form-input" type="text" placeholder="e.g. 238310 — Drywall Contractors">
+            <div class="form-hint">Needed for government contract matching. <a href="https://www.census.gov/naics/" target="_blank" style="color: var(--rust);">Look up your code →</a></div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Secondary NAICS <span class="opt">optional</span></label>
+            <input class="form-input" type="text" placeholder="Additional code if applicable">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-prev" onclick="prevStep(2)">← Back</button>
+        <div class="step-counter">Step 2 of 6</div>
+        <button class="btn-next" onclick="nextStep(2)">Continue → Location</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 3: Location ══ -->
+    <div id="step-3" class="step-panel" style="display:none">
+      <div class="form-header">
+        <div class="form-step-label">Step 3 of 6</div>
+        <div class="form-title">Location & Service Area</div>
+        <div class="form-subtitle">Where are you based and where can you work? You'll show up in location-based searches.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Primary Business Address</div>
+        <div class="form-group">
+          <label class="form-label">Street Address <span class="req">*</span></label>
+          <input class="form-input" type="text" placeholder="123 Industrial Blvd">
+        </div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">City <span class="req">*</span></label>
+            <input class="form-input" type="text" placeholder="Laredo">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State / State</label>
+            <input class="form-input" type="text" placeholder="Texas / Tamaulipas">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ZIP / Postal Code</label>
+            <input class="form-input" type="text" placeholder="78041">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Country <span class="req">*</span></label>
+          <select class="form-select">
+            <option>United States</option>
+            <option>Mexico</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Service Area — Where Can You Work?</div>
+        <p style="font-size: 14px; color: var(--ink-3); margin-bottom: 16px;">Select all areas where your company actively takes projects.</p>
+        <div class="location-grid">
+          <div class="loc-option selected" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇺🇸</div>
+            <div><div class="loc-name">Laredo, TX</div><div class="loc-sub">Webb County</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇺🇸</div>
+            <div><div class="loc-name">McAllen / RGV</div><div class="loc-sub">Hidalgo County</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇺🇸</div>
+            <div><div class="loc-name">Brownsville, TX</div><div class="loc-sub">Cameron County</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇺🇸</div>
+            <div><div class="loc-name">Corpus Christi</div><div class="loc-sub">Nueces County</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇺🇸</div>
+            <div><div class="loc-name">San Antonio</div><div class="loc-sub">Bexar County</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇺🇸</div>
+            <div><div class="loc-name">Starr / Zapata</div><div class="loc-sub">Starr / Zapata Co.</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇲🇽</div>
+            <div><div class="loc-name">Nuevo Laredo</div><div class="loc-sub">Tamaulipas</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇲🇽</div>
+            <div><div class="loc-name">Monterrey</div><div class="loc-sub">Nuevo León</div></div>
+          </div>
+          <div class="loc-option" onclick="toggleLoc(this)">
+            <div class="loc-flag">🇲🇽</div>
+            <div><div class="loc-name">Matamoros / Reynosa</div><div class="loc-sub">Tamaulipas</div></div>
+          </div>
+        </div>
+        <div style="margin-top: 14px;">
+          <label style="display:flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--rust);">
+            <span>We can travel anywhere in the region (statewide / nationwide for large projects)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-prev" onclick="prevStep(3)">← Back</button>
+        <div class="step-counter">Step 3 of 6</div>
+        <button class="btn-next" onclick="nextStep(3)">Continue → Certifications</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 4: Certifications ══ -->
+    <div id="step-4" class="step-panel" style="display:none">
+      <div class="form-header">
+        <div class="form-step-label">Step 4 of 6</div>
+        <div class="form-title">Certifications & Registrations</div>
+        <div class="form-subtitle">Certifications unlock government contracts and give you priority matching for eligible projects. All optional — check what you have.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Federal & Government Registrations</div>
+        <div class="cert-list">
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check">✓</div>
+            <div class="cert-info">
+              <div class="cert-name">SAM.gov Registered (UEI)</div>
+              <div class="cert-desc">Required for all U.S. federal government contracts</div>
+            </div>
+          </div>
+          <div class="cert-item checked" onclick="toggleCert(this)">
+            <div class="cert-check">✓</div>
+            <div class="cert-info">
+              <div class="cert-name">HUBZone Certified</div>
+              <div class="cert-desc">SBA-certified Historically Underutilized Business Zone</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">SBA 8(a) Business Development</div>
+              <div class="cert-desc">For small disadvantaged businesses</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">SDVOSB — Service-Disabled Veteran-Owned</div>
+              <div class="cert-desc">VA-verified veteran-owned business</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">WOSB — Woman-Owned Small Business</div>
+              <div class="cert-desc">SBA-certified woman-owned business</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">MBE — Minority Business Enterprise</div>
+              <div class="cert-desc">State or NMSDC certified</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Trade & Industry Licenses</div>
+        <div class="cert-list">
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">Texas Contractor License (TDLR)</div>
+              <div class="cert-desc">General contractor, electrical, HVAC, plumbing</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">NCCER Certification</div>
+              <div class="cert-desc">National Center for Construction Education & Research</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">C-TPAT (Customs-Trade Partnership)</div>
+              <div class="cert-desc">CBP trusted shipper for cross-border logistics</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">IMMEX / Maquiladora Certification</div>
+              <div class="cert-desc">Mexico manufacturing/export program</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">ISO 9001 Quality Management</div>
+              <div class="cert-desc">International quality standard</div>
+            </div>
+          </div>
+          <div class="cert-item" onclick="toggleCert(this)">
+            <div class="cert-check"></div>
+            <div class="cert-info">
+              <div class="cert-name">OSHA 30 Certified Workforce</div>
+              <div class="cert-desc">Required on most large construction sites</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Insurance</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">General Liability Coverage</label>
+            <select class="form-select">
+              <option value="">Select level...</option>
+              <option>$500K</option><option>$1M</option><option>$2M</option>
+              <option>$5M+</option><option>Not currently insured</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Workers' Comp</label>
+            <select class="form-select">
+              <option value="">Select...</option>
+              <option>Yes — active policy</option>
+              <option>Exempt (sole prop / owner-only)</option>
+              <option>Not currently</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-prev" onclick="prevStep(4)">← Back</button>
+        <div class="step-counter">Step 4 of 6</div>
+        <button class="btn-next" onclick="nextStep(4)">Continue → Capacity</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 5: Capacity & Experience ══ -->
+    <div id="step-5" class="step-panel" style="display:none">
+      <div class="form-header">
+        <div class="form-step-label">Step 5 of 6</div>
+        <div class="form-title">Capacity & Experience</div>
+        <div class="form-subtitle">Help project owners understand what scale of work you're ready to take on right now.</div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Current Workforce Capacity</div>
+        <p style="font-size: 14px; color: var(--ink-3); margin-bottom: 16px;">How many workers can you deploy to a project right now?</p>
+        <div class="capacity-options">
+          <div class="cap-option" onclick="selectCap(this)">
+            <div class="cap-num">1–5</div>
+            <div class="cap-label">Micro</div>
+          </div>
+          <div class="cap-option" onclick="selectCap(this)">
+            <div class="cap-num">6–20</div>
+            <div class="cap-label">Small</div>
+          </div>
+          <div class="cap-option selected" onclick="selectCap(this)">
+            <div class="cap-num">21–75</div>
+            <div class="cap-label">Mid</div>
+          </div>
+          <div class="cap-option" onclick="selectCap(this)">
+            <div class="cap-num">76–200</div>
+            <div class="cap-label">Large</div>
+          </div>
+          <div class="cap-option" onclick="selectCap(this)">
+            <div class="cap-num">200+</div>
+            <div class="cap-label">Enterprise</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Project Scale Comfortable With</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Minimum project value you'll take</label>
+            <select class="form-select">
+              <option>Any size</option>
+              <option>$10K+</option><option>$50K+</option><option>$100K+</option>
+              <option>$500K+</option><option>$1M+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Maximum project value capacity</label>
+            <select class="form-select">
+              <option>Under $100K</option>
+              <option>Up to $500K</option><option>Up to $1M</option>
+              <option>Up to $5M</option><option>$5M–$20M</option>
+              <option>$20M+</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Past Project Experience</div>
+        <div class="form-group">
+          <label class="form-label">Describe 1–3 significant past projects</label>
+          <textarea class="form-textarea" style="min-height: 120px;" placeholder="e.g. Completed $2.4M structural steel contract for Laredo industrial park expansion (2023). Crew of 28, on time and under budget. Clients include [company names if permitted]..."></textarea>
+          <div class="form-hint">This builds credibility. Specific numbers and project types convert faster than vague descriptions.</div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Largest single project completed ($)</label>
+            <select class="form-select">
+              <option>Under $50K</option>
+              <option>$50K–$250K</option><option>$250K–$1M</option>
+              <option>$1M–$5M</option><option>$5M–$20M</option><option>$20M+</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Years in business in this region</label>
+            <select class="form-select">
+              <option>Less than 1 year</option><option>1–3 years</option>
+              <option>3–7 years</option><option>7–15 years</option><option>15+ years</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Ready-to-Work Status</div>
+        <div class="ready-panel">
+          <div class="ready-panel-title">✅ What does "Ready to Work" mean?</div>
+          <p style="font-size: 13.5px; color: var(--green); line-height: 1.65;">A "Ready" badge means project owners can count on you being actively available. We display this prominently in search results.</p>
+          <div class="ready-checklist">
+            <div class="ready-check-item"><span class="rcheck">✅</span> Active business operations (not dormant)</div>
+            <div class="ready-check-item"><span class="rcheck">✅</span> Verified contact information</div>
+            <div class="ready-check-item"><span class="rcheck">✅</span> Available workforce capacity now</div>
+            <div class="ready-check-item"><span class="rcheck">✅</span> Responding to inquiries within 48 hrs</div>
+          </div>
+        </div>
+        <div style="margin-top: 18px;">
+          <label style="display:flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+            <input type="checkbox" checked style="width:18px; height:18px; accent-color: var(--green); margin-top: 2px; flex-shrink: 0;">
+            <span style="font-size: 14px; line-height: 1.6;"><strong>Yes — mark my company as "Ready to Work"</strong><br><span style="color: var(--ink-3);">I confirm we are actively operating and can respond to project inquiries within 48 hours.</span></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-prev" onclick="prevStep(5)">← Back</button>
+        <div class="step-counter">Step 5 of 6</div>
+        <button class="btn-next" onclick="nextStep(5)">Continue → Review & Submit</button>
+      </div>
+    </div>
+
+    <!-- ══ STEP 6: Review ══ -->
+    <div id="step-6" class="step-panel" style="display:none">
+      <div class="form-header">
+        <div class="form-step-label">Step 6 of 6</div>
+        <div class="form-title">Review & Submit</div>
+        <div class="form-subtitle">Look good? Submit for admin review. You'll be notified when your listing goes live (24–48 hours).</div>
+      </div>
+
+      <div class="review-grid">
+        <div class="review-card">
+          <div class="review-card-title">Business Info</div>
+          <div class="review-item"><span class="review-key">Company</span><span class="review-val">Falcon Industrial Services LLC</span></div>
+          <div class="review-item"><span class="review-key">Type</span><span class="review-val">LLC</span></div>
+          <div class="review-item"><span class="review-key">Founded</span><span class="review-val">2014</span></div>
+          <div class="review-item"><span class="review-key">Employees</span><span class="review-val">21–75</span></div>
+          <div class="review-item"><span class="review-key">Contact</span><span class="review-val">Carlos Reyes — CEO</span></div>
+          <div class="review-item"><span class="review-key">Email</span><span class="review-val">c.reyes@falconindustrial.com</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-title">Sector & Services</div>
+          <div class="review-item"><span class="review-key">Primary Sector</span><span class="review-val">Construction</span></div>
+          <div class="review-item"><span class="review-key">Services</span><span class="review-val">Structural Welding, Pipeline Support, Steel Fab</span></div>
+          <div class="review-item"><span class="review-key">NAICS</span><span class="review-val">238190</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-title">Location</div>
+          <div class="review-item"><span class="review-key">HQ</span><span class="review-val">Laredo, TX 78041</span></div>
+          <div class="review-item"><span class="review-key">Service Areas</span><span class="review-val">Laredo, McAllen, Nuevo Laredo</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-title">Certifications</div>
+          <div class="review-item"><span class="review-key">HUBZone</span><span class="review-val" style="color: var(--green)">✓ Certified</span></div>
+          <div class="review-item"><span class="review-key">SAM</span><span class="review-val" style="color: var(--green)">✓ Registered</span></div>
+          <div class="review-item"><span class="review-key">Liability Ins.</span><span class="review-val">$2M</span></div>
+        </div>
+        <div class="review-card">
+          <div class="review-card-title">Capacity</div>
+          <div class="review-item"><span class="review-key">Workforce</span><span class="review-val">21–75 workers</span></div>
+          <div class="review-item"><span class="review-key">Project Range</span><span class="review-val">$100K – $5M</span></div>
+          <div class="review-item"><span class="review-key">Experience</span><span class="review-val">7–15 years regional</span></div>
+        </div>
+        <div class="review-card" style="border-color: var(--green); background: var(--green-light);">
+          <div class="review-card-title" style="color: var(--green)">Status</div>
+          <div class="review-item"><span class="review-key">Ready to Work</span><span class="review-val" style="color: var(--green)">✅ Yes — Active</span></div>
+          <div class="review-item"><span class="review-key">Visibility</span><span class="review-val">Pending Admin Review</span></div>
+          <div class="review-item"><span class="review-key">Goes Live</span><span class="review-val">Within 24–48 hrs</span></div>
+        </div>
+      </div>
+
+      <div style="margin-top: 28px; background: var(--white); border: 1.5px solid var(--border); border-radius: 10px; padding: 24px;">
+        <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer; margin-bottom: 14px;">
+          <input type="checkbox" checked style="width:18px; height:18px; accent-color: var(--rust); margin-top: 2px; flex-shrink: 0;">
+          <span style="font-size: 13.5px; line-height: 1.65;">I certify that the information provided is accurate and that I am authorized to represent this business. I agree to the <a href="#" style="color: var(--rust);">Terms of Use</a> and <a href="#" style="color: var(--rust);">Privacy Policy</a>.</span>
+        </label>
+        <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+          <input type="checkbox" style="width:18px; height:18px; accent-color: var(--rust); margin-top: 2px; flex-shrink: 0;">
+          <span style="font-size: 13.5px; color: var(--ink-3); line-height: 1.65;">Notify me about matching project opportunities by email. (Optional — always free, unsubscribe anytime.)</span>
+        </label>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-prev" onclick="prevStep(6)">← Back</button>
+        <div class="step-counter">Step 6 of 6</div>
+        <button class="btn-next" style="background: var(--green); padding: 13px 36px;" onclick="submitForm()">🚀 Submit for Review</button>
+      </div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="success-screen" class="success-screen">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">You're in the queue!</div>
+      <div class="success-sub">Your business profile has been submitted. Our team reviews every listing to keep the directory high-quality. You'll get an email when you go live.</div>
+      <div class="success-steps">
+        <div class="success-step">
+          <div class="ss-num">1</div>
+          <div class="ss-text"><strong>Admin Review (24–48 hrs)</strong>We verify your contact info and that your profile is complete.</div>
+        </div>
+        <div class="success-step">
+          <div class="ss-num">2</div>
+          <div class="ss-text"><strong>Email Confirmation</strong>You'll receive a confirmation with your public profile link.</div>
+        </div>
+        <div class="success-step">
+          <div class="ss-num">3</div>
+          <div class="ss-text"><strong>Start Getting Matched</strong>Project owners search, you show up. Matching starts automatically.</div>
+        </div>
+      </div>
+      <a href="index.html" style="display: inline-block; padding: 13px 32px; background: var(--rust); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px;">← Return to RioWork</a>
+    </div>
+
+  </main>
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 6;
+
+function nextStep(step) {
+  document.getElementById('step-' + step).style.display = 'none';
+  currentStep = step + 1;
+  document.getElementById('step-' + currentStep).style.display = 'block';
+  updateSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevStep(step) {
+  document.getElementById('step-' + step).style.display = 'none';
+  currentStep = step - 1;
+  document.getElementById('step-' + currentStep).style.display = 'block';
+  updateSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateSidebar() {
+  document.querySelectorAll('.step-item').forEach((item, i) => {
+    const sNum = i + 1;
+    item.classList.remove('active', 'done', 'locked');
+    if (sNum < currentStep) item.classList.add('done');
+    else if (sNum === currentStep) item.classList.add('active');
+    else item.classList.add('locked');
+  });
+  const pct = Math.round(((currentStep - 1) / totalSteps) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+async function submitForm() {
+  const btn = document.querySelector('.btn-next[onclick="submitForm()"]');
+  if (btn) { btn.textContent = 'Submitting...'; btn.disabled = true; }
+
+  const formData = {
+    legal_name: document.getElementById('f-company-name')?.value || 'Unknown Company',
+    contact_email: document.querySelector('input[type="email"]')?.value || '',
+    contact_phone: document.querySelector('input[type="tel"]')?.value || '',
+    sector: document.querySelector('.sector-option.selected .sector-name')?.textContent || 'Construction',
+    city: document.querySelector('input[placeholder="Laredo"]')?.value || '',
+    country: document.querySelector('.form-select')?.value === 'Mexico' ? 'MX' : 'US',
+    status: 'pending',
+    ready_to_work: document.querySelector('input[type="checkbox"][checked]') ? true : false,
+    description: document.querySelector('.form-textarea')?.value || '',
+    services: Array.from(document.querySelectorAll('.service-tag')).map(t => t.textContent.replace('×','').trim()),
+    cert_hubzone: Array.from(document.querySelectorAll('.cert-item.checked .cert-name')).some(el => el.textContent.includes('HUBZone')),
+    cert_sam: Array.from(document.querySelectorAll('.cert-item.checked .cert-name')).some(el => el.textContent.includes('SAM')),
+  };
+
+  const result = await rdSubmitCompany(formData);
+
+  document.getElementById('step-6').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+  currentStep = 7;
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-pct').textContent = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function toggleSector(el) {
+  el.classList.toggle('selected');
+}
+function toggleLoc(el) {
+  el.classList.toggle('selected');
+}
+function toggleCert(el) {
+  el.classList.toggle('checked');
+}
+function selectCap(el) {
+  document.querySelectorAll('.cap-option').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function removeTag(el) {
+  el.parentElement.remove();
+}
+function handleTagInput(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = e.target.value.trim();
+    if (val) {
+      addTag(val);
+      e.target.value = '';
+    }
+  }
+}
+function addTag(text) {
+  const tag = document.createElement('span');
+  tag.className = 'service-tag';
+  tag.innerHTML = text + ' <span class="tag-remove" onclick="removeTag(this)">×</span>';
+  document.getElementById('service-tags').appendChild(tag);
+}
+function addSugTag(el) {
+  addTag(el.textContent);
+  el.remove();
+}
+</script>
+</body>
+</html>

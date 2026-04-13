@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — Regional Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700;9..144,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0F0F0E; --ink-2: #2A2A27; --ink-3: #5C5C54;
+  --border: #E2DDD6; --parchment: #F7F3EE; --white: #FDFCFB;
+  --rust: #B8431E; --rust-light: #F2E8E3;
+  --teal: #1A6B72; --teal-light: #E3F0F1;
+  --gold: #B07D1A; --gold-light: #FBF4E3;
+  --green: #2A6B43; --green-light: #E4F0EA;
+  --r: 8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--parchment);color:var(--ink);height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+
+/* TOP NAV */
+.topnav{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:0 24px;height:56px;display:flex;align-items:center;
+  justify-content:space-between;flex-shrink:0;z-index:100;
+}
+.brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--ink);text-decoration:none;}
+.brand span{color:var(--rust);}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.btn-sm{padding:7px 14px;border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;border:1.5px solid var(--border);background:transparent;color:var(--ink-3);}
+.btn-sm:hover{border-color:var(--ink);color:var(--ink);}
+.btn-sm-fill{background:var(--rust);color:white;border-color:var(--rust);}
+.btn-sm-fill:hover{background:#D4582E;}
+
+/* LAYOUT */
+.map-layout{display:flex;flex:1;overflow:hidden;}
+
+/* SIDEBAR */
+.map-sidebar{
+  width:360px;flex-shrink:0;
+  background:var(--white);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.sidebar-search{padding:16px;border-bottom:1px solid var(--border);}
+.search-input{
+  width:100%;padding:10px 14px;
+  border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:inherit;font-size:13.5px;color:var(--ink);
+  background:var(--parchment);transition:all 0.2s;
+}
+.search-input:focus{outline:none;border-color:var(--rust);background:var(--white);}
+
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--border);}
+.chip{
+  padding:5px 11px;border-radius:20px;
+  font-size:12px;font-weight:500;cursor:pointer;
+  border:1.5px solid var(--border);background:var(--white);color:var(--ink-3);
+  transition:all 0.15s;white-space:nowrap;
+}
+.chip:hover{border-color:var(--rust);color:var(--rust);}
+.chip.active{background:var(--rust);color:white;border-color:var(--rust);}
+
+.sidebar-header{
+  padding:10px 16px;display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;color:var(--ink-3);border-bottom:1px solid var(--border);
+  background:var(--parchment);
+}
+.sidebar-count strong{color:var(--ink);}
+.sidebar-sort select{border:none;background:transparent;font-family:inherit;font-size:12px;color:var(--ink-3);cursor:pointer;}
+.sidebar-sort select:focus{outline:none;}
+
+.company-list{overflow-y:auto;flex:1;}
+.company-item{
+  padding:14px 16px;border-bottom:1px solid var(--border);
+  cursor:pointer;transition:background 0.15s;
+  display:flex;gap:12px;align-items:flex-start;
+}
+.company-item:hover{background:var(--parchment);}
+.company-item.selected{background:var(--rust-light);border-left:3px solid var(--rust);}
+.company-item.selected .ci-name{color:var(--rust);}
+
+.ci-avatar{
+  width:38px;height:38px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fraunces',serif;font-size:16px;font-weight:700;
+}
+.ci-body{flex:1;min-width:0;}
+.ci-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+.ci-name{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.3;}
+.ci-ready{
+  width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px;
+}
+.ready-y{background:var(--green);box-shadow:0 0 0 2px rgba(42,107,67,0.2);}
+.ready-n{background:var(--border);}
+.ci-loc{font-size:11.5px;color:var(--ink-3);margin-top:2px;}
+.ci-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+.ci-tag{
+  font-size:10.5px;padding:2px 7px;border-radius:3px;
+  background:var(--parchment);border:1px solid var(--border);
+  color:var(--ink-3);font-weight:500;
+}
+
+/* MAP AREA */
+.map-area{flex:1;position:relative;overflow:hidden;}
+
+/* SVG MAP */
+.map-svg-container{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#E8F4F4 0%,#D4EAE8 40%,#C8E0D8 100%);}
+.map-svg{width:100%;height:100%;max-width:none;}
+
+/* MAP CONTROLS */
+.map-controls{
+  position:absolute;right:20px;top:20px;
+  display:flex;flex-direction:column;gap:6px;
+  z-index:20;
+}
+.map-ctrl-btn{
+  width:36px;height:36px;background:var(--white);
+  border:1px solid var(--border);border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:16px;transition:all 0.15s;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+.map-ctrl-btn:hover{background:var(--parchment);border-color:var(--rust);}
+
+/* LEGEND */
+.map-legend{
+  position:absolute;left:16px;bottom:20px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;
+  z-index:20;box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  min-width:180px;
+}
+.legend-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin-bottom:10px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12.5px;margin-bottom:6px;}
+.legend-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+
+/* STATS OVERLAY */
+.map-stats{
+  position:absolute;right:68px;top:20px;
+  display:flex;gap:10px;z-index:20;
+}
+.map-stat-pill{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:20px;padding:7px 14px;
+  font-size:12px;font-weight:600;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+  display:flex;align-items:center;gap:6px;
+}
+.pill-dot{width:8px;height:8px;border-radius:50%;}
+
+/* DETAIL PANEL */
+.detail-panel{
+  position:absolute;right:0;top:0;bottom:0;
+  width:340px;background:var(--white);
+  border-left:1px solid var(--border);
+  transform:translateX(100%);
+  transition:transform 0.3s ease;
+  z-index:30;overflow-y:auto;
+  box-shadow:-8px 0 24px rgba(0,0,0,0.1);
+}
+.detail-panel.open{transform:translateX(0);}
+.dp-header{padding:20px 20px 16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
+.dp-close{cursor:pointer;font-size:18px;color:var(--ink-3);line-height:1;}
+.dp-name{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:4px;line-height:1.2;}
+.dp-loc{font-size:13px;color:var(--ink-3);}
+.dp-body{padding:20px;}
+.dp-section{margin-bottom:20px;}
+.dp-section-title{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin-bottom:10px;}
+.dp-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.dp-row:last-child{border-bottom:none;}
+.dp-key{color:var(--ink-3);}
+.dp-val{font-weight:600;color:var(--ink);text-align:right;max-width:180px;}
+.dp-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.dp-tag{font-size:11.5px;padding:3px 10px;border-radius:3px;background:var(--parchment);border:1px solid var(--border);color:var(--ink-3);font-weight:500;}
+.dp-btns{display:flex;flex-direction:column;gap:8px;margin-top:20px;}
+.dp-btn{padding:11px;border-radius:var(--r);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.dp-btn-primary{background:var(--rust);color:white;}
+.dp-btn-primary:hover{background:#D4582E;}
+.dp-btn-ghost{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.dp-btn-ghost:hover{border-color:var(--ink);background:var(--parchment);}
+
+/* SVG pins */
+.pin{cursor:pointer;transition:transform 0.2s;}
+.pin:hover{transform:scale(1.2);}
+.pin.selected{transform:scale(1.3);}
+.pin-circle{transition:all 0.2s;}
+.pin:hover .pin-circle,.pin.selected .pin-circle{stroke-width:2.5;}
+
+/* Map tooltip */
+.map-tooltip{
+  position:absolute;background:var(--ink);color:white;
+  padding:6px 11px;border-radius:6px;font-size:12px;font-weight:500;
+  pointer-events:none;white-space:nowrap;z-index:50;
+  transform:translate(-50%,-100%) translateY(-10px);
+  opacity:0;transition:opacity 0.15s;
+}
+.map-tooltip.show{opacity:1;}
+
+/* LAYER TOGGLE */
+.layer-toggle{
+  position:absolute;left:16px;top:20px;
+  background:var(--white);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;z-index:20;
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  min-width:160px;
+}
+.lt-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink-3);margin-bottom:10px;}
+.lt-item{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:8px;cursor:pointer;}
+.lt-item input{accent-color:var(--rust);width:14px;height:14px;}
+.lt-label{font-size:12.5px;font-weight:500;}
+
+@media(max-width:768px){
+  .map-sidebar{width:100%;position:absolute;bottom:0;left:0;right:0;height:50%;z-index:40;}
+  .map-stats{display:none;}
+  .layer-toggle{display:none;}
+}
+</style>
+
+<!-- ═══ RIODATA SUPABASE CONNECTION ═══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL = 'https://knbtwcxwdhyjvgncnzjo.supabase.co';
+const SUPA_KEY = 'sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let currentUser = null;
+
+sb.auth.onAuthStateChange((event, session) => {
+  currentUser = session?.user || null;
+});
+
+async function rdSignUp(email, password, fullName, userType, org) {
+  const { data, error } = await sb.auth.signUp({
+    email, password,
+    options: { data: { full_name: fullName, user_type: userType, organization: org } }
+  });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignIn(email, password) {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) return { error: error.message };
+  return { success: true, user: data.user };
+}
+
+async function rdSignOut() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+async function rdSubmitCompany(formData) {
+  const { data, error } = await sb.from('companies').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdLoadCompanies(filters) {
+  filters = filters || {};
+  let query = sb.from('companies').select('*').eq('status', 'active');
+  if (filters.sector) query = query.eq('sector', filters.sector);
+  if (filters.city) query = query.ilike('city', '%' + filters.city + '%');
+  if (filters.ready) query = query.eq('ready_to_work', true);
+  if (filters.search) query = query.or('legal_name.ilike.%' + filters.search + '%,description.ilike.%' + filters.search + '%');
+  const { data, error } = await query.order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdLoadProjects() {
+  const { data, error } = await sb.from('projects').select('*').eq('status', 'active').order('created_at', { ascending: false });
+  return error ? [] : data;
+}
+
+async function rdSubmitProject(formData) {
+  const { data, error } = await sb.from('projects').insert([formData]);
+  if (error) return { error: error.message };
+  return { success: true };
+}
+
+async function rdTrack(page) {
+  await sb.from('analytics_events').insert([{ event_type: 'page_view', page: page, user_id: currentUser?.id || null }]);
+}
+
+window.addEventListener('load', () => rdTrack(window.location.pathname || '/'));
+</script>
+<!-- ═══════════════════════════════════════════ -->
+
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="brand">Rio<span style='color:var(--teal)'>Data</span> <span style="font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:400;color:var(--ink-3);margin-left:8px;">Map View</span></a>
+  <div class="nav-right">
+    <button class="btn-sm" onclick="window.location.href='index.html'">← Platform</button>
+    <button class="btn-sm btn-sm-fill" onclick="window.location.href='onboarding.html'">+ Add Business</button>
+  </div>
+</nav>
+
+<div class="map-layout">
+
+  <!-- SIDEBAR -->
+  <div class="map-sidebar">
+    <div class="sidebar-search">
+      <input class="search-input" placeholder="🔍  Search companies, cities, services..." oninput="filterList(this.value)">
+    </div>
+    <div class="filter-chips">
+      <div class="chip active" onclick="filterChip(this,'all')">All</div>
+      <div class="chip" onclick="filterChip(this,'construction')">Construction</div>
+      <div class="chip" onclick="filterChip(this,'energy')">Energy</div>
+      <div class="chip" onclick="filterChip(this,'logistics')">Logistics</div>
+      <div class="chip" onclick="filterChip(this,'manufacturing')">Mfg</div>
+      <div class="chip" onclick="filterChip(this,'ready')">✅ Ready Only</div>
+    </div>
+    <div class="sidebar-header">
+      <div class="sidebar-count"><span id="list-count"><strong>18</strong> companies</span></div>
+      <div class="sidebar-sort"><select><option>Nearest first</option><option>A–Z</option><option>Ready first</option></select></div>
+    </div>
+    <div class="company-list" id="company-list">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- MAP -->
+  <div class="map-area" id="map-area">
+
+    <!-- Layer toggle -->
+    <div class="layer-toggle">
+      <div class="lt-title">Map Layers</div>
+      <label class="lt-item"><input type="checkbox" checked onchange="toggleLayer('companies')"><span class="lt-label">Companies</span></label>
+      <label class="lt-item"><input type="checkbox" checked onchange="toggleLayer('projects')"><span class="lt-label">Active Projects</span></label>
+      <label class="lt-item"><input type="checkbox" onchange="toggleLayer('edu')"><span class="lt-label">Schools</span></label>
+      <label class="lt-item"><input type="checkbox" onchange="toggleLayer('border')"><span class="lt-label">Border Crossings</span></label>
+    </div>
+
+    <!-- Stats overlay -->
+    <div class="map-stats">
+      <div class="map-stat-pill"><div class="pill-dot" style="background:var(--green)"></div>214 Ready</div>
+      <div class="map-stat-pill"><div class="pill-dot" style="background:var(--rust)"></div>126 Not Ready</div>
+      <div class="map-stat-pill"><div class="pill-dot" style="background:var(--gold)"></div>58 Projects</div>
+    </div>
+
+    <!-- Controls -->
+    <div class="map-controls">
+      <div class="map-ctrl-btn" title="Zoom In" onclick="zoomMap(1.2)">+</div>
+      <div class="map-ctrl-btn" title="Zoom Out" onclick="zoomMap(0.83)">−</div>
+      <div class="map-ctrl-btn" title="Reset View" onclick="resetZoom()">⊡</div>
+    </div>
+
+    <!-- SVG MAP -->
+    <div class="map-svg-container" id="svg-container">
+      <svg id="main-map" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <defs>
+          <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.2)"/>
+          </filter>
+          <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="1" fill="rgba(0,0,0,0.06)"/>
+          </pattern>
+        </defs>
+
+        <!-- OCEAN / GULF -->
+        <rect width="900" height="600" fill="#C8E8F0" opacity="0.4"/>
+
+        <!-- MEXICO LAND -->
+        <path d="M0,280 Q60,260 120,270 Q180,280 240,285 Q300,290 360,295 Q420,295 480,300 Q540,305 600,310 Q660,315 720,318 Q780,320 840,318 Q870,317 900,316 L900,600 L0,600 Z"
+          fill="#D4E8C8" stroke="#B8D4A8" stroke-width="1"/>
+        <text x="200" y="430" font-family="Fraunces,serif" font-size="18" font-weight="700" fill="rgba(60,80,40,0.4)" letter-spacing="3">MEXICO</text>
+        <text x="260" y="452" font-family="Instrument Sans,sans-serif" font-size="11" fill="rgba(60,80,40,0.3)" letter-spacing="1">TAMAULIPAS · NUEVO LEÓN · COAHUILA</text>
+
+        <!-- TEXAS LAND -->
+        <path d="M0,0 L900,0 L900,316 Q870,317 840,318 Q780,320 720,318 Q660,315 600,310 Q540,305 480,300 Q420,295 360,295 Q300,290 240,285 Q180,280 120,270 Q60,260 0,280 Z"
+          fill="#E8EFD8" stroke="#C8D8B8" stroke-width="1"/>
+        <text x="600" y="80" font-family="Fraunces,serif" font-size="20" font-weight="700" fill="rgba(80,80,60,0.3)" letter-spacing="2">TEXAS</text>
+
+        <!-- DOTTED OVERLAY -->
+        <rect width="900" height="600" fill="url(#dots)"/>
+
+        <!-- BORDER LINE -->
+        <path d="M0,280 Q60,260 120,270 Q180,280 240,285 Q300,290 360,295 Q420,295 480,300 Q540,305 600,310 Q660,315 720,318 Q780,320 840,318 Q870,317 900,316"
+          fill="none" stroke="rgba(180,100,40,0.5)" stroke-width="2.5" stroke-dasharray="8,4"/>
+        <text x="700" y="308" font-family="Instrument Sans,sans-serif" font-size="9" fill="rgba(180,100,40,0.7)" letter-spacing="1.5">US / MEXICO BORDER</text>
+
+        <!-- GULF OF MEXICO label -->
+        <text x="720" y="200" font-family="Fraunces,serif" font-size="15" font-style="italic" fill="rgba(40,100,140,0.35)" letter-spacing="1">Gulf of Mexico</text>
+
+        <!-- RIVERS (Rio Grande) -->
+        <path d="M0,280 Q60,260 120,270 Q180,280 240,285 Q300,290 360,295 Q420,295 480,300 Q540,305 600,310 Q660,315 720,318"
+          fill="none" stroke="#7ABCD0" stroke-width="3" opacity="0.6"/>
+        <text x="310" y="285" font-family="Instrument Sans,sans-serif" font-size="9" fill="#5A9CB0" transform="rotate(-4,310,285)">Río Bravo / Rio Grande</text>
+
+        <!-- ROADS -->
+        <line x1="200" y1="0" x2="200" y2="600" stroke="rgba(0,0,0,0.06)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="0" y1="200" x2="900" y2="200" stroke="rgba(0,0,0,0.06)" stroke-width="1.5" stroke-dasharray="4,4"/>
+        <line x1="0" y1="350" x2="900" y2="280" stroke="rgba(0,0,0,0.08)" stroke-width="2"/>
+        <text x="20" y="345" font-size="9" fill="rgba(0,0,0,0.3)" font-family="Instrument Sans,sans-serif">I-35</text>
+
+        <!-- CITY AREAS (soft glow) -->
+        <circle cx="200" cy="260" r="40" fill="rgba(184,67,30,0.06)" stroke="none"/>
+        <circle cx="430" cy="235" r="48" fill="rgba(26,107,114,0.06)" stroke="none"/>
+        <circle cx="600" cy="230" r="36" fill="rgba(176,125,26,0.06)" stroke="none"/>
+        <circle cx="720" cy="140" r="30" fill="rgba(42,107,67,0.06)" stroke="none"/>
+
+        <!-- COMPANY PINS (layer id=layer-companies) -->
+        <g id="layer-companies">
+
+          <!-- Laredo TX cluster -->
+          <g class="pin" data-id="1" onclick="selectCompany(1)" onmouseenter="showTooltip(event,'Falcon Industrial')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="200" cy="255" r="14" fill="#B8431E" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="200" y="260" text-anchor="middle" font-size="10" fill="white" font-weight="700">F</text>
+          </g>
+          <g class="pin" data-id="2" onclick="selectCompany(2)" onmouseenter="showTooltip(event,'Rio Pipe & Steel')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="215" cy="240" r="11" fill="#B8431E" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="215" y="244" text-anchor="middle" font-size="9" fill="white" font-weight="700">R</text>
+          </g>
+          <g class="pin" data-id="3" onclick="selectCompany(3)" onmouseenter="showTooltip(event,'Laredo Electrical')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="185" cy="248" r="11" fill="#1A6B72" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="185" y="252" text-anchor="middle" font-size="9" fill="white" font-weight="700">L</text>
+          </g>
+          <g class="pin" data-id="4" onclick="selectCompany(4)" onmouseenter="showTooltip(event,'Border City Logistics')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="195" cy="270" r="11" fill="#B07D1A" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="195" y="274" text-anchor="middle" font-size="9" fill="white" font-weight="700">B</text>
+          </g>
+
+          <!-- Nuevo Laredo MX -->
+          <g class="pin" data-id="5" onclick="selectCompany(5)" onmouseenter="showTooltip(event,'NorMex Industrial')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="208" cy="290" r="12" fill="#2A6B43" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="208" y="294" text-anchor="middle" font-size="9" fill="white" font-weight="700">N</text>
+          </g>
+
+          <!-- McAllen / RGV cluster -->
+          <g class="pin" data-id="6" onclick="selectCompany(6)" onmouseenter="showTooltip(event,'Valley Civil')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="430" cy="230" r="14" fill="#B8431E" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="430" y="235" text-anchor="middle" font-size="10" fill="white" font-weight="700">V</text>
+          </g>
+          <g class="pin" data-id="7" onclick="selectCompany(7)" onmouseenter="showTooltip(event,'RGV Mechanical')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="448" cy="218" r="11" fill="#1A6B72" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="448" y="222" text-anchor="middle" font-size="9" fill="white" font-weight="700">R</text>
+          </g>
+          <g class="pin" data-id="8" onclick="selectCompany(8)" onmouseenter="showTooltip(event,'South Texas Crane')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="415" cy="245" r="11" fill="#B8431E" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="415" y="249" text-anchor="middle" font-size="9" fill="white" font-weight="700">S</text>
+          </g>
+
+          <!-- Brownsville / Port -->
+          <g class="pin" data-id="9" onclick="selectCompany(9)" onmouseenter="showTooltip(event,'Gulf Coast Marine')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="600" cy="228" r="14" fill="#1A6B72" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="600" y="233" text-anchor="middle" font-size="10" fill="white" font-weight="700">G</text>
+          </g>
+          <g class="pin" data-id="10" onclick="selectCompany(10)" onmouseenter="showTooltip(event,'Sendero Electric')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="618" cy="215" r="11" fill="#B8431E" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="618" y="219" text-anchor="middle" font-size="9" fill="white" font-weight="700">S</text>
+          </g>
+
+          <!-- Matamoros MX -->
+          <g class="pin" data-id="11" onclick="selectCompany(11)" onmouseenter="showTooltip(event,'Border Energy')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="610" cy="250" r="12" fill="#2A6B43" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="610" y="254" text-anchor="middle" font-size="9" fill="white" font-weight="700">B</text>
+          </g>
+
+          <!-- Corpus Christi -->
+          <g class="pin" data-id="12" onclick="selectCompany(12)" onmouseenter="showTooltip(event,'Coastal Fabricators')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="720" cy="138" r="13" fill="#B8431E" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="720" y="143" text-anchor="middle" font-size="10" fill="white" font-weight="700">C</text>
+          </g>
+
+          <!-- Monterrey MX -->
+          <g class="pin" data-id="13" onclick="selectCompany(13)" onmouseenter="showTooltip(event,'NorMex Mfg')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="320" cy="420" r="14" fill="#2A6B43" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="320" y="425" text-anchor="middle" font-size="10" fill="white" font-weight="700">M</text>
+          </g>
+          <g class="pin" data-id="14" onclick="selectCompany(14)" onmouseenter="showTooltip(event,'Monterrey Logistics')" onmouseleave="hideTooltip()">
+            <circle class="pin-circle" cx="338" cy="408" r="11" fill="#B07D1A" stroke="white" stroke-width="1.5" filter="url(#shadow)"/>
+            <text x="338" y="412" text-anchor="middle" font-size="9" fill="white" font-weight="700">M</text>
+          </g>
+
+        </g>
+
+        <!-- PROJECT PINS (layer id=layer-projects) -->
+        <g id="layer-projects">
+          <!-- LNG Project - Brownsville port -->
+          <g onclick="selectProject('lng')" style="cursor:pointer" onmouseenter="showTooltip(event,'$420M LNG Terminal')" onmouseleave="hideTooltip()">
+            <rect x="575" y="200" width="20" height="20" rx="4" fill="#B07D1A" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="585" y="214" text-anchor="middle" font-size="11" fill="white" font-weight="700">⚡</text>
+          </g>
+          <!-- Data Center - Starr County -->
+          <g onclick="selectProject('dc')" style="cursor:pointer" onmouseenter="showTooltip(event,'$280M Data Campus')" onmouseleave="hideTooltip()">
+            <rect x="360" y="215" width="20" height="20" rx="4" fill="#B07D1A" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="370" y="229" text-anchor="middle" font-size="11" fill="white" font-weight="700">💻</text>
+          </g>
+          <!-- Gov contract - Laredo -->
+          <g onclick="selectProject('gov')" style="cursor:pointer" onmouseenter="showTooltip(event,'$18M Gov Contract')" onmouseleave="hideTooltip()">
+            <rect x="176" y="225" width="20" height="20" rx="4" fill="#B07D1A" stroke="white" stroke-width="2" filter="url(#shadow)"/>
+            <text x="186" y="239" text-anchor="middle" font-size="11" fill="white" font-weight="700">🏛️</text>
+          </g>
+        </g>
+
+        <!-- CITY LABELS -->
+        <g id="city-labels" font-family="Instrument Sans,sans-serif">
+          <text x="200" y="220" text-anchor="middle" font-size="12" font-weight="700" fill="rgba(15,15,14,0.7)">Laredo</text>
+          <text x="200" y="233" text-anchor="middle" font-size="9" fill="rgba(15,15,14,0.4)">Webb Co.</text>
+          <text x="207" y="315" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(40,80,40,0.7)">Nuevo Laredo</text>
+
+          <text x="430" y="198" text-anchor="middle" font-size="12" font-weight="700" fill="rgba(15,15,14,0.7)">McAllen / RGV</text>
+          <text x="430" y="211" text-anchor="middle" font-size="9" fill="rgba(15,15,14,0.4)">Hidalgo Co.</text>
+
+          <text x="600" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="rgba(15,15,14,0.7)">Brownsville</text>
+          <text x="600" y="209" text-anchor="middle" font-size="9" fill="rgba(15,15,14,0.4)">Cameron Co.</text>
+
+          <text x="720" y="110" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(15,15,14,0.6)">Corpus Christi</text>
+
+          <text x="320" y="398" text-anchor="middle" font-size="11" font-weight="700" fill="rgba(40,80,40,0.7)">Monterrey</text>
+          <text x="320" y="410" text-anchor="middle" font-size="9" fill="rgba(40,80,40,0.4)">Nuevo León</text>
+
+          <text x="610" y="275" text-anchor="middle" font-size="10" font-weight="700" fill="rgba(40,80,40,0.6)">Matamoros</text>
+
+          <!-- Port indicator -->
+          <path d="M640,220 L660,195 L670,195" stroke="#1A6B72" stroke-width="1" fill="none" stroke-dasharray="3,2"/>
+          <text x="672" y="193" font-size="9" fill="#1A6B72" font-weight="600">Port of Brownsville</text>
+        </g>
+
+        <!-- SCALE BAR -->
+        <g transform="translate(720,550)">
+          <line x1="0" y1="0" x2="80" y2="0" stroke="rgba(0,0,0,0.4)" stroke-width="1.5"/>
+          <line x1="0" y1="-4" x2="0" y2="4" stroke="rgba(0,0,0,0.4)" stroke-width="1.5"/>
+          <line x1="80" y1="-4" x2="80" y2="4" stroke="rgba(0,0,0,0.4)" stroke-width="1.5"/>
+          <text x="40" y="-8" text-anchor="middle" font-size="9" fill="rgba(0,0,0,0.4)" font-family="Instrument Sans,sans-serif">≈ 100 miles</text>
+        </g>
+
+      </svg>
+    </div>
+
+    <!-- TOOLTIP -->
+    <div class="map-tooltip" id="map-tooltip"></div>
+
+    <!-- LEGEND -->
+    <div class="map-legend">
+      <div class="legend-title">Legend</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--rust)"></div>Construction</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Energy / Marine</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Mexico-based</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div>Logistics / Mfg</div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);">
+        <div class="legend-item"><div style="width:14px;height:14px;background:var(--gold);border-radius:3px;flex-shrink:0"></div>Active Project</div>
+      </div>
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="dp-header">
+        <div>
+          <div class="dp-name" id="dp-name">Company Name</div>
+          <div class="dp-loc" id="dp-loc">📍 Location</div>
+        </div>
+        <div class="dp-close" onclick="closeDetail()">✕</div>
+      </div>
+      <div class="dp-body" id="dp-body"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// COMPANY DATA
+const companies = [
+  { id:1, name:"Falcon Industrial Services", loc:"Laredo, TX", sector:"Construction", ready:true, services:["Structural Welding","Pipeline Support","Steel Fab"], certs:["HUBZone","SAM"], employees:"21–75", capacity:"$100K–$5M", pin:"F" },
+  { id:2, name:"Rio Pipe & Steel", loc:"Laredo, TX", sector:"Construction", ready:true, services:["Pipefitting","Ironwork","Fabrication"], certs:["SAM"], employees:"6–20", capacity:"Up to $1M", pin:"R" },
+  { id:3, name:"Laredo Electrical LLC", loc:"Laredo, TX", sector:"Energy", ready:true, services:["Commercial Electrical","Substation","High-Voltage"], certs:["SAM","OSHA 30"], employees:"16–50", capacity:"$100K–$5M", pin:"L" },
+  { id:4, name:"Border City Logistics", loc:"Laredo, TX", sector:"Logistics", ready:false, services:["Cross-Border Freight","Customs Brokerage"], certs:["C-TPAT"], employees:"16–50", capacity:"Up to $5M", pin:"B" },
+  { id:5, name:"NorMex Industrial SA", loc:"Nuevo Laredo, Tamps", sector:"Construction", ready:true, services:["Concrete","Civil Works","Site Prep"], certs:["IMSS Compliant"], employees:"51–200", capacity:"$500K–$10M", pin:"N" },
+  { id:6, name:"Valley Civil Contractors", loc:"McAllen, TX", sector:"Construction", ready:true, services:["Site Prep","Grading","Underground Utilities"], certs:["HUBZone","SAM"], employees:"21–75", capacity:"$50K–$2M", pin:"V" },
+  { id:7, name:"RGV Mechanical LLC", loc:"McAllen, TX", sector:"Energy", ready:true, services:["Mechanical Contracting","HVAC","Piping"], certs:["SAM"], employees:"16–50", capacity:"Up to $3M", pin:"R" },
+  { id:8, name:"South Texas Crane & Rigging", loc:"Mission, TX", sector:"Construction", ready:false, services:["Crane Services","Rigging","Heavy Lift"], certs:[], employees:"6–20", capacity:"Up to $500K", pin:"S" },
+  { id:9, name:"Gulf Coast Marine Const.", loc:"Brownsville, TX", sector:"Energy", ready:true, services:["Marine Construction","Offshore Support","LNG"], certs:["SAM","HUBZone"], employees:"51–200", capacity:"$1M–$20M", pin:"G" },
+  { id:10, name:"Sendero Electric", loc:"Brownsville, TX", sector:"Energy", ready:true, services:["Commercial Electrical","Industrial Wiring"], certs:["SAM"], employees:"16–50", capacity:"Up to $5M", pin:"S" },
+  { id:11, name:"Border Energy Solutions", loc:"Matamoros, Tamps", sector:"Energy", ready:true, services:["LNG Support","Mechanical","Inspection"], certs:["ISO 9001"], employees:"21–75", capacity:"$500K–$5M", pin:"B" },
+  { id:12, name:"Coastal Fabricators Inc.", loc:"Corpus Christi, TX", sector:"Construction", ready:true, services:["Steel Fabrication","Industrial","Offshore"], certs:["SAM","NCCER"], employees:"51–200", capacity:"$500K–$20M", pin:"C" },
+  { id:13, name:"NorMex Manufacturing Co.", loc:"Monterrey, NL", sector:"Manufacturing", ready:true, services:["CNC Machining","Metal Fab","OEM Parts"], certs:["IMMEX","ISO 9001"], employees:"201–500", capacity:"$1M–$50M", pin:"M" },
+  { id:14, name:"Monterrey Logistics Group", loc:"Monterrey, NL", sector:"Logistics", ready:false, services:["Rail Freight","Cross-Border","Distribution"], certs:["C-TPAT"], employees:"51–200", capacity:"Up to $10M", pin:"M" },
+];
+
+let currentFilter = 'all';
+let selectedId = null;
+
+function renderList(list) {
+  const el = document.getElementById('company-list');
+  el.innerHTML = list.map(c => `
+    <div class="company-item ${c.id === selectedId ? 'selected':''}" data-id="${c.id}" onclick="selectCompany(${c.id})">
+      <div class="ci-avatar" style="background:${sectorColor(c.sector,true)};color:${sectorColor(c.sector,false)}">${c.pin}</div>
+      <div class="ci-body">
+        <div class="ci-top">
+          <div class="ci-name">${c.name}</div>
+          <div class="ci-ready ${c.ready?'ready-y':'ready-n'}"></div>
+        </div>
+        <div class="ci-loc">📍 ${c.loc}</div>
+        <div class="ci-tags">
+          <span class="ci-tag">${c.sector}</span>
+          ${c.certs.slice(0,2).map(cert=>`<span class="ci-tag">${cert}</span>`).join('')}
+        </div>
+      </div>
+    </div>`).join('');
+  document.getElementById('list-count').innerHTML = `<strong>${list.length}</strong> companies`;
+}
+
+function sectorColor(sector, bg) {
+  const map = {
+    Construction: ['#F2E8E3','#B8431E'],
+    Energy: ['#E3F0F1','#1A6B72'],
+    Logistics: ['#FBF4E3','#B07D1A'],
+    Manufacturing: ['#E4F0EA','#2A6B43'],
+    Technology: ['#E8E8F4','#4A4A8A'],
+  };
+  const pair = map[sector] || ['#F4F4F4','#666'];
+  return bg ? pair[0] : pair[1];
+}
+
+function filterChip(el, key) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = key;
+  applyFilter();
+}
+
+function applyFilter() {
+  let list = companies;
+  if (currentFilter === 'ready') list = list.filter(c => c.ready);
+  else if (currentFilter !== 'all') list = list.filter(c => c.sector.toLowerCase().includes(currentFilter));
+  renderList(list);
+}
+
+function filterList(q) {
+  q = q.toLowerCase();
+  const list = companies.filter(c =>
+    c.name.toLowerCase().includes(q) ||
+    c.loc.toLowerCase().includes(q) ||
+    c.sector.toLowerCase().includes(q) ||
+    c.services.some(s => s.toLowerCase().includes(q))
+  );
+  renderList(list);
+}
+
+function selectCompany(id) {
+  selectedId = id;
+  const c = companies.find(x => x.id === id);
+  if (!c) return;
+
+  // highlight pin
+  document.querySelectorAll('.pin').forEach(p => p.classList.remove('selected'));
+  const pin = document.querySelector(`.pin[data-id="${id}"]`);
+  if (pin) pin.classList.add('selected');
+
+  // highlight list item
+  document.querySelectorAll('.company-item').forEach(i => i.classList.remove('selected'));
+  const item = document.querySelector(`.company-item[data-id="${id}"]`);
+  if (item) { item.classList.add('selected'); item.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
+
+  // detail panel
+  document.getElementById('dp-name').textContent = c.name;
+  document.getElementById('dp-loc').textContent = '📍 ' + c.loc;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="dp-section">
+      <div class="dp-section-title">Status</div>
+      <div class="dp-row"><span class="dp-key">Ready to Work</span><span class="dp-val" style="color:${c.ready?'var(--green)':'var(--ink-3)'}">${c.ready ? '✅ Yes — Active' : '⬜ Not flagged'}</span></div>
+      <div class="dp-row"><span class="dp-key">Sector</span><span class="dp-val">${c.sector}</span></div>
+      <div class="dp-row"><span class="dp-key">Employees</span><span class="dp-val">${c.employees}</span></div>
+      <div class="dp-row"><span class="dp-key">Project Capacity</span><span class="dp-val">${c.capacity}</span></div>
+    </div>
+    <div class="dp-section">
+      <div class="dp-section-title">Services</div>
+      <div class="dp-tags">${c.services.map(s=>`<span class="dp-tag">${s}</span>`).join('')}</div>
+    </div>
+    ${c.certs.length ? `<div class="dp-section">
+      <div class="dp-section-title">Certifications</div>
+      <div class="dp-tags">${c.certs.map(s=>`<span class="dp-tag" style="background:var(--green-light);color:var(--green);border-color:rgba(42,107,67,0.2)">✓ ${s}</span>`).join('')}</div>
+    </div>` : ''}
+    <div class="dp-btns">
+      <button class="dp-btn dp-btn-primary">📧 Contact This Company</button>
+      <button class="dp-btn dp-btn-ghost">View Full Profile →</button>
+    </div>
+  `;
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function selectProject(id) {
+  const projects = {
+    lng: { name:'Port of Brownsville LNG Terminal', loc:'Brownsville, TX', value:'$420M', deadline:'May 15, 2025', matches: 22 },
+    dc: { name:'Starr County Data Campus', loc:'Rio Grande City, TX', value:'$280M', deadline:'Apr 28, 2025', matches: 14 },
+    gov: { name:'Webb County Road Maintenance', loc:'Laredo, TX', value:'$18M/yr', deadline:'Jun 1, 2025', matches: 31 },
+  };
+  const p = projects[id];
+  if (!p) return;
+  document.getElementById('dp-name').textContent = p.name;
+  document.getElementById('dp-loc').textContent = '📍 ' + p.loc;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="dp-section">
+      <div class="dp-section-title">Project Details</div>
+      <div class="dp-row"><span class="dp-key">Total Value</span><span class="dp-val" style="color:var(--green)">${p.value}</span></div>
+      <div class="dp-row"><span class="dp-key">Application Deadline</span><span class="dp-val">${p.deadline}</span></div>
+      <div class="dp-row"><span class="dp-key">Matched Companies</span><span class="dp-val" style="color:var(--teal)">${p.matches} local matches</span></div>
+    </div>
+    <div class="dp-btns">
+      <button class="dp-btn dp-btn-primary">View Full Opportunity →</button>
+      <button class="dp-btn dp-btn-ghost" onclick="closeDetail()">Close</button>
+    </div>`;
+  document.getElementById('detail-panel').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').classList.remove('open');
+  document.querySelectorAll('.pin').forEach(p => p.classList.remove('selected'));
+  document.querySelectorAll('.company-item').forEach(i => i.classList.remove('selected'));
+  selectedId = null;
+}
+
+// TOOLTIP
+function showTooltip(e, text) {
+  const tt = document.getElementById('map-tooltip');
+  tt.textContent = text;
+  tt.classList.add('show');
+  const rect = document.getElementById('svg-container').getBoundingClientRect();
+  tt.style.left = (e.clientX - rect.left) + 'px';
+  tt.style.top = (e.clientY - rect.top) + 'px';
+}
+function hideTooltip() {
+  document.getElementById('map-tooltip').classList.remove('show');
+}
+
+// LAYER TOGGLE
+function toggleLayer(id) {
+  const el = document.getElementById('layer-' + id);
+  if (el) el.style.display = el.style.display === 'none' ? '' : 'none';
+}
+
+// ZOOM
+let zoomLevel = 1;
+let panX = 0, panY = 0;
+function zoomMap(factor) {
+  zoomLevel = Math.min(Math.max(zoomLevel * factor, 0.6), 3);
+  applyTransform();
+}
+function resetZoom() { zoomLevel=1; panX=0; panY=0; applyTransform(); }
+function applyTransform() {
+  document.getElementById('main-map').style.transform = `scale(${zoomLevel}) translate(${panX}px,${panY}px)`;
+  document.getElementById('main-map').style.transformOrigin = 'center center';
+}
+
+// INIT
+renderList(companies);
+</script>
+</body>
+</html>
