@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About RioData — South Texas & Northern Mexico</title>
+<meta name="description" content="RioData is a free public platform connecting businesses, workforce data, and project opportunities across South Texas and Northern Mexico.">
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,800;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0F0F0E;--ink2:#2A2A27;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--rust2:#D4582E;--rustl:#F2E8E3;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--goldl:#FBF4E3;--green:#2A6B43;--greenl:#E4F0EA;--r:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--white);color:var(--ink);}
+nav{position:sticky;top:0;z-index:200;background:rgba(253,252,251,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;padding:0 56px;}
+.brand{font-family:'Fraunces',serif;font-size:21px;font-weight:700;color:var(--ink);cursor:pointer;margin-right:auto;display:flex;align-items:center;gap:7px;letter-spacing:-.3px;text-decoration:none;}
+.brand-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+.nav-links{display:flex;align-items:center;gap:4px;}
+.nav-link{padding:7px 14px;font-size:13px;font-weight:500;color:var(--ink3);cursor:pointer;text-decoration:none;border-radius:6px;transition:all .12s;}
+.nav-link:hover{color:var(--ink);background:var(--parch);}
+.nav-link.active{color:var(--teal);font-weight:600;}
+.btn-nav{padding:8px 18px;border-radius:6px;border:none;background:var(--teal);color:white;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-left:16px;text-decoration:none;display:inline-block;}
+/* HERO */
+.hero{background:var(--ink);padding:96px 56px 80px;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025)1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025)1px,transparent 1px);background-size:40px 40px;}
+.hero-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,114,.18),transparent 70%);top:-100px;right:-100px;}
+.hero-inner{position:relative;z-index:2;max-width:720px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,120,80,.8);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:currentColor;}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(40px,5vw,68px);font-weight:700;letter-spacing:-2px;line-height:1.04;color:white;margin-bottom:20px;}
+.hero h1 em{font-style:italic;font-weight:300;color:rgba(232,120,80,.9);}
+.hero-desc{font-size:17px;color:rgba(255,255,255,.55);line-height:1.75;max-width:580px;margin-bottom:32px;}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-white{padding:12px 24px;border-radius:7px;background:white;color:var(--ink);border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;}
+.btn-ghost{padding:12px 24px;border-radius:7px;background:transparent;color:rgba(255,255,255,.7);border:1.5px solid rgba(255,255,255,.2);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;}
+.btn-ghost:hover{border-color:rgba(255,255,255,.5);color:white;}
+/* SECTIONS */
+.section{padding:80px 56px;}
+.section-parch{background:var(--parch);}
+.section-dark{background:var(--ink);}
+.section-white{background:var(--white);}
+.section-rust{background:var(--rust);}
+.max{max-width:900px;margin:0 auto;}
+.max-wide{max-width:1100px;margin:0 auto;}
+h2{font-family:'Fraunces',serif;font-size:clamp(28px,3.5vw,46px);font-weight:700;letter-spacing:-1.2px;line-height:1.07;margin-bottom:14px;}
+.section-dark h2{color:white;}
+.section-rust h2{color:white;}
+.lead{font-size:16px;color:var(--ink3);line-height:1.75;max-width:620px;}
+.section-dark .lead{color:rgba(255,255,255,.48);}
+.section-rust .lead{color:rgba(255,255,255,.75);}
+/* MISSION STATEMENT */
+.mission-statement{font-family:'Fraunces',serif;font-size:clamp(22px,3vw,36px);font-weight:700;line-height:1.25;letter-spacing:-.5px;color:var(--ink);border-left:4px solid var(--teal);padding-left:28px;margin:40px 0;}
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-top:48px;}
+.stat-box{background:var(--white);padding:28px 24px;}
+.stat-big{font-family:'Fraunces',serif;font-size:40px;font-weight:700;letter-spacing:-2px;line-height:1;margin-bottom:6px;color:var(--ink);}
+.stat-title{font-size:13px;font-weight:600;margin-bottom:4px;}
+.stat-text{font-size:12px;color:var(--ink3);line-height:1.5;}
+/* TEAM / VALUES */
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.value-card{padding:28px 24px;border:1.5px solid var(--border);border-radius:10px;}
+.value-icon{font-size:28px;margin-bottom:14px;}
+.value-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+.value-text{font-size:13.5px;color:var(--ink3);line-height:1.65;}
+/* STORY */
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;margin-top:48px;}
+.story-text p{font-size:15px;color:var(--ink3);line-height:1.8;margin-bottom:16px;}
+.story-text p:last-child{margin-bottom:0;}
+.story-pull{font-family:'Fraunces',serif;font-size:22px;font-weight:700;letter-spacing:-.3px;line-height:1.3;color:var(--teal);margin-bottom:20px;}
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-item{display:flex;gap:20px;padding-bottom:28px;position:relative;}
+.tl-item:last-child{padding-bottom:0;}
+.tl-item::before{content:'';position:absolute;left:14px;top:28px;bottom:0;width:1.5px;background:var(--border);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--teal);background:var(--white);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:var(--teal);z-index:1;}
+.tl-content{padding-top:4px;}
+.tl-date{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:4px;}
+.tl-title{font-size:14px;font-weight:600;margin-bottom:3px;}
+.tl-text{font-size:12.5px;color:var(--ink3);line-height:1.55;}
+/* REGION */
+.region-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;}
+.region-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:10px;padding:22px 20px;}
+.region-flag{font-size:22px;margin-bottom:10px;}
+.region-name{font-size:15px;font-weight:700;color:white;margin-bottom:5px;}
+.region-desc{font-size:12.5px;color:rgba(255,255,255,.45);line-height:1.6;}
+.region-stats{margin-top:12px;display:flex;gap:14px;}
+.rs{font-size:11px;color:rgba(255,255,255,.35);}
+.rs strong{color:rgba(255,255,255,.7);display:block;font-size:14px;font-family:'Fraunces',serif;}
+/* CTA */
+.cta-box{background:var(--teal);border-radius:12px;padding:48px;text-align:center;margin-top:48px;}
+.cta-box h3{font-family:'Fraunces',serif;font-size:30px;font-weight:700;letter-spacing:-.5px;color:white;margin-bottom:10px;}
+.cta-box p{font-size:15px;color:rgba(255,255,255,.65);margin-bottom:24px;}
+.cta-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+/* FOOTER */
+footer{background:var(--ink);padding:48px 56px 28px;}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:22px;}
+.ft-brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:white;margin-bottom:8px;}
+.ft-desc{font-size:12.5px;color:rgba(255,255,255,.35);line-height:1.7;max-width:240px;}
+.ft-col-title{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:12px;}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.ft-links a{font-size:13px;color:rgba(255,255,255,.42);text-decoration:none;cursor:pointer;}
+.ft-links a:hover{color:white;}
+.ft-bottom{display:flex;justify-content:space-between;align-items:center;}
+.ft-copy{font-size:11.5px;color:rgba(255,255,255,.2);}
+@media(max-width:900px){.story-grid,.values-grid,.region-grid{grid-template-columns:1fr;}.stats-row{grid-template-columns:1fr 1fr;}.ft-grid{grid-template-columns:1fr 1fr;}.section{padding:56px 24px;}.hero{padding:64px 24px 56px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/"><span class="brand-dot"></span>RioData</a>
+  <div class="nav-links">
+    <a class="nav-link" href="/">Platform</a>
+    <a class="nav-link active" href="/about.html">About</a>
+    <a class="nav-link" href="/pitch.html">For Institutions</a>
+  </div>
+  <a class="btn-nav" href="/onboarding.html">Register Your Business →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-inner">
+    <div class="eyebrow">Our Mission</div>
+    <h1>This region deserves<em>better infrastructure.</em></h1>
+    <p class="hero-desc">South Texas and Northern Mexico move more trade than any land border on earth. We have the workforce, the geography, and the drive. What we've been missing is a shared platform to connect it all.</p>
+    <div class="hero-btns">
+      <a class="btn-white" href="/onboarding.html">List Your Business Free</a>
+      <a class="btn-ghost" href="/pitch.html">For Institutions →</a>
+    </div>
+  </div>
+</div>
+
+<!-- MISSION -->
+<div class="section section-white">
+  <div class="max">
+    <div class="eyebrow" style="color:var(--rust)">What We Believe</div>
+    <h2>The border isn't a barrier.<br>It's our biggest advantage.</h2>
+    <div class="mission-statement">"RioData exists to give South Texas and Northern Mexico the same data infrastructure that every major American metro takes for granted."</div>
+    <p class="lead">Every business in this region deserves to be discoverable. Every project deserves to find the local company that can execute it. Every student deserves to see the career pathways that exist right here — without leaving home.</p>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-big">$370B</div><div class="stat-title">Annual Cross-Border Trade</div><div class="stat-text">More than any other U.S. land border. This region is already a global node.</div></div>
+      <div class="stat-box"><div class="stat-big">2.1M</div><div class="stat-title">Regional Population</div><div class="stat-text">One of the fastest-growing metros in the country — and still underserved.</div></div>
+      <div class="stat-box"><div class="stat-big">94%</div><div class="stat-title">Bilingual Workforce</div><div class="stat-text">A genuinely unique competitive advantage for cross-border business.</div></div>
+      <div class="stat-box"><div class="stat-big">$9.3B</div><div class="stat-title">Active Project Pipeline</div><div class="stat-text">LNG, data centers, manufacturing — all looking for local companies right now.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- STORY -->
+<div class="section section-parch">
+  <div class="max">
+    <div class="eyebrow" style="color:var(--rust)">The Story</div>
+    <h2>Why we built this.</h2>
+    <div class="story-grid">
+      <div class="story-text">
+        <div class="story-pull">The Laredo–Brownsville corridor handles more trade than most countries — but nobody knew who the local contractors were.</div>
+        <p>When billion-dollar energy and infrastructure projects started arriving in South Texas, the developers had one problem: they couldn't find qualified local businesses fast enough. The region had the workforce and the companies — there was just no way to connect them.</p>
+        <p>At the same time, local businesses had no platform to showcase their certifications, capacity, and readiness. A HUBZone-certified welder in Laredo had the same visibility as someone with no certifications — essentially none.</p>
+        <p>RioData was built to fix that. A free, verified directory of regional businesses. A live project opportunity board. A workforce intelligence layer. All of it free, forever — because this is infrastructure, not a product.</p>
+        <p>The goal is simple: make South Texas and Northern Mexico as legible to investors, developers, and institutions as any other major American metro.</p>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot">1</div>
+          <div class="tl-content">
+            <div class="tl-date">The Problem</div>
+            <div class="tl-title">$180B in projects, no local directory</div>
+            <div class="tl-text">LNG terminals, data centers, and industrial projects couldn't find verified local subcontractors. Local companies had no platform to be found.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">2</div>
+          <div class="tl-content">
+            <div class="tl-date">The Gap</div>
+            <div class="tl-title">No regional data infrastructure</div>
+            <div class="tl-text">No single source for workforce data, business certifications, project pipelines, and economic intelligence across the Laredo–Brownsville corridor.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">3</div>
+          <div class="tl-content">
+            <div class="tl-date">The Solution</div>
+            <div class="tl-title">RioData — free public platform</div>
+            <div class="tl-text">A verified business directory, live project board, workforce intelligence, and economic analytics — all free, all built for this specific region.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot">4</div>
+          <div class="tl-content">
+            <div class="tl-date">The Vision</div>
+            <div class="tl-title">The data layer for a growing metro</div>
+            <div class="tl-text">Licensed to universities, EDCs, banks, and institutions — funding the platform's growth while staying free for every business in the region.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUES -->
+<div class="section section-white">
+  <div class="max">
+    <div class="eyebrow" style="color:var(--rust)">Our Principles</div>
+    <h2>How we operate.</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <div class="value-icon">🆓</div>
+        <div class="value-title">Free Forever for Businesses</div>
+        <div class="value-text">No fees, no subscriptions, no paywalls for the businesses and workers this platform is built to serve. Revenue comes from institutional data licensing — never from the region's small businesses.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">✅</div>
+        <div class="value-title">Verified, Not Scraped</div>
+        <div class="value-text">Every company is submitted directly and reviewed before going live. We'd rather have 50 verified businesses than 5,000 unverified listings. Quality over quantity, always.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🌎</div>
+        <div class="value-title">Both Sides of the Border</div>
+        <div class="value-text">This region doesn't stop at the Rio Grande. Our coverage spans South Texas and Northern Mexico — Laredo to Brownsville, Nuevo Laredo to Monterrey to Matamoros.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">📊</div>
+        <div class="value-title">Data as Public Infrastructure</div>
+        <div class="value-text">Economic data shouldn't be locked behind expensive subscriptions. Regional intelligence should be available to every business, researcher, and institution that needs it.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <div class="value-title">Built With the Region</div>
+        <div class="value-text">This platform is built by people from this region, for this region. We're not a Silicon Valley company that discovered the border — we're from here.</div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🚀</div>
+        <div class="value-title">Infrastructure, Not a Product</div>
+        <div class="value-text">RioData is designed to be acquired by or licensed to the institutions — universities, EDCs, banks — that serve this region long-term. We're building the foundation, not a startup.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REGION COVERAGE -->
+<div class="section section-dark">
+  <div class="max-wide">
+    <div class="eyebrow">Coverage Area</div>
+    <h2>Where we operate.</h2>
+    <p class="lead">The full Laredo–Brownsville corridor plus Northern Mexico — the complete economic region, not just one city.</p>
+    <div class="region-grid">
+      <div class="region-card">
+        <div class="region-flag">🇺🇸</div>
+        <div class="region-name">Laredo / Webb County</div>
+        <div class="region-desc">The #1 U.S. land port of entry. Industrial hub, cross-border logistics, energy sector gateway.</div>
+        <div class="region-stats"><div class="rs"><strong>$370B</strong>Annual trade</div><div class="rs"><strong>260K</strong>Population</div></div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇺🇸</div>
+        <div class="region-name">McAllen / Rio Grande Valley</div>
+        <div class="region-desc">Fastest-growing metro in Texas. Healthcare, retail, manufacturing, and a massive young workforce.</div>
+        <div class="region-stats"><div class="rs"><strong>1.4M</strong>Population</div><div class="rs"><strong>33K</strong>STC students</div></div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇺🇸</div>
+        <div class="region-name">Brownsville / Cameron County</div>
+        <div class="region-desc">SpaceX, LNG terminals, Port of Brownsville. The region's fastest-growing industrial zone.</div>
+        <div class="region-stats"><div class="rs"><strong>$420M</strong>LNG Phase 3</div><div class="rs"><strong>185K</strong>Population</div></div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇲🇽</div>
+        <div class="region-name">Nuevo Laredo, Tamaulipas</div>
+        <div class="region-desc">Twin city to Laredo. The Mexican side of the largest land port. Manufacturing and logistics hub.</div>
+        <div class="region-stats"><div class="rs"><strong>450K</strong>Population</div><div class="rs"><strong>400+</strong>Maquiladoras</div></div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇲🇽</div>
+        <div class="region-name">Monterrey, Nuevo León</div>
+        <div class="region-desc">Mexico's industrial capital. Engineering talent, advanced manufacturing, major Fortune 500 operations.</div>
+        <div class="region-stats"><div class="rs"><strong>5.3M</strong>Metro area</div><div class="rs"><strong>180K</strong>UANL students</div></div>
+      </div>
+      <div class="region-card">
+        <div class="region-flag">🇲🇽</div>
+        <div class="region-name">Matamoros / Reynosa</div>
+        <div class="region-desc">Twin cities to Brownsville and McAllen. Major maquiladora centers, automotive supply chain.</div>
+        <div class="region-stats"><div class="rs"><strong>1.2M</strong>Combined pop.</div><div class="rs"><strong>600+</strong>Maquiladoras</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="section section-white">
+  <div class="max">
+    <div class="cta-box">
+      <h3>Ready to be part of it?</h3>
+      <p>List your business free. Browse opportunities. See the regional data. No fees, no catch.</p>
+      <div class="cta-btns">
+        <a href="/onboarding.html" style="padding:13px 28px;border-radius:7px;background:white;color:var(--teal);font-family:inherit;font-size:14.5px;font-weight:700;text-decoration:none;cursor:pointer;">Register Your Business Free →</a>
+        <a href="/pitch.html" style="padding:13px 28px;border-radius:7px;background:rgba(255,255,255,.15);color:white;border:1.5px solid rgba(255,255,255,.3);font-family:inherit;font-size:14.5px;font-weight:500;text-decoration:none;cursor:pointer;">For Institutions & EDCs</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-grid">
+    <div>
+      <div class="ft-brand">RioData</div>
+      <div class="ft-desc">A free public platform for South Texas and Northern Mexico. Built for the region's future. Free forever.</div>
+    </div>
+    <div>
+      <div class="ft-col-title">Platform</div>
+      <ul class="ft-links"><li><a href="/">Home</a></li><li><a href="/about.html">About</a></li><li><a href="/pitch.html">For Institutions</a></li><li><a href="/onboarding.html">Register Business</a></li></ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Region</div>
+      <ul class="ft-links"><li><a>Laredo, TX</a></li><li><a>McAllen / RGV</a></li><li><a>Brownsville</a></li><li><a>Monterrey, NL</a></li></ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Contact</div>
+      <ul class="ft-links"><li><a href="mailto:hello@riodata.org">hello@riodata.org</a></li><li><a href="/pitch.html">Partnership Inquiries</a></li><li><a href="/admin.html">Admin</a></li></ul>
+    </div>
+  </div>
+  <div class="ft-bottom"><div class="ft-copy">© 2025 RioData · riodata.org · Free Public Resource</div></div>
+</footer>
+</body>
+</html>

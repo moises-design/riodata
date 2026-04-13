@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData for Institutions — Data Licensing & Partnership</title>
+<meta name="description" content="License or acquire the most comprehensive economic dataset on the South Texas–Northern Mexico corridor. Built for EDCs, universities, banks, and regional institutions.">
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient}=supabase;
+const sb=createClient('https://knbtwcxwdhyjvgncnzjo.supabase.co','sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw');
+</script>
+<style>
+:root{--ink:#0F0F0E;--ink2:#2A2A27;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--rustl:#F2E8E3;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--goldl:#FBF4E3;--green:#2A6B43;--greenl:#E4F0EA;--r:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--white);color:var(--ink);}
+nav{position:sticky;top:0;z-index:200;background:rgba(253,252,251,.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;padding:0 56px;}
+.brand{font-family:'Fraunces',serif;font-size:21px;font-weight:700;color:var(--ink);margin-right:auto;display:flex;align-items:center;gap:7px;letter-spacing:-.3px;text-decoration:none;}
+.brand-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);}
+.nav-links{display:flex;align-items:center;gap:4px;}
+.nav-link{padding:7px 14px;font-size:13px;font-weight:500;color:var(--ink3);text-decoration:none;border-radius:6px;transition:all .12s;}
+.nav-link:hover{color:var(--ink);background:var(--parch);}
+.nav-link.active{color:var(--teal);font-weight:600;}
+.btn-nav{padding:8px 18px;border-radius:6px;border:none;background:var(--teal);color:white;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-left:16px;text-decoration:none;display:inline-block;}
+/* HERO */
+.hero{background:var(--ink);padding:96px 56px 88px;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025)1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025)1px,transparent 1px);background-size:40px 40px;}
+.hero-glow-1{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(176,125,26,.15),transparent 70%);top:-50px;right:100px;}
+.hero-glow-2{position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,114,.12),transparent 70%);bottom:-100px;left:200px;}
+.hero-inner{position:relative;z-index:2;max-width:800px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:currentColor;}
+.ey-gold{color:rgba(240,192,80,.8);}
+.ey-rust{color:rgba(232,120,80,.8);}
+.ey-teal{color:rgba(80,210,220,.7);}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(38px,5vw,66px);font-weight:700;letter-spacing:-2px;line-height:1.04;color:white;margin-bottom:20px;}
+.hero h1 em{font-style:italic;font-weight:300;color:rgba(240,192,80,.9);}
+.hero-desc{font-size:17px;color:rgba(255,255,255,.5);line-height:1.75;max-width:600px;margin-bottom:40px;}
+.hero-metrics{display:flex;gap:40px;flex-wrap:wrap;padding-top:32px;border-top:1px solid rgba(255,255,255,.08);}
+.hm{text-align:left;}
+.hm-num{font-family:'Fraunces',serif;font-size:32px;font-weight:700;letter-spacing:-1px;color:white;line-height:1;}
+.hm-label{font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;}
+/* SECTIONS */
+.section{padding:80px 56px;}
+.section-white{background:var(--white);}
+.section-parch{background:var(--parch);}
+.section-dark{background:var(--ink);}
+.max{max-width:960px;margin:0 auto;}
+.max-wide{max-width:1100px;margin:0 auto;}
+h2{font-family:'Fraunces',serif;font-size:clamp(28px,3.5vw,44px);font-weight:700;letter-spacing:-1.2px;line-height:1.07;margin-bottom:14px;}
+.section-dark h2{color:white;}
+.lead{font-size:16px;color:var(--ink3);line-height:1.75;max-width:640px;}
+.section-dark .lead{color:rgba(255,255,255,.45);}
+/* AUDIENCE CARDS */
+.audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:44px;}
+.aud-card{border-radius:10px;padding:28px 24px;position:relative;overflow:hidden;cursor:pointer;transition:transform .2s;}
+.aud-card:hover{transform:translateY(-3px);}
+.aud-icon{font-size:32px;margin-bottom:14px;}
+.aud-title{font-family:'Fraunces',serif;font-size:19px;font-weight:700;margin-bottom:8px;}
+.aud-desc{font-size:13px;line-height:1.65;margin-bottom:16px;}
+.aud-bullets{list-style:none;display:flex;flex-direction:column;gap:5px;}
+.aud-bullets li{font-size:12.5px;padding-left:14px;position:relative;}
+.aud-bullets li::before{content:'→';position:absolute;left:0;font-size:11px;}
+.aud-link{display:inline-block;margin-top:16px;font-size:12.5px;font-weight:600;text-decoration:underline;cursor:pointer;}
+/* DATA LAYER */
+.data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:40px;}
+.data-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:24px 22px;}
+.data-icon{font-size:22px;margin-bottom:12px;}
+.data-title{font-size:14px;font-weight:700;color:white;margin-bottom:6px;}
+.data-desc{font-size:12.5px;color:rgba(255,255,255,.42);line-height:1.6;margin-bottom:12px;}
+.data-tags{display:flex;flex-wrap:wrap;gap:5px;}
+.dtag{font-size:10px;padding:2px 8px;border-radius:3px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.45);font-weight:600;}
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;}
+.price-card{border:1.5px solid var(--border);border-radius:10px;padding:28px 24px;position:relative;}
+.price-card.featured{border-color:var(--teal);background:var(--teall);}
+.price-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--teal);color:white;font-size:10px;font-weight:700;padding:3px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.price-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:4px;}
+.price-target{font-size:11.5px;color:var(--ink3);margin-bottom:18px;}
+.price-amount{font-family:'Fraunces',serif;font-size:32px;font-weight:700;letter-spacing:-1px;margin-bottom:4px;}
+.price-period{font-size:12px;color:var(--ink3);}
+.price-divider{height:1px;background:var(--border);margin:18px 0;}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.price-features li{font-size:13px;color:var(--ink2);padding-left:18px;position:relative;line-height:1.5;}
+.price-features li::before{content:'✓';position:absolute;left:0;color:var(--green);font-size:12px;font-weight:700;}
+.price-btn{width:100%;padding:11px;margin-top:22px;border-radius:var(--r);font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.pbtn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink);}
+.pbtn-outline:hover{border-color:var(--teal);color:var(--teal);}
+.pbtn-fill{background:var(--teal);color:white;}
+.pbtn-fill:hover{background:#155960;}
+/* TARGETS */
+.targets{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:40px;}
+.target{display:flex;gap:16px;padding:18px 20px;border:1px solid var(--border);border-radius:var(--r);align-items:flex-start;cursor:pointer;transition:all .15s;}
+.target:hover{border-color:var(--teal);background:var(--parch);}
+.target-icon{font-size:26px;flex-shrink:0;}
+.target-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.target-desc{font-size:12.5px;color:var(--ink3);line-height:1.55;}
+.target-why{font-size:11.5px;color:var(--teal);font-weight:600;margin-top:6px;}
+/* FORM */
+.inquiry-wrap{display:grid;grid-template-columns:1fr 1fr;gap:56px;margin-top:48px;align-items:start;}
+.inquiry-left h3{font-family:'Fraunces',serif;font-size:24px;font-weight:700;letter-spacing:-.4px;margin-bottom:12px;}
+.inquiry-left p{font-size:14px;color:var(--ink3);line-height:1.7;margin-bottom:20px;}
+.inquiry-promise{display:flex;flex-direction:column;gap:10px;}
+.ip{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--ink3);}
+.ip-icon{font-size:16px;flex-shrink:0;}
+.form-card{background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:32px;}
+.fgroup{margin-bottom:13px;}
+.flabel{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:5px;}
+.req{color:var(--rust);}
+.finput,.fselect{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--white);transition:border-color .12s;}
+.finput:focus,.fselect:focus{outline:none;border-color:var(--teal);}
+.ftextarea{width:100%;padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--white);min-height:90px;resize:vertical;}
+.ftextarea:focus{outline:none;border-color:var(--teal);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-submit{width:100%;padding:13px;background:var(--teal);color:white;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:4px;}
+.btn-submit:hover{background:#155960;}
+.btn-submit:disabled{background:#aaa;cursor:not-allowed;}
+.fmsg{padding:11px 14px;border-radius:var(--r);font-size:13px;margin-top:10px;display:none;line-height:1.5;}
+.fmsg.show{display:block;}
+.fmsg-ok{background:var(--greenl);color:var(--green);border:1px solid rgba(42,107,67,.15);}
+.fmsg-err{background:var(--rustl);color:var(--rust);border:1px solid rgba(184,67,30,.15);}
+/* QUOTE */
+.quote-block{border-left:4px solid var(--gold);padding:20px 24px;background:var(--goldl);border-radius:0 8px 8px 0;margin:32px 0;}
+.quote-text{font-family:'Fraunces',serif;font-size:18px;font-style:italic;font-weight:400;line-height:1.5;color:var(--ink);margin-bottom:8px;}
+.quote-source{font-size:12px;font-weight:600;color:var(--gold);}
+/* FOOTER */
+footer{background:var(--ink);padding:48px 56px 28px;}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:22px;}
+.ft-brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:white;margin-bottom:8px;}
+.ft-desc{font-size:12.5px;color:rgba(255,255,255,.35);line-height:1.7;max-width:240px;}
+.ft-col-title{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:12px;}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.ft-links a{font-size:13px;color:rgba(255,255,255,.42);text-decoration:none;cursor:pointer;}
+.ft-links a:hover{color:white;}
+.ft-bottom{display:flex;justify-content:space-between;}
+.ft-copy{font-size:11.5px;color:rgba(255,255,255,.2);}
+@media(max-width:900px){.audience-grid,.pricing-grid,.data-grid,.targets,.inquiry-wrap,.frow{grid-template-columns:1fr;}.section{padding:56px 24px;}.hero{padding:64px 24px 56px;}.hero-metrics{gap:24px;}.ft-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="/"><span class="brand-dot"></span>RioData</a>
+  <div class="nav-links">
+    <a class="nav-link" href="/">Platform</a>
+    <a class="nav-link" href="/about.html">About</a>
+    <a class="nav-link active" href="/pitch.html">For Institutions</a>
+  </div>
+  <a class="btn-nav" href="#inquiry">Get Data Access →</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow-1"></div>
+  <div class="hero-glow-2"></div>
+  <div class="hero-inner">
+    <div class="eyebrow ey-gold">For EDCs, Universities & Institutions</div>
+    <h1>The data layer for<em>the border economy.</em></h1>
+    <p class="hero-desc">RioData is the most comprehensive, verified, real-time dataset on the South Texas–Northern Mexico economic corridor. License it for research, power your EDC's intelligence, or acquire the platform entirely.</p>
+    <div class="hero-metrics">
+      <div class="hm"><div class="hm-num">$370B</div><div class="hm-label">Annual trade corridor</div></div>
+      <div class="hm"><div class="hm-num">12</div><div class="hm-label">Counties covered</div></div>
+      <div class="hm"><div class="hm-num">2</div><div class="hm-label">Countries</div></div>
+      <div class="hm"><div class="hm-num">$9.3B</div><div class="hm-label">Active project pipeline</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHO THIS IS FOR -->
+<div class="section section-white">
+  <div class="max-wide">
+    <div class="eyebrow ey-rust" style="color:var(--rust)">Who This Is For</div>
+    <h2>Built for the institutions<br>that serve this region.</h2>
+    <p class="lead">RioData gives EDCs, universities, banks, and government agencies the verified regional intelligence they need to make decisions, attract investment, and serve their constituents.</p>
+    <div class="audience-grid">
+      <div class="aud-card" style="background:var(--teall);border:1.5px solid rgba(26,107,114,.2);">
+        <div class="aud-icon">🏛️</div>
+        <div class="aud-title" style="color:var(--teal)">Economic Development Corps</div>
+        <div class="aud-desc" style="color:var(--ink3)">Laredo EDC, McAllen EDC, Brownsville EDC — your entire mission is to grow this region. RioData is your intelligence layer.</div>
+        <ul class="aud-bullets" style="color:var(--ink3)">
+          <li>Verified business directory for investor presentations</li>
+          <li>Live project pipeline data for your reports</li>
+          <li>Workforce gap data for grant applications</li>
+          <li>White-label option with your branding</li>
+        </ul>
+        <a class="aud-link" style="color:var(--teal)" href="#inquiry">Request EDC pricing →</a>
+      </div>
+      <div class="aud-card" style="background:var(--goldl);border:1.5px solid rgba(176,125,26,.2);">
+        <div class="aud-icon">🎓</div>
+        <div class="aud-title" style="color:var(--gold)">Universities & Colleges</div>
+        <div class="aud-desc" style="color:var(--ink3)">UTRGV, TAMIU, South Texas College, Laredo College — power your economic research, workforce programs, and grant applications.</div>
+        <ul class="aud-bullets" style="color:var(--ink3)">
+          <li>Skills gap data for program development</li>
+          <li>Regional economic dataset for research</li>
+          <li>Employer connection pipeline for students</li>
+          <li>Co-branded portal for career services</li>
+        </ul>
+        <a class="aud-link" style="color:var(--gold)" href="#inquiry">Request academic pricing →</a>
+      </div>
+      <div class="aud-card" style="background:var(--rustl);border:1.5px solid rgba(184,67,30,.15);">
+        <div class="aud-icon">🏦</div>
+        <div class="aud-title" style="color:var(--rust)">Banks & Financial Institutions</div>
+        <div class="aud-desc" style="color:var(--ink3)">IBC Bank, Frost Bank, Vantage Bank — the most comprehensive directory of regional businesses for loan prospecting and CRA compliance.</div>
+        <ul class="aud-bullets" style="color:var(--ink3)">
+          <li>Verified small business directory for prospecting</li>
+          <li>CRA compliance documentation support</li>
+          <li>Regional growth data for risk assessment</li>
+          <li>API access for your internal systems</li>
+        </ul>
+        <a class="aud-link" style="color:var(--rust)" href="#inquiry">Request bank pricing →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT'S IN THE DATA -->
+<div class="section section-dark">
+  <div class="max-wide">
+    <div class="eyebrow ey-teal">The Dataset</div>
+    <h2>What you're actually getting.</h2>
+    <p class="lead">Four structured data layers, continuously updated, covering both sides of the border.</p>
+    <div class="data-grid">
+      <div class="data-card">
+        <div class="data-icon">🏢</div>
+        <div class="data-title">Business Directory</div>
+        <div class="data-desc">Verified companies with legal name, sector, location, services, certifications, employee count, project capacity, and contact info.</div>
+        <div class="data-tags"><span class="dtag">Legal Name</span><span class="dtag">SAM/HUBZone</span><span class="dtag">IMMEX/C-TPAT</span><span class="dtag">Services</span><span class="dtag">Capacity</span><span class="dtag">Contact</span><span class="dtag">Ready Status</span></div>
+      </div>
+      <div class="data-card">
+        <div class="data-icon">📋</div>
+        <div class="data-title">Project Pipeline</div>
+        <div class="data-desc">Active construction, energy, government, and industrial projects with value, location, timeline, and contractor requirements.</div>
+        <div class="data-tags"><span class="dtag">Project Type</span><span class="dtag">Total Value</span><span class="dtag">Deadline</span><span class="dtag">Location</span><span class="dtag">Requirements</span><span class="dtag">Contact</span></div>
+      </div>
+      <div class="data-card">
+        <div class="data-icon">👷</div>
+        <div class="data-title">Workforce Intelligence</div>
+        <div class="data-desc">Skills demand vs. supply by occupation, school pipeline data, wage benchmarks, and certified workforce counts by region.</div>
+        <div class="data-tags"><span class="dtag">Skills Gap</span><span class="dtag">Occupation Demand</span><span class="dtag">School Pipeline</span><span class="dtag">Wage Data</span><span class="dtag">Cert Counts</span></div>
+      </div>
+      <div class="data-card">
+        <div class="data-icon">📊</div>
+        <div class="data-title">Economic Analytics</div>
+        <div class="data-desc">Regional GDP, employment by sector, cross-border trade flows, industry growth rates, and metro comparison benchmarks.</div>
+        <div class="data-tags"><span class="dtag">GDP</span><span class="dtag">Employment</span><span class="dtag">Trade Volume</span><span class="dtag">Growth Rate</span><span class="dtag">Metro Benchmarks</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TARGET INSTITUTIONS -->
+<div class="section section-parch">
+  <div class="max">
+    <div class="eyebrow" style="color:var(--rust)">Target Partners</div>
+    <h2>Who we're talking to.</h2>
+    <p class="lead">Every institution listed below has a direct, specific reason to license or acquire RioData.</p>
+    <div class="targets">
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏫</div>
+        <div><div class="target-title">UTRGV — UT Rio Grande Valley</div><div class="target-desc">32,000 students, economic development mission, Hidalgo County focus.</div><div class="target-why">→ Powers workforce research + grant applications</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏫</div>
+        <div><div class="target-title">TAMIU — Laredo</div><div class="target-desc">8,500 students, international trade focus, Webb County anchor institution.</div><div class="target-why">→ Cross-border business intelligence for research</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏛️</div>
+        <div><div class="target-title">Laredo EDC</div><div class="target-desc">Economic development for Webb County and the Laredo metro area.</div><div class="target-why">→ Verified local business roster for investor presentations</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏛️</div>
+        <div><div class="target-title">McAllen EDC / RGV Partnership</div><div class="target-desc">One of the most active EDCs in Texas, managing major industrial recruitment.</div><div class="target-why">→ Live project pipeline + workforce availability data</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🌐</div>
+        <div><div class="target-title">RioPlex</div><div class="target-desc">Strategic initiative uniting RGV + Northern Tamaulipas to attract foreign direct investment.</div><div class="target-why">→ You attract investment, we show who can execute it</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏦</div>
+        <div><div class="target-title">IBC Bank / Frost Bank</div><div class="target-desc">Largest regional banks with deep South Texas roots and CRA obligations.</div><div class="target-why">→ Small business prospecting + CRA compliance data</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏫</div>
+        <div><div class="target-title">South Texas College</div><div class="target-desc">33,000 students in Hidalgo/Starr Counties. Skills gap data maps directly to their programs.</div><div class="target-why">→ Employer pipeline + program demand validation</div></div>
+      </div>
+      <div class="target" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">
+        <div class="target-icon">🏛️</div>
+        <div><div class="target-title">Brownsville EDC / BEDC</div><div class="target-desc">Managing SpaceX, LNG, and port development attraction for Cameron County.</div><div class="target-why">→ Local contractor directory for major project developers</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="section section-white">
+  <div class="max">
+    <div class="eyebrow" style="color:var(--rust)">Data Access Options</div>
+    <h2>Flexible licensing for every institution.</h2>
+    <p class="lead">From research access to full platform acquisition — we work with your budget and your mission.</p>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <div class="price-title">Research Access</div>
+        <div class="price-target">Universities & researchers</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-period">Annual license · negotiated</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Full dataset export (CSV/JSON)</li>
+          <li>Historical data access</li>
+          <li>Up to 3 researcher accounts</li>
+          <li>Quarterly data updates</li>
+          <li>Academic citation support</li>
+        </ul>
+        <button class="price-btn pbtn-outline" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Request Pricing</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-title">Institutional License</div>
+        <div class="price-target">EDCs, government agencies, banks</div>
+        <div class="price-amount">Custom</div>
+        <div class="price-period">Annual license · negotiated</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Full platform access + API</li>
+          <li>Real-time data updates</li>
+          <li>Unlimited staff accounts</li>
+          <li>White-label option available</li>
+          <li>Custom reporting & exports</li>
+          <li>Dedicated account support</li>
+        </ul>
+        <button class="price-btn pbtn-fill" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Request Pricing</button>
+      </div>
+      <div class="price-card">
+        <div class="price-title">Full Acquisition</div>
+        <div class="price-target">Strategic buyer or institution</div>
+        <div class="price-amount">Negotiated</div>
+        <div class="price-period">One-time acquisition</div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Full platform + codebase</li>
+          <li>Complete database transfer</li>
+          <li>Brand, domain, all assets</li>
+          <li>90-day transition support</li>
+          <li>Ongoing development option</li>
+          <li>First right of acquisition</li>
+        </ul>
+        <button class="price-btn pbtn-outline" onclick="document.getElementById('inquiry').scrollIntoView({behavior:'smooth'})">Start Conversation</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INQUIRY FORM -->
+<div class="section section-parch" id="inquiry">
+  <div class="max">
+    <div class="inquiry-wrap">
+      <div class="inquiry-left">
+        <div class="eyebrow" style="color:var(--rust)">Get In Touch</div>
+        <h3>Let's talk about data access.</h3>
+        <p>Whether you're interested in a research license, an institutional partnership, or a full acquisition conversation — fill out the form and we'll follow up within 48 hours.</p>
+        <div class="inquiry-promise">
+          <div class="ip"><span class="ip-icon">⚡</span><span>Response within 48 hours</span></div>
+          <div class="ip"><span class="ip-icon">📊</span><span>We'll send a data overview and sample export</span></div>
+          <div class="ip"><span class="ip-icon">💬</span><span>No hard sell — just a conversation about your needs</span></div>
+          <div class="ip"><span class="ip-icon">🤝</span><span>Flexible pricing based on your institution's budget and mission</span></div>
+        </div>
+        <div class="quote-block" style="margin-top:32px;">
+          <div class="quote-text">"You attract the investment. We show who can execute it."</div>
+          <div class="quote-source">RioData · For EDC & Investment Partners</div>
+        </div>
+      </div>
+      <div class="form-card">
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:4px;">Send an Inquiry</div>
+        <div style="font-size:13px;color:var(--ink3);margin-bottom:20px;">We'll follow up within 48 hours.</div>
+        <div class="frow">
+          <div class="fgroup"><label class="flabel">First Name <span class="req">*</span></label><input class="finput" id="iq-first" placeholder="Maria"></div>
+          <div class="fgroup"><label class="flabel">Last Name <span class="req">*</span></label><input class="finput" id="iq-last" placeholder="Garcia"></div>
+        </div>
+        <div class="fgroup"><label class="flabel">Institution / Organization <span class="req">*</span></label><input class="finput" id="iq-org" placeholder="UTRGV, Laredo EDC, IBC Bank..."></div>
+        <div class="fgroup"><label class="flabel">Your Title / Role</label><input class="finput" id="iq-title" placeholder="Director of Economic Development"></div>
+        <div class="fgroup"><label class="flabel">Work Email <span class="req">*</span></label><input class="finput" type="email" id="iq-email" placeholder="you@institution.edu"></div>
+        <div class="fgroup"><label class="flabel">Interest Type <span class="req">*</span></label>
+          <select class="fselect" id="iq-type">
+            <option value="">Select your interest...</option>
+            <option value="research">Research / Academic License</option>
+            <option value="institutional">Institutional Data License</option>
+            <option value="api">API Access</option>
+            <option value="whitelabel">White-Label Partnership</option>
+            <option value="acquisition">Full Platform Acquisition</option>
+            <option value="other">Other / Not Sure Yet</option>
+          </select>
+        </div>
+        <div class="fgroup"><label class="flabel">Tell us about your use case</label><textarea class="ftextarea" id="iq-msg" placeholder="What data do you need? How would your institution use it? Any specific regions or sectors?"></textarea></div>
+        <div class="fmsg fmsg-err" id="iq-err"></div>
+        <div class="fmsg fmsg-ok" id="iq-ok"></div>
+        <button class="btn-submit" id="iq-btn" onclick="submitInquiry()">Send Inquiry →</button>
+        <div style="text-align:center;margin-top:12px;font-size:11.5px;color:var(--ink3);">We respond within 48 hours · No spam · hello@riodata.org</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="ft-grid">
+    <div>
+      <div class="ft-brand">RioData</div>
+      <div class="ft-desc">The data layer for South Texas and Northern Mexico. Free for businesses, licensed to institutions.</div>
+    </div>
+    <div>
+      <div class="ft-col-title">Platform</div>
+      <ul class="ft-links"><li><a href="/">Home</a></li><li><a href="/about.html">About</a></li><li><a href="/onboarding.html">Register Business</a></li></ul>
+    </div>
+    <div>
+      <div class="ft-col-title">For Institutions</div>
+      <ul class="ft-links"><li><a href="#inquiry">Research License</a></li><li><a href="#inquiry">EDC Partnership</a></li><li><a href="#inquiry">Full Acquisition</a></li></ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Contact</div>
+      <ul class="ft-links"><li><a href="mailto:hello@riodata.org">hello@riodata.org</a></li><li><a href="/about.html">Our Mission</a></li></ul>
+    </div>
+  </div>
+  <div class="ft-bottom"><div class="ft-copy">© 2025 RioData · riodata.org</div></div>
+</footer>
+
+<script>
+async function submitInquiry(){
+  const first=document.getElementById('iq-first').value.trim();
+  const last=document.getElementById('iq-last').value.trim();
+  const org=document.getElementById('iq-org').value.trim();
+  const email=document.getElementById('iq-email').value.trim();
+  const type=document.getElementById('iq-type').value;
+  const title=document.getElementById('iq-title').value.trim();
+  const msg=document.getElementById('iq-msg').value.trim();
+  const err=document.getElementById('iq-err');
+  const ok=document.getElementById('iq-ok');
+  const btn=document.getElementById('iq-btn');
+  err.classList.remove('show');ok.classList.remove('show');
+  if(!first||!last){err.textContent='Please enter your name.';err.classList.add('show');return;}
+  if(!org){err.textContent='Please enter your institution.';err.classList.add('show');return;}
+  if(!email||!email.includes('@')){err.textContent='Please enter a valid email.';err.classList.add('show');return;}
+  if(!type){err.textContent='Please select your interest type.';err.classList.add('show');return;}
+  btn.textContent='Sending...';btn.disabled=true;
+  const {error}=await sb.from('analytics_events').insert([{
+    event_type:'pitch_inquiry',
+    page:'pitch',
+    search_term:JSON.stringify({
+      name:first+' '+last,
+      organization:org,
+      title,
+      email,
+      interest_type:type,
+      message:msg
+    })
+  }]);
+  btn.textContent='Send Inquiry →';btn.disabled=false;
+  if(error){err.textContent='Error submitting. Please email us at hello@riodata.org';err.classList.add('show');}
+  else{
+    ok.textContent='✅ Inquiry received! We\'ll follow up at '+email+' within 48 hours.';
+    ok.classList.add('show');
+    document.getElementById('iq-first').value='';
+    document.getElementById('iq-last').value='';
+    document.getElementById('iq-org').value='';
+    document.getElementById('iq-email').value='';
+    document.getElementById('iq-type').value='';
+    document.getElementById('iq-msg').value='';
+  }
+}
+</script>
+</body>
+</html>
