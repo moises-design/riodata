@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — South Texas & Northern Mexico</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;1,9..144,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPA_URL='https://knbtwcxwdhyjvgncnzjo.supabase.co';
+const SUPA_KEY='sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw';
+const {createClient}=supabase;
+const sb=createClient(SUPA_URL,SUPA_KEY);
+let currentUser=null;
+sb.auth.onAuthStateChange((event,session)=>{
+  currentUser=session?.user||null;
+  updateAuthUI();
+  if(event==='SIGNED_IN' && document.getElementById('auth-modal')?.classList.contains('open')){closeModal('auth-modal');window.location.href='/dashboard.html';}
+});
+</script>
+<style>
+:root{--ink:#0F0F0E;--ink2:#2A2A27;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--rust2:#D4582E;--rustl:#F2E8E3;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--goldl:#FBF4E3;--green:#2A6B43;--greenl:#E4F0EA;--r:8px;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Instrument Sans',sans-serif;background:var(--white);color:var(--ink);overflow-x:hidden;}
+nav{position:sticky;top:0;z-index:200;background:rgba(253,252,251,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:60px;display:flex;align-items:center;padding:0 32px;gap:0;}
+.brand{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--ink);cursor:pointer;margin-right:36px;display:flex;align-items:center;gap:6px;}
+.brand-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);}
+.nav-links{display:flex;align-items:stretch;list-style:none;flex:1;height:60px;}
+.nav-links a{display:flex;align-items:center;padding:0 13px;font-size:13.5px;font-weight:500;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.nav-links a:hover{color:var(--ink);}
+.nav-links a.active{color:var(--teal);border-bottom-color:var(--teal);}
+.nav-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.btn-outline{padding:7px 16px;border-radius:var(--r);border:1.5px solid var(--border);background:transparent;font-family:inherit;font-size:13px;font-weight:500;color:var(--ink);cursor:pointer;transition:all .15s;}
+.btn-outline:hover{border-color:var(--ink);}
+.btn-solid{padding:8px 18px;border-radius:var(--r);border:none;background:var(--teal);color:white;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;}
+.btn-solid:hover{background:#155960;}
+.burger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:5px;}
+.burger span{width:22px;height:2px;background:var(--ink);border-radius:2px;display:block;}
+.mob-nav{display:none;position:fixed;inset:0;top:60px;background:var(--ink);z-index:300;padding:20px;flex-direction:column;gap:4px;overflow-y:auto;}
+.mob-nav.open{display:flex;}
+.mob-item{padding:13px 14px;font-size:15px;font-weight:500;color:rgba(255,255,255,.7);border-radius:6px;cursor:pointer;}
+.mob-item:hover{background:rgba(255,255,255,.07);color:white;}
+.mob-btns{margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:8px;}
+.mob-btn{padding:12px;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:none;text-align:center;}
+.nav-user{display:none;align-items:center;gap:10px;}
+.nav-avatar{width:32px;height:32px;border-radius:50%;background:var(--teal);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;cursor:pointer;}
+.page{display:none;}
+.page.active{display:block;}
+/* HERO */
+.hero{height:calc(100vh - 60px);display:grid;grid-template-columns:55% 45%;}
+.hero-l{padding:48px 48px 48px 80px;display:flex;flex-direction:column;justify-content:center;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--rust);margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.eyebrow::before{content:'';width:18px;height:1.5px;background:currentColor;}
+h1{font-family:'Fraunces',serif;font-size:clamp(38px,5vw,68px);font-weight:700;line-height:1.04;letter-spacing:-2px;margin-bottom:18px;}
+h1 em{font-style:italic;font-weight:300;color:var(--rust);display:block;}
+.hero-desc{font-size:16px;color:var(--ink3);line-height:1.72;max-width:440px;margin-bottom:28px;}
+.hero-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-lg{padding:13px 26px;border-radius:var(--r);font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px;text-decoration:none;}
+.btn-primary{background:var(--teal);color:white;border:none;}
+.btn-primary:hover{background:#155960;transform:translateY(-1px);}
+.btn-secondary{background:transparent;color:var(--ink);border:1.5px solid var(--border);}
+.btn-secondary:hover{border-color:var(--ink);}
+.hero-stats{margin-top:44px;padding-top:28px;border-top:1px solid var(--border);display:flex;gap:0;flex-wrap:wrap;}
+.hstat{padding-right:28px;margin-right:28px;border-right:1px solid var(--border);}
+.hstat:last-child{border-right:none;padding-right:0;margin-right:0;}
+.hstat-num{font-family:'Fraunces',serif;font-size:30px;font-weight:700;letter-spacing:-1px;line-height:1;}
+.hstat-num sup{font-size:16px;color:var(--teal);}
+.hstat-label{font-size:10.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-top:3px;}
+.hero-r{background:var(--ink);position:relative;overflow:hidden;display:flex;align-items:center;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03)1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03)1px,transparent 1px);background-size:30px 30px;}
+.hero-glow{position:absolute;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,114,.22),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);}
+.live-feed{position:relative;z-index:2;padding:36px;}
+.feed-label{font-size:9.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:14px;}
+.feed-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:11px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;}
+.fi-name{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.88);}
+.fi-sub{font-size:10.5px;color:rgba(255,255,255,.38);margin-top:2px;}
+.fi-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:.05em;}
+.fb-ready{background:rgba(42,107,67,.3);color:#6FCF97;}
+.fb-sector{background:rgba(26,107,114,.3);color:#80D4DA;}
+.fb-gold{background:rgba(176,125,26,.3);color:#F0D080;}
+/* SECTIONS */
+.section{padding:72px 80px;}
+.section-white{background:var(--white);}
+.section-parch{background:var(--parch);}
+.section-dark{background:var(--ink);}
+.section-dark h2{color:white;}
+.section-dark .eyebrow{color:rgba(232,120,80,.8);}
+.section-dark .eyebrow::before{background:rgba(232,120,80,.8);}
+h2{font-family:'Fraunces',serif;font-size:clamp(26px,3.5vw,46px);font-weight:700;letter-spacing:-1.2px;line-height:1.07;margin-bottom:14px;}
+.lead{font-size:15.5px;color:var(--ink3);line-height:1.7;max-width:520px;}
+.section-dark .lead{color:rgba(255,255,255,.45);}
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-top:44px;}
+.stat-box{background:var(--white);padding:28px 24px;}
+.stat-big{font-family:'Fraunces',serif;font-size:38px;font-weight:700;letter-spacing:-2px;line-height:1;margin-bottom:6px;}
+.stat-big sup{font-size:18px;color:var(--teal);}
+.stat-title{font-size:13.5px;font-weight:600;margin-bottom:4px;}
+.stat-text{font-size:12px;color:var(--ink3);line-height:1.5;}
+/* PILLARS */
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px;}
+.pillar{border:1.5px solid var(--border);border-radius:10px;padding:28px 24px;cursor:pointer;transition:all .22s;text-decoration:none;color:inherit;display:block;}
+.pillar:hover{border-color:var(--teal);transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.08);}
+.pillar-icon{width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:19px;margin-bottom:16px;}
+.pillar-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:7px;}
+.pillar-desc{font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:12px;}
+.pillar-bullets{list-style:none;display:flex;flex-direction:column;gap:4px;}
+.pillar-bullets li{font-size:12px;color:var(--ink3);padding-left:12px;position:relative;}
+.pillar-bullets li::before{content:'·';position:absolute;left:0;color:var(--teal);font-size:16px;line-height:1;}
+/* DIRECTORY */
+.search-bar{display:grid;grid-template-columns:1fr auto auto auto auto;gap:8px;padding:20px 0 0;}
+.si{padding:10px 13px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--white);}
+.si:focus{outline:none;border-color:var(--teal);}
+.ss{padding:10px 11px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--ink3);background:var(--white);cursor:pointer;min-width:130px;}
+.sbtn{padding:10px 18px;border-radius:var(--r);background:var(--teal);color:white;border:none;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;}
+.sbtn:hover{background:#155960;}
+.dir-meta{display:flex;justify-content:space-between;align-items:center;margin:14px 0;}
+.dir-count-txt{font-size:13px;color:var(--ink3);}
+.dir-count-txt strong{color:var(--ink);}
+.co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.co-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .2s;}
+.co-card:hover{border-color:var(--teal);box-shadow:0 4px 16px rgba(0,0,0,.07);transform:translateY(-2px);}
+.co-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+.co-av{width:38px;height:38px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:16px;font-weight:700;flex-shrink:0;}
+.co-name{font-size:13.5px;font-weight:700;}
+.co-loc{font-size:11px;color:var(--ink3);margin-top:2px;}
+.co-desc{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:8px;}
+.co-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;}
+.co-tag{font-size:10px;padding:2px 7px;border-radius:3px;background:var(--parch);border:1px solid var(--border);color:var(--ink3);}
+.co-tag-cert{background:var(--greenl);color:var(--green);border-color:rgba(42,107,67,.15);}
+.co-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--border);}
+.co-sector{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:3px 7px;border-radius:3px;background:var(--teall);color:var(--teal);}
+.ready-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.rd-yes{background:var(--green);box-shadow:0 0 0 3px rgba(42,107,67,.12);}
+.rd-no{background:var(--border);}
+/* OPPORTUNITIES */
+.opp{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:22px;margin-bottom:10px;cursor:pointer;transition:all .18s;display:grid;grid-template-columns:1fr auto;gap:20px;position:relative;border-left:3px solid var(--border);}
+.opp:hover{border-left-color:var(--teal);box-shadow:0 4px 14px rgba(0,0,0,.07);}
+.opp-type{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--teal);margin-bottom:5px;}
+.opp-title{font-family:'Fraunces',serif;font-size:16.5px;font-weight:700;margin-bottom:5px;letter-spacing:-.2px;}
+.opp-desc{font-size:12.5px;color:var(--ink3);line-height:1.6;margin-bottom:9px;}
+.opp-meta{display:flex;gap:14px;flex-wrap:wrap;}
+.opp-meta span{font-size:12px;color:var(--ink3);}
+.opp-r{text-align:right;min-width:110px;}
+.opp-dl-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);}
+.opp-dl-date{font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-bottom:10px;}
+.btn-apply{padding:9px 14px;background:var(--teal);color:white;border:none;border-radius:var(--r);font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;text-decoration:none;display:block;text-align:center;}
+.btn-apply:hover{background:#155960;}
+/* MODAL */
+.modal-ov{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,15,14,.78);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px;}
+.modal-ov.open{display:flex;}
+.modal{background:var(--white);border-radius:14px;width:100%;max-width:440px;padding:36px;position:relative;animation:pop .28s ease;}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-x{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:transparent;cursor:pointer;font-size:15px;color:var(--ink3);display:flex;align-items:center;justify-content:center;}
+.modal-x:hover{background:var(--parch);}
+.modal-brand{font-family:'Fraunces',serif;font-size:17px;font-weight:700;margin-bottom:3px;}
+.modal-h{font-family:'Fraunces',serif;font-size:23px;font-weight:700;letter-spacing:-.4px;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--ink3);margin-bottom:20px;}
+.modal-tabs{display:flex;border-bottom:1.5px solid var(--border);margin-bottom:18px;}
+.mtab{padding:8px 16px;font-size:13.5px;font-weight:500;cursor:pointer;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-1.5px;transition:all .12s;}
+.mtab:hover{color:var(--ink);}
+.mtab.active{color:var(--teal);border-bottom-color:var(--teal);}
+.fgroup{margin-bottom:13px;}
+.flabel{font-size:12px;font-weight:600;color:var(--ink2);display:block;margin-bottom:5px;}
+.finput,.fselect{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--white);transition:border-color .12s;}
+.finput:focus,.fselect:focus{outline:none;border-color:var(--teal);}
+.ftextarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13.5px;color:var(--ink);background:var(--white);min-height:78px;resize:vertical;}
+.ftextarea:focus{outline:none;border-color:var(--teal);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.flink{font-size:12px;color:var(--teal);cursor:pointer;text-decoration:underline;display:inline;}
+.or-div{text-align:center;font-size:12px;color:var(--ink3);margin:13px 0;position:relative;}
+.or-div::before,.or-div::after{content:'';position:absolute;top:50%;height:1px;background:var(--border);width:40%;}
+.or-div::before{left:0;}.or-div::after{right:0;}
+.btn-google{width:100%;padding:10px;border:1.5px solid var(--border);border-radius:var(--r);font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;background:var(--white);color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;transition:all .12s;}
+.btn-google:hover{border-color:var(--ink3);background:var(--parch);}
+.btn-submit{width:100%;padding:12px;background:var(--teal);color:white;border:none;border-radius:var(--r);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:4px;}
+.btn-submit:hover{background:#155960;}
+.btn-submit:disabled{background:#aaa;cursor:not-allowed;}
+.fmsg{padding:10px 13px;border-radius:var(--r);font-size:12.5px;margin-top:10px;display:none;line-height:1.5;}
+.fmsg.show{display:block;}
+.fmsg-err{background:var(--rustl);color:var(--rust);border:1px solid rgba(184,67,30,.15);}
+.fmsg-ok{background:var(--greenl);color:var(--green);border:1px solid rgba(42,107,67,.15);}
+.utypes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:13px;}
+.utype{border:1.5px solid var(--border);border-radius:var(--r);padding:9px 5px;text-align:center;cursor:pointer;transition:all .12s;}
+.utype:hover{border-color:var(--teal);}
+.utype.sel{border-color:var(--teal);background:var(--teall);}
+.utype-icon{font-size:17px;margin-bottom:3px;}
+.utype-label{font-size:10px;font-weight:600;color:var(--ink2);}
+/* ANALYTICS */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px;}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:16px;}
+.kpi-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;}
+.kpi-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.kpi-trend{font-size:10px;font-weight:700;padding:2px 6px;border-radius:20px;}
+.kup{color:var(--green);background:var(--greenl);}
+.kdn{color:var(--rust);background:var(--rustl);}
+.kpi-val{font-family:'Fraunces',serif;font-size:26px;font-weight:700;letter-spacing:-1px;line-height:1;margin-bottom:3px;}
+.kpi-label{font-size:11px;color:var(--ink3);}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:22px;}
+.chart-title{font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:3px;}
+.chart-sub{font-size:11.5px;color:var(--ink3);margin-bottom:16px;}
+.bars{display:flex;align-items:flex-end;gap:5px;height:100px;}
+.bar{flex:1;border-radius:3px 3px 0 0;cursor:pointer;min-width:6px;}
+.bar:hover{opacity:.75;}
+.bar-lbls{display:flex;gap:5px;margin-top:5px;padding-top:5px;border-top:1px solid var(--border);}
+.bar-lbl{flex:1;font-size:9px;text-align:center;color:var(--ink3);}
+.prog-row{margin-bottom:11px;}
+.prog-top{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.prog-bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;}
+/* WORKFORCE */
+.school-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .18s;cursor:pointer;}
+.school-card:hover{border-color:var(--teal);transform:translateY(-2px);}
+.school-top{padding:5px 13px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:white;}
+.school-body{padding:16px;}
+.school-name{font-family:'Fraunces',serif;font-size:14px;font-weight:700;margin-bottom:3px;}
+.school-loc{font-size:11px;color:var(--ink3);margin-bottom:10px;}
+.prog-item{display:flex;justify-content:space-between;align-items:center;padding:5px 9px;background:var(--parch);border-radius:4px;margin-bottom:4px;font-size:11.5px;}
+.prog-pct{font-size:10.5px;color:var(--green);font-weight:600;}
+.school-foot{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:14px;}
+.school-stat{font-size:11px;color:var(--ink3);}
+.school-stat strong{color:var(--ink);font-weight:600;}
+.gap-row{padding:9px 0;border-bottom:1px solid var(--border);}
+.gap-row:last-child{border-bottom:none;}
+.gap-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.gap-name{font-size:12.5px;font-weight:600;}
+.sev{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;}
+.sev-crit{background:var(--rustl);color:var(--rust);}
+.sev-high{background:var(--goldl);color:var(--gold);}
+.sev-ok{background:var(--greenl);color:var(--green);}
+/* TABS */
+.tab-row{display:flex;gap:5px;margin-bottom:18px;flex-wrap:wrap;}
+.tab{padding:7px 15px;border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--white);color:var(--ink3);transition:all .12s;}
+.tab:hover{border-color:var(--teal);color:var(--teal);}
+.tab.active{background:var(--teal);color:white;border-color:var(--teal);}
+/* TABLE */
+.mtable{width:100%;border-collapse:collapse;font-size:12.5px;}
+.mtable th{text-align:left;padding:8px 12px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);border-bottom:1.5px solid var(--border);background:var(--parch);}
+.mtable td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--ink2);}
+.mtable tr:last-child td{border-bottom:none;}
+.mtable tr:hover td{background:rgba(247,243,238,.5);}
+/* FOOTER */
+footer{background:var(--ink);padding:48px 80px 28px;}
+.ft-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:36px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:24px;}
+.ft-brand{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:white;margin-bottom:8px;}
+.ft-desc{font-size:12.5px;color:rgba(255,255,255,.38);line-height:1.7;max-width:240px;}
+.ft-col-title{font-size:9.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:12px;}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.ft-links a{font-size:13px;color:rgba(255,255,255,.45);text-decoration:none;cursor:pointer;}
+.ft-links a:hover{color:white;}
+.ft-bottom{display:flex;justify-content:space-between;align-items:center;}
+.ft-copy{font-size:11.5px;color:rgba(255,255,255,.22);}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;z-index:9999;background:var(--ink);color:white;padding:11px 18px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transform:translateY(6px);transition:all .25s;pointer-events:none;max-width:300px;line-height:1.4;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast-ok{border-left:3px solid var(--green);}
+.toast-err{border-left:3px solid var(--rust);}
+/* COMPANY DETAIL MODAL (wider) */
+.modal-lg{max-width:520px;max-height:85vh;overflow-y:auto;}
+/* RESPONSIVE */
+@media(max-width:1024px){.hero{grid-template-columns:1fr;}.hero-r{display:none;}.section{padding:56px 40px;}.kpi-grid{grid-template-columns:repeat(3,1fr);}.stats-grid,.pillars-grid{grid-template-columns:1fr 1fr;}.co-grid{grid-template-columns:1fr 1fr;}.ft-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.nav-links,.nav-right{display:none!important;}.burger{display:flex;}.hero-l{padding:36px 20px;}.hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;}.hstat{border-right:none!important;padding-right:0!important;margin-right:0!important;}.section{padding:40px 20px;}.kpi-grid{grid-template-columns:1fr 1fr;}.stats-grid{grid-template-columns:1fr 1fr;}.pillars-grid{grid-template-columns:1fr;}.search-bar{grid-template-columns:1fr;}.co-grid{grid-template-columns:1fr;}.opp{grid-template-columns:1fr;}.ft-grid{grid-template-columns:1fr;gap:24px;}.footer{padding:36px 20px 20px;}.modal{padding:24px 18px;}.frow{grid-template-columns:1fr;}.nav-user{display:none!important;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="brand" onclick="showPage('home')"><span class="brand-dot"></span>RioData</div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')" class="active" id="nav-home">Home</a></li>
+    <li><a onclick="showPage('analytics')" id="nav-analytics">Analytics</a></li>
+    <li><a onclick="showPage('workforce')" id="nav-workforce">Workforce</a></li>
+    <li><a onclick="showPage('directory')" id="nav-directory">Companies</a></li>
+    <li><a onclick="showPage('opportunities')" id="nav-opportunities">Opportunities</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="nav-user" id="nav-user">
+      <span id="nav-uname" style="font-size:12.5px;color:var(--ink3)"></span>
+      <div class="nav-avatar" id="nav-av" onclick="window.location.href='/dashboard.html'" title="Go to Dashboard">U</div>
+      <button class="btn-outline" onclick="doSignOut()">Sign Out</button>
+    </div>
+    <div id="nav-auth">
+      <button class="btn-outline" onclick="openModal('auth-modal');setTab('signin')" style="margin-right:8px">Sign In</button>
+      <button class="btn-solid" onclick="openModal('auth-modal');setTab('signup')">Join Free</button>
+    </div>
+  </div>
+  <div class="burger" onclick="toggleMenu()"><span></span><span></span><span></span></div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mob-nav" id="mob-nav">
+  <div class="mob-item" onclick="showPage('home');closeMenu()">🏠 Home</div>
+  <div class="mob-item" onclick="showPage('analytics');closeMenu()">📊 Analytics</div>
+  <div class="mob-item" onclick="showPage('workforce');closeMenu()">🎓 Workforce</div>
+  <div class="mob-item" onclick="showPage('directory');closeMenu()">🏢 Companies</div>
+  <div class="mob-item" onclick="showPage('opportunities');closeMenu()">🔗 Opportunities</div>
+  <div class="mob-btns">
+    <button class="mob-btn" style="background:rgba(255,255,255,.1);color:white;" onclick="openModal('auth-modal');setTab('signin');closeMenu()">Sign In</button>
+    <button class="mob-btn" style="background:var(--teal);color:white;" onclick="openModal('auth-modal');setTab('signup');closeMenu()">Join Free →</button>
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-l">
+      <div class="eyebrow">South Texas + Northern Mexico · Free Regional Platform</div>
+      <h1>Building the next great<em>American metro.</em></h1>
+      <p class="hero-desc">From Laredo to Brownsville and across Northern Mexico — one free platform to connect businesses, develop the workforce, and compete with the biggest cities in the country.</p>
+      <div class="hero-btns">
+        <button class="btn-lg btn-primary" onclick="openModal('auth-modal');setTab('signup')">Get Started Free →</button>
+        <button class="btn-lg btn-secondary" onclick="showPage('analytics')">View Regional Data</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="hstat-num">2.1M</div><div class="hstat-label">Population</div></div>
+        <div class="hstat"><div class="hstat-num">$48B</div><div class="hstat-label">Regional GDP</div></div>
+        <div class="hstat"><div class="hstat-num" id="h-cos">—</div><div class="hstat-label">Companies</div></div>
+        <div class="hstat"><div class="hstat-num" id="h-projs">—</div><div class="hstat-label">Projects</div></div>
+      </div>
+    </div>
+    <div class="hero-r">
+      <div class="hero-grid"></div>
+      <div class="hero-glow"></div>
+      <div class="live-feed">
+        <div class="feed-label">Live Regional Activity</div>
+        <div class="feed-item"><div><div class="fi-name">Falcon Industrial Services</div><div class="fi-sub">Laredo, TX · Construction</div></div><div class="fi-badge fb-ready">Ready</div></div>
+        <div class="feed-item"><div><div class="fi-name">Border Energy Solutions</div><div class="fi-sub">Matamoros · Energy</div></div><div class="fi-badge fb-ready">Ready</div></div>
+        <div class="feed-item"><div><div class="fi-name">Port of Brownsville LNG — Ph.3</div><div class="fi-sub">$420M opportunity · Open</div></div><div class="fi-badge fb-sector">Energy</div></div>
+        <div class="feed-item"><div><div class="fi-name">Rio Grande Logistics</div><div class="fi-sub">McAllen · Customs / Freight</div></div><div class="fi-badge fb-gold">SAM</div></div>
+        <div class="feed-item"><div><div class="fi-name">Workforce Gap: 340 Welders</div><div class="fi-sub">Region-wide shortfall</div></div><div class="fi-badge fb-sector">Alert</div></div>
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:space-between;align-items:center;">
+          <span style="font-size:10.5px;color:rgba(255,255,255,.28)">12 counties · 3 metros · 2 countries</span>
+          <span style="font-size:10.5px;color:rgba(255,255,255,.38);display:flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#4CAF78;display:inline-block;animation:pulse 2s infinite"></span>Live</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section section-white">
+    <div class="eyebrow">The Opportunity</div>
+    <h2>We have everything it takes.<br>We just need the infrastructure.</h2>
+    <p class="lead">The Laredo–Brownsville corridor is one of the fastest-growing, most strategically positioned regions in North America.</p>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-big">$370B</div><div class="stat-title">Annual Cross-Border Trade</div><div class="stat-text">More than any other U.S. land border crossing.</div></div>
+      <div class="stat-box"><div class="stat-big">38%</div><div class="stat-title">Younger Than 25</div><div class="stat-text">One of the youngest regional workforces in the nation.</div></div>
+      <div class="stat-box"><div class="stat-big">$9.3B</div><div class="stat-title">Active Project Pipeline</div><div class="stat-text">LNG, data centers, manufacturing — seeking local companies.</div></div>
+      <div class="stat-box"><div class="stat-big">94%</div><div class="stat-title">Bilingual Workforce</div><div class="stat-text">Unique advantage for cross-border business operations.</div></div>
+    </div>
+  </div>
+
+  <div class="section section-parch">
+    <div class="eyebrow">What RioData Does</div>
+    <h2>Four pillars. One free platform.</h2>
+    <p class="lead">Everything a growing metro needs — built for our region, free forever.</p>
+    <div class="pillars-grid">
+      <a class="pillar" onclick="showPage('directory')"><div class="pillar-icon" style="background:var(--teall)">🏢</div><div class="pillar-title">Business Directory</div><div class="pillar-desc">Verified companies with ready-to-work status across every sector.</div><ul class="pillar-bullets"><li>HUBZone, SAM, C-TPAT certified</li><li>Texas + Mexico coverage</li><li>Smart project matching</li></ul></a>
+      <a class="pillar" onclick="showPage('analytics')"><div class="pillar-icon" style="background:var(--goldl)">📊</div><div class="pillar-title">Regional Analytics</div><div class="pillar-desc">Live economic data and growth benchmarks for investors and EDCs.</div><ul class="pillar-bullets"><li>Employment by sector</li><li>Industry growth tracking</li><li>Metro comparison benchmarks</li></ul></a>
+      <a class="pillar" onclick="showPage('workforce')"><div class="pillar-icon" style="background:var(--rustl)">🎓</div><div class="pillar-title">Workforce & Education</div><div class="pillar-desc">Skills gaps, school pipelines, and career pathways matched to demand.</div><ul class="pillar-bullets"><li>Skills demand vs. supply</li><li>University & trade school data</li><li>Career pathway mapping</li></ul></a>
+      <a class="pillar" onclick="showPage('opportunities')"><div class="pillar-icon" style="background:var(--greenl)">🔗</div><div class="pillar-title">Project Opportunities</div><div class="pillar-desc">Active projects matched to verified local businesses.</div><ul class="pillar-bullets"><li>LNG, construction, data centers</li><li>Government contract listings</li><li>Automatic company matching</li></ul></a>
+      <a class="pillar" href="/onboarding.html"><div class="pillar-icon" style="background:var(--teall)">✅</div><div class="pillar-title">List Your Business</div><div class="pillar-desc">Register in 8 minutes. Get discovered. Start winning work.</div><ul class="pillar-bullets"><li>Free forever — no fees ever</li><li>Live within 24 hours</li><li>Matched to active projects</li></ul></a>
+      <div class="pillar" style="background:var(--ink);border-color:var(--ink);" onclick="openModal('auth-modal');setTab('signup')"><div class="pillar-icon" style="background:rgba(255,255,255,.1)">🌵</div><div class="pillar-title" style="color:white">100% Free. Always.</div><div class="pillar-desc" style="color:rgba(255,255,255,.5)">No fees, no paywalls. This is infrastructure for the region.</div><div style="margin-top:16px;background:var(--teal);color:white;padding:10px;border-radius:6px;text-align:center;font-size:13.5px;font-weight:600">Join Free →</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ANALYTICS ══ -->
+<div class="page" id="page-analytics">
+  <div style="background:var(--ink);padding:48px 80px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.07);">
+      <div>
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,120,80,.8);margin-bottom:9px;">Regional Intelligence</div>
+        <h1 style="font-family:'Fraunces',serif;font-size:clamp(30px,4vw,50px);font-weight:700;letter-spacing:-1.5px;color:white;margin-bottom:5px;">Economic Dashboard</h1>
+        <p style="font-size:14px;color:rgba(255,255,255,.4);">South Texas + Northern Mexico · Updated monthly</p>
+      </div>
+      <button style="padding:9px 16px;border-radius:var(--r);background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.12);font-family:inherit;font-size:12.5px;cursor:pointer;">↓ Download Report</button>
+    </div>
+  </div>
+  <div style="padding:28px 80px;background:var(--parch);">
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:var(--goldl)">📈</div><span class="kpi-trend kup">↑ 7.4%</span></div><div class="kpi-val">$48.2B</div><div class="kpi-label">Regional GDP</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:var(--teall)">👷</div><span class="kpi-trend kup">↑ 3.1%</span></div><div class="kpi-val">612K</div><div class="kpi-label">Total Employment</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rustl)">🏢</div><span class="kpi-trend kup">↑ 14%</span></div><div class="kpi-val" id="an-cos">—</div><div class="kpi-label">Listed Companies</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:var(--greenl)">🏗️</div><span class="kpi-trend kup">↑ 31%</span></div><div class="kpi-val">$9.3B</div><div class="kpi-label">Active Pipeline</div></div>
+      <div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:var(--rustl)">⚠️</div><span class="kpi-trend kdn">4,200 gap</span></div><div class="kpi-val">14</div><div class="kpi-label">Critical Skill Gaps</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px;">
+      <div class="chart-card">
+        <div class="chart-title">GDP Growth — Region vs. National</div>
+        <div class="chart-sub">Annual growth rate comparison, 2019–2024</div>
+        <div class="bars">
+          <div style="display:flex;align-items:flex-end;gap:2px;flex:1"><div class="bar" style="height:55%;background:var(--teal)"></div><div class="bar" style="height:38%;background:rgba(26,107,114,.28)"></div></div>
+          <div style="display:flex;align-items:flex-end;gap:2px;flex:1"><div class="bar" style="height:62%;background:var(--teal)"></div><div class="bar" style="height:44%;background:rgba(26,107,114,.28)"></div></div>
+          <div style="display:flex;align-items:flex-end;gap:2px;flex:1"><div class="bar" style="height:40%;background:var(--teal)"></div><div class="bar" style="height:30%;background:rgba(26,107,114,.28)"></div></div>
+          <div style="display:flex;align-items:flex-end;gap:2px;flex:1"><div class="bar" style="height:72%;background:var(--teal)"></div><div class="bar" style="height:55%;background:rgba(26,107,114,.28)"></div></div>
+          <div style="display:flex;align-items:flex-end;gap:2px;flex:1"><div class="bar" style="height:82%;background:var(--teal)"></div><div class="bar" style="height:60%;background:rgba(26,107,114,.28)"></div></div>
+          <div style="display:flex;align-items:flex-end;gap:2px;flex:1"><div class="bar" style="height:100%;background:var(--rust)"></div><div class="bar" style="height:63%;background:rgba(26,107,114,.28)"></div></div>
+        </div>
+        <div class="bar-lbls"><div class="bar-lbl">2019</div><div class="bar-lbl">2020</div><div class="bar-lbl">2021</div><div class="bar-lbl">2022</div><div class="bar-lbl">2023</div><div class="bar-lbl" style="color:var(--rust);font-weight:700">2024</div></div>
+        <div style="display:flex;gap:14px;margin-top:10px;">
+          <span style="font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:var(--teal);border-radius:2px;display:inline-block"></span>Our Region</span>
+          <span style="font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;background:rgba(26,107,114,.3);border-radius:2px;display:inline-block"></span>National Avg</span>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Active Pipeline by Sector</div>
+        <div class="chart-sub">By total value</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="padding:9px 12px;background:var(--rustl);border-radius:5px;border-left:3px solid var(--rust)"><div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--rust)">Energy/LNG</div><div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700">$4.2B</div></div>
+          <div style="padding:9px 12px;background:var(--teall);border-radius:5px;border-left:3px solid var(--teal)"><div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--teal)">Construction</div><div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700">$2.8B</div></div>
+          <div style="padding:9px 12px;background:var(--goldl);border-radius:5px;border-left:3px solid var(--gold)"><div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--gold)">Data Centers</div><div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700">$1.4B</div></div>
+          <div style="padding:9px 12px;background:var(--greenl);border-radius:5px;border-left:3px solid var(--green)"><div style="font-size:9.5px;font-weight:700;text-transform:uppercase;color:var(--green)">Industrial</div><div style="font-family:'Fraunces',serif;font-size:19px;font-weight:700">$880M</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">Cross-Border Trade — Top Commodity Flows</div>
+      <div class="chart-sub">South Texas ports of entry</div>
+      <table class="mtable">
+        <thead><tr><th>Commodity</th><th>Port</th><th>Monthly Volume</th><th>YoY</th><th>Key Players</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Auto Parts & Vehicles</strong></td><td>Laredo</td><td>$8.4B</td><td style="color:var(--green);font-weight:600">+12%</td><td>GM, Ford, BMW</td></tr>
+          <tr><td><strong>Petroleum / LNG</strong></td><td>Brownsville</td><td>$2.1B</td><td style="color:var(--green);font-weight:600">+31%</td><td>Cheniere, NextDecade</td></tr>
+          <tr><td><strong>Electronics / Maquiladora</strong></td><td>McAllen</td><td>$1.8B</td><td style="color:var(--green);font-weight:600">+8%</td><td>Samsung, LG</td></tr>
+          <tr><td><strong>Fresh Produce</strong></td><td>Hidalgo</td><td>$680M</td><td style="color:var(--green);font-weight:600">+4%</td><td>Multiple</td></tr>
+          <tr><td><strong>Steel & Metals</strong></td><td>Laredo</td><td>$420M</td><td style="color:var(--rust);font-weight:600">-6%</td><td>Ternium, AHMSA</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ WORKFORCE ══ -->
+<div class="page" id="page-workforce">
+  <div style="background:var(--teal);padding:52px 80px;">
+    <div style="font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.48);margin-bottom:9px;">Human Capital</div>
+    <h1 style="font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-2px;color:white;margin-bottom:9px;">Workforce & Education</h1>
+    <p style="font-size:15px;color:rgba(255,255,255,.62);max-width:480px;">Skills gaps, school pipelines, career pathways matched to real regional demand.</p>
+  </div>
+  <div style="padding:36px 80px;background:var(--parch);">
+    <div class="tab-row">
+      <div class="tab active" onclick="setWtab(this,'w-skills')">Skills Gap</div>
+      <div class="tab" onclick="setWtab(this,'w-schools')">Schools</div>
+      <div class="tab" onclick="setWtab(this,'w-pathways')">Career Pathways</div>
+    </div>
+    <div id="w-skills">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="chart-card">
+          <div class="chart-title">🔴 Critical Workforce Gaps</div>
+          <div style="margin-top:14px">
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Certified Welders</span><span class="sev sev-crit">340 short</span></div><div class="prog-bg"><div class="prog-fill" style="width:43%;background:var(--rust)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Licensed Electricians</span><span class="sev sev-crit">220 short</span></div><div class="prog-bg"><div class="prog-fill" style="width:57%;background:var(--rust)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">CDL Truck Drivers</span><span class="sev sev-crit">480 short</span></div><div class="prog-bg"><div class="prog-fill" style="width:38%;background:var(--rust)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">IT / Cybersecurity</span><span class="sev sev-crit">290 short</span></div><div class="prog-bg"><div class="prog-fill" style="width:10%;background:var(--rust)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Civil Engineers</span><span class="sev sev-high">140 short</span></div><div class="prog-bg"><div class="prog-fill" style="width:22%;background:var(--gold)"></div></div></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">🟢 Regional Strengths</div>
+          <div style="margin-top:14px">
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Bilingual Customer Service</span><span class="sev sev-ok">Surplus</span></div><div class="prog-bg"><div class="prog-fill" style="width:95%;background:var(--green)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">General Construction Labor</span><span class="sev sev-ok">Surplus</span></div><div class="prog-bg"><div class="prog-fill" style="width:88%;background:var(--green)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Customs Compliance</span><span class="sev sev-ok">Strong</span></div><div class="prog-bg"><div class="prog-fill" style="width:76%;background:var(--green)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Interpreters (Eng/Spa)</span><span class="sev sev-ok">Surplus</span></div><div class="prog-bg"><div class="prog-fill" style="width:92%;background:var(--green)"></div></div></div>
+            <div class="gap-row"><div class="gap-top"><span class="gap-name">Agricultural Workers</span><span class="sev sev-ok">Surplus</span></div><div class="prog-bg"><div class="prog-fill" style="width:84%;background:var(--green)"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="w-schools" style="display:none">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div class="school-card"><div class="school-top" style="background:var(--teal)">University</div><div class="school-body"><div class="school-name">TAMIU</div><div class="school-loc">📍 Laredo, TX · 8,500 students</div><div class="prog-item"><span>Engineering</span><span class="prog-pct">94% hired</span></div><div class="prog-item"><span>Intl. Trade</span><span class="prog-pct">89% hired</span></div><div class="prog-item"><span>Nursing</span><span class="prog-pct">98% hired</span></div></div><div class="school-foot"><span class="school-stat"><strong>82%</strong> employed</span><span class="school-stat"><strong>$38K</strong> avg</span></div></div>
+        <div class="school-card"><div class="school-top" style="background:var(--teal)">University</div><div class="school-body"><div class="school-name">UT Rio Grande Valley</div><div class="school-loc">📍 Edinburg, TX · 32,000 students</div><div class="prog-item"><span>Computer Science</span><span class="prog-pct">91% hired</span></div><div class="prog-item"><span>Civil Engineering</span><span class="prog-pct">96% hired</span></div><div class="prog-item"><span>Nursing</span><span class="prog-pct">97% hired</span></div></div><div class="school-foot"><span class="school-stat"><strong>79%</strong> employed</span><span class="school-stat"><strong>$42K</strong> avg</span></div></div>
+        <div class="school-card"><div class="school-top" style="background:var(--gold)">Community College</div><div class="school-body"><div class="school-name">Laredo College</div><div class="school-loc">📍 Laredo, TX · 14,000 students</div><div class="prog-item"><span>Welding</span><span class="prog-pct">97% hired</span></div><div class="prog-item"><span>CDL / Transport</span><span class="prog-pct">99% hired</span></div><div class="prog-item"><span>Electrical Tech</span><span class="prog-pct">96% hired</span></div></div><div class="school-foot"><span class="school-stat"><strong>88%</strong> employed</span><span class="school-stat"><strong>$32K</strong> avg</span></div></div>
+        <div class="school-card"><div class="school-top" style="background:var(--gold)">Community College</div><div class="school-body"><div class="school-name">South Texas College</div><div class="school-loc">📍 McAllen, TX · 33,000 students</div><div class="prog-item"><span>Industrial Tech</span><span class="prog-pct">93% hired</span></div><div class="prog-item"><span>HVAC</span><span class="prog-pct">98% hired</span></div><div class="prog-item"><span>Construction Mgmt</span><span class="prog-pct">91% hired</span></div></div><div class="school-foot"><span class="school-stat"><strong>86%</strong> employed</span><span class="school-stat"><strong>$34K</strong> avg</span></div></div>
+        <div class="school-card"><div class="school-top" style="background:var(--rust)">Technical College</div><div class="school-body"><div class="school-name">TSTC Harlingen</div><div class="school-loc">📍 Harlingen, TX · 6,000 students</div><div class="prog-item"><span>Welding</span><span class="prog-pct">98% hired</span></div><div class="prog-item"><span>HVAC</span><span class="prog-pct">97% hired</span></div><div class="prog-item"><span>Diesel Tech</span><span class="prog-pct">99% hired</span></div></div><div class="school-foot"><span class="school-stat"><strong>92%</strong> employed</span><span class="school-stat"><strong>$38K</strong> avg</span></div></div>
+        <div class="school-card"><div class="school-top" style="background:var(--teal)">Universidad</div><div class="school-body"><div class="school-name">UANL — Monterrey</div><div class="school-loc">📍 Monterrey, NL · 180K students</div><div class="prog-item"><span>Engineering</span><span class="prog-pct">4,000/yr</span></div><div class="prog-item"><span>Business/MBA</span><span class="prog-pct">3,500/yr</span></div><div class="prog-item"><span>Medicine</span><span class="prog-pct">1,200/yr</span></div></div><div class="school-foot"><span class="school-stat"><strong>Largest</strong> NL</span><span class="school-stat"><strong>$22K</strong> avg</span></div></div>
+      </div>
+    </div>
+    <div id="w-pathways" style="display:none">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">🔧</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">Welder</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">AWS cert → LNG & construction</div><div style="font-size:12px;font-weight:600;color:var(--green)">$38–58K · 340 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">⚡</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">Electrician</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">2yr apprenticeship → data centers</div><div style="font-size:12px;font-weight:600;color:var(--green)">$48–72K · 220 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">🚛</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">CDL Driver</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">6-week CDL → cross-border routes</div><div style="font-size:12px;font-weight:600;color:var(--green)">$52–68K · 480 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">💻</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">IT / Cybersecurity</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">Bootcamp/degree → data centers, govt</div><div style="font-size:12px;font-weight:600;color:var(--green)">$55–90K · 290 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">🏗️</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">Project Manager</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">Engineering + PMP cert → energy</div><div style="font-size:12px;font-weight:600;color:var(--green)">$72–110K · 85 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">📦</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">Customs Broker</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">CBP exam → import/export</div><div style="font-size:12px;font-weight:600;color:var(--green)">$54–78K · 120 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">🔬</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">Civil Engineer</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">BS + PE license → infrastructure</div><div style="font-size:12px;font-weight:600;color:var(--green)">$68–95K · 140 openings</div></div>
+        <div style="border:1px solid var(--border);border-radius:var(--r);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:24px;margin-bottom:8px">🛢️</div><div style="font-family:'Fraunces',serif;font-size:13.5px;font-weight:700;margin-bottom:4px">Pipeline Tech</div><div style="font-size:11.5px;color:var(--ink3);line-height:1.5;margin-bottom:8px">Trade cert + NCCER → LNG, oil & gas</div><div style="font-size:12px;font-weight:600;color:var(--green)">$44–62K · 195 openings</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DIRECTORY ══ -->
+<div class="page" id="page-directory">
+  <div style="background:var(--ink);padding:44px 80px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:24px;">
+      <div>
+        <div style="font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(232,120,80,.8);margin-bottom:8px;">Business Directory</div>
+        <h1 style="font-family:'Fraunces',serif;font-size:clamp(28px,4vw,48px);font-weight:700;letter-spacing:-1.5px;color:white;margin-bottom:5px;">Find Who's Ready to Work</h1>
+        <p style="font-size:14px;color:rgba(255,255,255,.4);" id="dir-total">Loading...</p>
+      </div>
+      <a href="/onboarding.html" style="padding:9px 18px;border-radius:var(--r);background:var(--teal);color:white;text-decoration:none;font-size:13px;font-weight:600;flex-shrink:0;">+ List Your Business</a>
+    </div>
+    <div class="search-bar">
+      <input class="si" id="dir-q" placeholder="Search by name, service, keyword..." oninput="debSearch()">
+      <select class="ss" id="dir-sector" onchange="doSearch()"><option value="">All Sectors</option><option>Construction</option><option>Energy</option><option>Manufacturing</option><option>Logistics</option><option>Technology</option><option>Healthcare</option><option>Government</option></select>
+      <select class="ss" id="dir-country" onchange="doSearch()"><option value="">All Locations</option><option value="US">Texas (US)</option><option value="MX">Mexico</option></select>
+      <select class="ss" id="dir-ready" onchange="doSearch()"><option value="">All Companies</option><option value="1">Ready to Work</option></select>
+      <button class="sbtn" onclick="doSearch()">Search</button>
+    </div>
+  </div>
+  <div style="padding:20px 80px;background:var(--parch);">
+    <div class="dir-meta">
+      <div class="dir-count-txt" id="dir-count">Loading companies...</div>
+      <div style="font-size:12px;color:var(--ink3);display:flex;align-items:center;gap:5px;"><span class="ready-dot rd-yes"></span> = Ready to Work</div>
+    </div>
+    <div class="co-grid" id="co-grid"></div>
+    <div style="text-align:center;margin-top:20px;">
+      <button id="load-more" onclick="loadMore()" style="display:none;padding:10px 24px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:13.5px;cursor:pointer;">Load More Companies</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ OPPORTUNITIES ══ -->
+<div class="page" id="page-opportunities">
+  <div style="background:var(--gold);padding:52px 80px;">
+    <div style="font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:8px;">Project Pipeline</div>
+    <h1 style="font-family:'Fraunces',serif;font-size:clamp(32px,5vw,56px);font-weight:700;letter-spacing:-2px;color:white;margin-bottom:8px;">Project Opportunities</h1>
+    <p style="font-size:15px;color:rgba(255,255,255,.68);max-width:460px;">Active projects seeking qualified local businesses. Free to view and apply.</p>
+  </div>
+  <div style="padding:28px 80px;background:var(--parch);">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;" id="opp-total">0</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-top:2px;">Active Projects</div></div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--gold)">$9.3B</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-top:2px;">Total Pipeline</div></div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--green)" id="opp-matched">0</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-top:2px;">Ready Companies</div></div>
+      <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;align-items:center;justify-content:center;"><button onclick="openModal('proj-modal')" style="padding:9px 16px;background:var(--gold);color:white;border:none;border-radius:6px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;width:100%">+ Post Project</button></div>
+    </div>
+    <div class="tab-row">
+      <div class="tab active" onclick="filterOpps(this,'')">All</div>
+      <div class="tab" onclick="filterOpps(this,'Energy')">Energy / LNG</div>
+      <div class="tab" onclick="filterOpps(this,'Construction')">Construction</div>
+      <div class="tab" onclick="filterOpps(this,'Government')">Government</div>
+      <div class="tab" onclick="filterOpps(this,'Manufacturing')">Manufacturing</div>
+    </div>
+    <div id="opp-list"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-grid">
+    <div>
+      <div class="ft-brand">RioData</div>
+      <div class="ft-desc">A free public platform for South Texas and Northern Mexico. Built for the region's future. Free forever.</div>
+    </div>
+    <div>
+      <div class="ft-col-title">Platform</div>
+      <ul class="ft-links">
+        <li><a onclick="showPage('analytics')">Analytics</a></li>
+        <li><a onclick="showPage('workforce')">Workforce</a></li>
+        <li><a onclick="showPage('directory')">Companies</a></li>
+        <li><a onclick="showPage('opportunities')">Opportunities</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Region</div>
+      <ul class="ft-links">
+        <li><a>Laredo, TX</a></li><li><a>McAllen / RGV</a></li>
+        <li><a>Brownsville</a></li><li><a>Nuevo Laredo</a></li>
+        <li><a>Monterrey, NL</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="ft-col-title">Resources</div>
+      <ul class="ft-links">
+        <li><a href="/onboarding.html">Register Business</a></li>
+        <li><a onclick="openModal('proj-modal')">Post a Project</a></li>
+        <li><a href="/dashboard.html">My Dashboard</a></li>
+        <li><a href="mailto:hello@riodata.org">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <div class="ft-copy">© 2025 RioData · riodata.org · South Texas + Northern Mexico · Free Public Resource</div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ AUTH MODAL ══ -->
+<div class="modal-ov" id="auth-modal" onclick="if(event.target===this)closeModal('auth-modal')">
+  <div class="modal">
+    <button class="modal-x" onclick="closeModal('auth-modal')">✕</button>
+    <div class="modal-brand">🌵 RioData</div>
+    <div class="modal-tabs">
+      <div class="mtab active" id="tab-si" onclick="setTab('signin')">Sign In</div>
+      <div class="mtab" id="tab-su" onclick="setTab('signup')">Create Account</div>
+    </div>
+    <!-- SIGN IN -->
+    <div id="form-si">
+      <div class="modal-h">Welcome back</div>
+      <div class="modal-sub">Sign in to your free RioData account</div>
+      <div class="fgroup"><label class="flabel">Email Address</label><input class="finput" id="si-email" type="email" placeholder="you@company.com" onkeydown="if(event.key==='Enter')doSignIn()"></div>
+      <div class="fgroup"><label class="flabel">Password</label><input class="finput" id="si-pass" type="password" placeholder="Your password" onkeydown="if(event.key==='Enter')doSignIn()"><div style="text-align:right;margin-top:4px;"><a class="flink" onclick="doForgotPass()">Forgot password?</a></div></div>
+      <div class="fmsg fmsg-err" id="si-err"></div>
+      <button class="btn-submit" id="si-btn" onclick="doSignIn()">Sign In →</button>
+      <div class="or-div">or</div>
+      <button class="btn-google" onclick="doGoogleAuth()"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Continue with Google</button>
+      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--ink3);">No account? <a onclick="setTab('signup')" class="flink">Join free →</a></div>
+    </div>
+    <!-- SIGN UP -->
+    <div id="form-su" style="display:none">
+      <div class="modal-h">Join RioData</div>
+      <div class="modal-sub">100% free · No credit card</div>
+      <div style="margin-bottom:12px;"><label class="flabel">I am a...</label>
+        <div class="utypes">
+          <div class="utype sel" onclick="pickUtype(this)"><div class="utype-icon">🏢</div><div class="utype-label">Business Owner</div></div>
+          <div class="utype" onclick="pickUtype(this)"><div class="utype-icon">🏗️</div><div class="utype-label">Developer/GC</div></div>
+          <div class="utype" onclick="pickUtype(this)"><div class="utype-icon">🎓</div><div class="utype-label">Job Seeker</div></div>
+          <div class="utype" onclick="pickUtype(this)"><div class="utype-icon">💼</div><div class="utype-label">Investor</div></div>
+          <div class="utype" onclick="pickUtype(this)"><div class="utype-icon">🏛️</div><div class="utype-label">University</div></div>
+          <div class="utype" onclick="pickUtype(this)"><div class="utype-icon">⭐</div><div class="utype-label">Gov/EDC</div></div>
+        </div>
+      </div>
+      <div class="frow">
+        <div class="fgroup"><label class="flabel">First Name</label><input class="finput" id="su-first" placeholder="Maria"></div>
+        <div class="fgroup"><label class="flabel">Last Name</label><input class="finput" id="su-last" placeholder="Garcia"></div>
+      </div>
+      <div class="fgroup"><label class="flabel">Email Address</label><input class="finput" id="su-email" type="email" placeholder="you@company.com"></div>
+      <div class="fgroup"><label class="flabel">Password (min 8 characters)</label><input class="finput" id="su-pass" type="password" placeholder="Create a password" onkeydown="if(event.key==='Enter')doSignUp()"></div>
+      <div class="fgroup"><label class="flabel">Organization (optional)</label><input class="finput" id="su-org" placeholder="Your company or school"></div>
+      <div class="fmsg fmsg-err" id="su-err"></div>
+      <div class="fmsg fmsg-ok" id="su-ok"></div>
+      <button class="btn-submit" id="su-btn" onclick="doSignUp()">Create Free Account →</button>
+      <div class="or-div">or</div>
+      <button class="btn-google" onclick="doGoogleAuth()"><svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Continue with Google</button>
+      <div style="text-align:center;margin-top:12px;font-size:12px;color:var(--ink3);">Have account? <a onclick="setTab('signin')" class="flink">Sign in →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPANY DETAIL MODAL -->
+<div class="modal-ov" id="co-modal" onclick="if(event.target===this)closeModal('co-modal')">
+  <div class="modal modal-lg">
+    <button class="modal-x" onclick="closeModal('co-modal')">✕</button>
+    <div style="font-size:10px;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;">Company Profile</div>
+    <div class="modal-h" id="cm-name"></div>
+    <div style="font-size:13px;color:var(--ink3);margin-bottom:14px;" id="cm-loc"></div>
+    <div id="cm-body"></div>
+  </div>
+</div>
+
+<!-- POST PROJECT MODAL -->
+<div class="modal-ov" id="proj-modal" onclick="if(event.target===this)closeModal('proj-modal')">
+  <div class="modal" style="max-width:500px;">
+    <button class="modal-x" onclick="closeModal('proj-modal')">✕</button>
+    <div class="modal-brand">📋 RioData</div>
+    <div class="modal-h">Post a Project</div>
+    <div class="modal-sub">Free to post. Matched to local companies.</div>
+    <div class="fgroup"><label class="flabel">Project Title *</label><input class="finput" id="pp-title" placeholder="e.g. Laredo Warehouse — Civil Works"></div>
+    <div class="frow">
+      <div class="fgroup"><label class="flabel">Type</label><select class="fselect" id="pp-type"><option>Construction</option><option>Energy / LNG</option><option>Data Center</option><option>Government</option><option>Manufacturing</option></select></div>
+      <div class="fgroup"><label class="flabel">City</label><input class="finput" id="pp-city" placeholder="Laredo, TX"></div>
+    </div>
+    <div class="fgroup"><label class="flabel">Description *</label><textarea class="ftextarea" id="pp-desc" placeholder="Services needed, timeline, scope..."></textarea></div>
+    <div class="frow">
+      <div class="fgroup"><label class="flabel">Est. Value</label><input class="finput" id="pp-val" placeholder="$2.4M"></div>
+      <div class="fgroup"><label class="flabel">Deadline</label><input class="finput" type="date" id="pp-deadline"></div>
+    </div>
+    <div class="fgroup"><label class="flabel">Contact Email *</label><input class="finput" type="email" id="pp-email" placeholder="bids@company.com"></div>
+    <div class="fmsg fmsg-err" id="pp-err"></div>
+    <div class="fmsg fmsg-ok" id="pp-ok"></div>
+    <button class="btn-submit" id="pp-btn" onclick="doPostProject()">Post Opportunity →</button>
+  </div>
+</div>
+
+<style>@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}</style>
+<script>
+// ════════════════════════════════════════════
+// RIODATA COMPLETE FUNCTIONALITY
+// ════════════════════════════════════════════
+
+// PAGE ROUTING
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id)?.classList.add('active');
+  document.querySelectorAll('.nav-links a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('nav-'+id)?.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='directory')initDir();
+  if(id==='opportunities')initOpps();
+}
+
+// MOBILE MENU
+function toggleMenu(){document.getElementById('mob-nav').classList.toggle('open');}
+function closeMenu(){document.getElementById('mob-nav').classList.remove('open');}
+
+// MODALS
+function openModal(id){document.getElementById(id)?.classList.add('open');}
+function closeModal(id){document.getElementById(id)?.classList.remove('open');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal-ov.open').forEach(m=>m.classList.remove('open'));});
+
+// TABS
+function setTab(t){
+  document.getElementById('form-si').style.display=t==='signin'?'block':'none';
+  document.getElementById('form-su').style.display=t==='signup'?'block':'none';
+  document.getElementById('tab-si').classList.toggle('active',t==='signin');
+  document.getElementById('tab-su').classList.toggle('active',t==='signup');
+}
+function pickUtype(el){document.querySelectorAll('.utype').forEach(u=>u.classList.remove('sel'));el.classList.add('sel');}
+function setWtab(el,id){
+  document.querySelectorAll('#page-workforce .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['w-skills','w-schools','w-pathways'].forEach(w=>{
+    const el2=document.getElementById(w);
+    if(el2)el2.style.display=w===id?'block':'none';
+  });
+}
+
+// TOAST
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast toast-'+type+' show';
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// AUTH UI UPDATE
+function updateAuthUI(){
+  const authBtns=document.getElementById('nav-auth');
+  const userArea=document.getElementById('nav-user');
+  if(currentUser){
+    if(authBtns)authBtns.style.display='none';
+    if(userArea)userArea.style.display='flex';
+    const av=document.getElementById('nav-av');
+    const nm=document.getElementById('nav-uname');
+    if(av)av.textContent=(currentUser.email||'U')[0].toUpperCase();
+    if(nm)nm.textContent=currentUser.email?.split('@')[0]||'';
+  } else {
+    if(authBtns)authBtns.style.display='flex';
+    if(userArea)userArea.style.display='none';
+  }
+}
+
+// SIGN IN
+async function doSignIn(){
+  const email=document.getElementById('si-email').value.trim();
+  const pass=document.getElementById('si-pass').value;
+  const err=document.getElementById('si-err');
+  const btn=document.getElementById('si-btn');
+  err.classList.remove('show');
+  if(!email||!pass){err.textContent='Please enter email and password.';err.classList.add('show');return;}
+  btn.textContent='Signing in...';btn.disabled=true;
+  const {error}=await sb.auth.signInWithPassword({email,password:pass});
+  btn.textContent='Sign In →';btn.disabled=false;
+  if(error){err.textContent=error.message;err.classList.add('show');}
+  else{closeModal('auth-modal');window.location.href='/dashboard.html';}
+}
+
+// SIGN UP
+async function doSignUp(){
+  const first=document.getElementById('su-first').value.trim();
+  const last=document.getElementById('su-last').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const pass=document.getElementById('su-pass').value;
+  const org=document.getElementById('su-org').value.trim();
+  const utype=document.querySelector('.utype.sel .utype-label')?.textContent||'user';
+  const err=document.getElementById('su-err');
+  const ok=document.getElementById('su-ok');
+  const btn=document.getElementById('su-btn');
+  err.classList.remove('show');ok.classList.remove('show');
+  if(!email){err.textContent='Please enter your email.';err.classList.add('show');return;}
+  if(!pass||pass.length<8){err.textContent='Password must be at least 8 characters.';err.classList.add('show');return;}
+  btn.textContent='Creating account...';btn.disabled=true;
+  const {data,error}=await sb.auth.signUp({
+    email,password:pass,
+    options:{data:{full_name:(first+' '+last).trim(),user_type:utype,organization:org},emailRedirectTo:'https://riodata.org/dashboard.html'}
+  });
+  btn.textContent='Create Free Account →';btn.disabled=false;
+  if(error){err.textContent=error.message;err.classList.add('show');return;}
+  if(data?.session){closeModal('auth-modal');window.location.href='/dashboard.html';}
+  else{ok.textContent='✅ Account created! Check your email ('+email+') and click the confirmation link to log in.';ok.classList.add('show');}
+}
+
+// GOOGLE AUTH
+async function doGoogleAuth(){
+  const {error}=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:'https://riodata.org/dashboard.html'}});
+  if(error)toast(error.message,'err');
+}
+
+// FORGOT PASSWORD
+async function doForgotPass(){
+  const email=document.getElementById('si-email').value.trim();
+  if(!email){document.getElementById('si-err').textContent='Enter your email first, then click Forgot Password.';document.getElementById('si-err').classList.add('show');return;}
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:'https://riodata.org/reset-password.html'});
+  if(error){document.getElementById('si-err').textContent=error.message;document.getElementById('si-err').classList.add('show');}
+  else{toast('✅ Reset email sent to '+email);closeModal('auth-modal');}
+}
+
+// SIGN OUT
+async function doSignOut(){
+  await sb.auth.signOut();
+  currentUser=null;updateAuthUI();
+  toast('Signed out successfully');
+}
+
+// ── DIRECTORY ──────────────────────────────────────────
+let allCos=[],dispCount=0;
+const PG=12;
+let searchT;
+function debSearch(){clearTimeout(searchT);searchT=setTimeout(doSearch,400);}
+
+async function initDir(){
+  const grid=document.getElementById('co-grid');
+  if(!grid||grid.dataset.loaded)return;
+  showSkeletons();
+  const {data,count}=await sb.from('companies').select('*',{count:'exact'}).eq('status','active').order('ready_to_work',{ascending:false}).order('created_at',{ascending:false});
+  if(!data||data.length===0){
+    allCos=demoCompanies();
+    document.getElementById('dir-total').textContent=allCos.length+' demo companies — add real ones via onboarding';
+  } else {
+    allCos=data;
+    document.getElementById('dir-total').textContent=count+' verified companies across the region';
+  }
+  dispCount=0;renderGrid(allCos,false);
+  grid.dataset.loaded='1';
+  // update matched count in opps
+  const om=document.getElementById('opp-matched');
+  if(om)om.textContent=allCos.filter(c=>c.ready_to_work).length;
+}
+
+async function doSearch(){
+  const q=document.getElementById('dir-q')?.value?.trim()||'';
+  const sector=document.getElementById('dir-sector')?.value||'';
+  const country=document.getElementById('dir-country')?.value||'';
+  const ready=document.getElementById('dir-ready')?.value==='1';
+  showSkeletons();
+  let query=sb.from('companies').select('*',{count:'exact'}).eq('status','active');
+  if(sector)query=query.eq('sector',sector);
+  if(country)query=query.eq('country',country);
+  if(ready)query=query.eq('ready_to_work',true);
+  if(q)query=query.or(`legal_name.ilike.%${q}%,description.ilike.%${q}%,city.ilike.%${q}%`);
+  query=query.order('ready_to_work',{ascending:false}).order('created_at',{ascending:false});
+  const {data,error}=await query;
+  if(error||!data||!data.length){
+    document.getElementById('co-grid').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:44px;color:var(--ink3)"><div style="font-size:28px;margin-bottom:8px">🔍</div><strong>No companies found</strong><div style="font-size:13px;margin-top:5px">Try different terms or <a href="/onboarding.html" style="color:var(--teal)">add yours</a></div></div>`;
+    document.getElementById('dir-count').innerHTML='<strong>0</strong> found';
+    return;
+  }
+  allCos=data;dispCount=0;renderGrid(allCos,false);
+}
+
+function showSkeletons(){
+  const g=document.getElementById('co-grid');
+  if(!g)return;
+  g.innerHTML=Array(6).fill(0).map(()=>`<div class="co-card" style="pointer-events:none"><div style="height:12px;background:var(--border);border-radius:3px;width:68%;margin-bottom:9px"></div><div style="height:9px;background:var(--border);border-radius:3px;width:38%;margin-bottom:7px"></div><div style="height:9px;background:var(--border);border-radius:3px;width:90%"></div></div>`).join('');
+}
+
+function renderGrid(cos,append=false){
+  const g=document.getElementById('co-grid');if(!g)return;
+  const chunk=cos.slice(dispCount,dispCount+PG);
+  const html=chunk.map(c=>coCard(c)).join('');
+  if(append)g.innerHTML+=html;else g.innerHTML=html||`<div style="grid-column:1/-1;text-align:center;padding:44px;color:var(--ink3)"><div style="font-size:28px;margin-bottom:8px">🏢</div><strong>No companies yet</strong><div style="font-size:13px;margin-top:5px">Be first — <a href="/onboarding.html" style="color:var(--teal)">register your business</a></div></div>`;
+  dispCount+=chunk.length;
+  const ready=cos.filter(c=>c.ready_to_work).length;
+  document.getElementById('dir-count').innerHTML=`Showing <strong>${Math.min(dispCount,cos.length)}</strong> of <strong>${cos.length}</strong> companies · <strong style="color:var(--green)">${ready} Ready to Work</strong>`;
+  const lb=document.getElementById('load-more');
+  if(lb)lb.style.display=dispCount<cos.length?'inline-block':'none';
+}
+
+function loadMore(){renderGrid(allCos,true);}
+
+function coCard(c){
+  const init=(c.legal_name||'C')[0].toUpperCase();
+  const pal=['#E3F0F1,#1A6B72','#F2E8E3,#B8431E','#FBF4E3,#B07D1A','#E4F0EA,#2A6B43','#EDE8F8,#5B3FA6'];
+  const [bg,fg]=pal[(c.legal_name||'').charCodeAt(0)%pal.length].split(',');
+  const svcs=(c.services||[]).slice(0,3);
+  const certs=[];
+  if(c.cert_sam)certs.push('SAM');if(c.cert_hubzone)certs.push('HUBZone');
+  if(c.cert_ctpat)certs.push('C-TPAT');if(c.cert_immex)certs.push('IMMEX');
+  const flag=c.country==='MX'?'🇲🇽':'🇺🇸';
+  const id=c.id||'';
+  return `<div class="co-card" onclick="${id?`showCo('${id}')`:''}">
+    <div class="co-head">
+      <div style="display:flex;gap:9px;align-items:flex-start">
+        <div class="co-av" style="background:${bg};color:${fg}">${init}</div>
+        <div><div class="co-name">${c.legal_name}</div><div class="co-loc">📍 ${c.city||''}${c.state_province?', '+c.state_province:''} ${flag}</div></div>
+      </div>
+      <div class="ready-dot ${c.ready_to_work?'rd-yes':'rd-no'}" title="${c.ready_to_work?'Ready to Work':'Not flagged'}"></div>
+    </div>
+    ${c.description?`<div class="co-desc">${c.description.substring(0,88)}${c.description.length>88?'...':''}</div>`:''}
+    <div class="co-tags">
+      ${svcs.map(s=>`<span class="co-tag">${s}</span>`).join('')}
+      ${certs.map(s=>`<span class="co-tag co-tag-cert">✓ ${s}</span>`).join('')}
+    </div>
+    <div class="co-foot">
+      <span class="co-sector">${c.sector||'General'}</span>
+      <span style="font-size:11.5px;color:var(--teal);font-weight:500">View →</span>
+    </div>
+  </div>`;
+}
+
+async function showCo(id){
+  if(!id)return;
+  const {data:c,error}=await sb.from('companies').select('*').eq('id',id).single();
+  if(error||!c)return;
+  const certs=[];
+  if(c.cert_sam)certs.push('SAM Registered');if(c.cert_hubzone)certs.push('HUBZone');
+  if(c.cert_8a)certs.push('SBA 8(a)');if(c.cert_sdvosb)certs.push('SDVOSB');
+  if(c.cert_wosb)certs.push('WOSB');if(c.cert_ctpat)certs.push('C-TPAT');
+  if(c.cert_immex)certs.push('IMMEX');if(c.cert_iso9001)certs.push('ISO 9001');
+  if(c.cert_nccer)certs.push('NCCER');if(c.cert_osha30)certs.push('OSHA 30');
+  document.getElementById('cm-name').textContent=c.legal_name;
+  document.getElementById('cm-loc').textContent='📍 '+(c.city||'')+(c.state_province?', '+c.state_province:'')+(c.country==='MX'?' 🇲🇽':' 🇺🇸');
+  document.getElementById('cm-body').innerHTML=`
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+      ${c.ready_to_work?'<span style="background:var(--greenl);color:var(--green);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">✅ Ready to Work</span>':''}
+      <span style="background:var(--teall);color:var(--teal);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${c.sector||'General'}</span>
+    </div>
+    ${c.description?`<p style="font-size:13px;color:var(--ink3);line-height:1.65;margin-bottom:12px">${c.description}</p>`:''}
+    ${c.services?.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:6px">Services</div><div style="display:flex;flex-wrap:wrap;gap:4px">${c.services.map(s=>`<span class="co-tag">${s}</span>`).join('')}</div></div>`:''}
+    ${certs.length?`<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:6px">Certifications</div><div style="display:flex;flex-wrap:wrap;gap:4px">${certs.map(s=>`<span class="co-tag co-tag-cert">✓ ${s}</span>`).join('')}</div></div>`:''}
+    <div style="background:var(--parch);border-radius:7px;padding:12px;margin-bottom:12px">
+      ${c.employee_range?`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border);font-size:12.5px"><span style="color:var(--ink3)">Team Size</span><strong>${c.employee_range}</strong></div>`:''}
+      ${c.year_founded?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:12.5px"><span style="color:var(--ink3)">Founded</span><strong>${c.year_founded}</strong></div>`:''}
+    </div>
+    ${c.contact_email?`<a href="mailto:${c.contact_email}" style="display:block;padding:11px;background:var(--teal);color:white;text-align:center;border-radius:var(--r);text-decoration:none;font-weight:600;font-size:13.5px;margin-bottom:7px">📧 Contact ${c.contact_name||'This Company'}</a>`:''}
+    ${c.website?`<a href="${c.website.startsWith('http')?c.website:'https://'+c.website}" target="_blank" style="display:block;padding:9px;background:transparent;color:var(--ink);text-align:center;border-radius:var(--r);text-decoration:none;font-size:13px;border:1.5px solid var(--border)">🌐 Visit Website</a>`:''}
+  `;
+  openModal('co-modal');
+}
+
+function demoCompanies(){
+  return [
+    {id:null,legal_name:'Falcon Industrial Services',city:'Laredo',state_province:'TX',country:'US',sector:'Construction',ready_to_work:true,services:['Structural Welding','Pipeline','Steel Fab'],cert_hubzone:true,cert_sam:true,description:'Full-service industrial contractor specializing in structural welding, pipeline support, and steel fabrication.'},
+    {id:null,legal_name:'Border Energy Solutions',city:'Matamoros',state_province:'',country:'MX',sector:'Energy',ready_to_work:true,services:['LNG Support','Mechanical','Inspection'],cert_iso9001:true,description:'LNG facility mechanical contracting and inspection services across the border region.'},
+    {id:null,legal_name:'Valley Civil Contractors',city:'Brownsville',state_province:'TX',country:'US',sector:'Construction',ready_to_work:true,services:['Site Prep','Grading','Utilities'],cert_hubzone:true,description:'Site preparation, grading, drainage, and underground utilities for commercial and industrial projects.'},
+    {id:null,legal_name:'Rio Grande Logistics',city:'McAllen',state_province:'TX',country:'US',sector:'Logistics',ready_to_work:false,services:['Cross-Border Freight','Customs Brokerage'],cert_sam:true,description:'Cross-border freight brokerage, customs clearance, and distribution throughout South Texas.'},
+    {id:null,legal_name:'NorMex Manufacturing',city:'Monterrey',state_province:'NL',country:'MX',sector:'Manufacturing',ready_to_work:true,services:['CNC Machining','Metal Fab','OEM'],cert_immex:true,description:'CNC machining, metal fabrication, and OEM component manufacturing for industrial clients.'},
+    {id:null,legal_name:'Sendero Electric LLC',city:'Brownsville',state_province:'TX',country:'US',sector:'Energy',ready_to_work:true,services:['Commercial Electrical','High-Voltage','Substation'],cert_sam:true,description:'Commercial and industrial electrical contractor. Substation and high-voltage work.'},
+  ];
+}
+
+// ── OPPORTUNITIES ──────────────────────────────────────
+let allOpps=[];
+async function initOpps(){
+  const list=document.getElementById('opp-list');
+  if(!list||list.dataset.loaded)return;
+  list.innerHTML='<div style="text-align:center;padding:28px;color:var(--ink3)">Loading projects...</div>';
+  const {data,count}=await sb.from('projects').select('*',{count:'exact'}).eq('status','active').order('created_at',{ascending:false});
+  allOpps=(!data||!data.length)?demoProjects():data;
+  document.getElementById('opp-total').textContent=allOpps.length;
+  renderOpps(allOpps);
+  list.dataset.loaded='1';
+}
+
+function filterOpps(el,type){
+  document.querySelectorAll('#page-opportunities .tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  const filtered=type?allOpps.filter(p=>(p.project_type||'').includes(type)):allOpps;
+  renderOpps(filtered);
+}
+
+function renderOpps(opps){
+  const list=document.getElementById('opp-list');if(!list)return;
+  if(!opps.length){
+    list.innerHTML=`<div style="text-align:center;padding:44px;color:var(--ink3)"><div style="font-size:28px;margin-bottom:8px">📋</div><strong>No projects yet</strong><div style="font-size:13px;margin-top:5px"><a onclick="openModal('proj-modal')" style="color:var(--teal);cursor:pointer">Post the first opportunity →</a></div></div>`;
+    return;
+  }
+  list.innerHTML=opps.map(p=>`
+    <div class="opp">
+      <div>
+        <div class="opp-type">📋 ${p.project_type||'Project'}</div>
+        <div class="opp-title">${p.title}</div>
+        <div class="opp-desc">${(p.description||'').substring(0,180)}${(p.description||'').length>180?'...':''}</div>
+        <div class="opp-meta">
+          ${p.city?`<span>📍 ${p.city}${p.state_province?', '+p.state_province:''}</span>`:''}
+          ${p.total_value?`<span>💰 ${p.total_value}</span>`:''}
+          ${p.worker_count?`<span>👥 ${p.worker_count}</span>`:''}
+          ${p.company_name?`<span>🏢 ${p.company_name}</span>`:''}
+        </div>
+      </div>
+      <div class="opp-r">
+        <div class="opp-dl-label">Deadline</div>
+        <div class="opp-dl-date">${p.deadline?new Date(p.deadline).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'Open'}</div>
+        ${p.contact_email?`<a href="mailto:${p.contact_email}" class="btn-apply" style="text-decoration:none">Apply / Inquire</a>`:'<button class="btn-apply">Apply / Inquire</button>'}
+      </div>
+    </div>`).join('');
+}
+
+function demoProjects(){
+  return [
+    {title:'Port of Brownsville LNG — Phase 3 Civil Works',project_type:'Energy',description:'NextDecade seeking qualified civil, structural, and mechanical subcontractors for the Rio Grande LNG facility. HUBZone preferred.',city:'Brownsville',state_province:'TX',total_value:'$420M total',worker_count:'200–400 workers',deadline:'2025-05-15',contact_email:null,company_name:'NextDecade'},
+    {title:'Starr County Data Campus — Electrical & HVAC',project_type:'Construction',description:'120MW hyperscale campus seeking licensed electrical and mechanical subcontractors. Strong local preference.',city:'Rio Grande City',state_province:'TX',total_value:'$280M total',worker_count:'150–250 workers',deadline:'2025-04-28',contact_email:null},
+    {title:'Webb County Road Maintenance — 3-Year Contract',project_type:'Government',description:'Annual RFQ for paving, signage, drainage, and road maintenance county-wide. HUBZone eligible.',city:'Laredo',state_province:'TX',total_value:'$18M/yr',worker_count:'30–80 workers',deadline:'2025-06-01',contact_email:null},
+    {title:'Hidalgo County Medical District Expansion',project_type:'Construction',description:'New outpatient care campus. Seeking masonry, MEP, and site work subcontractors.',city:'McAllen',state_province:'TX',total_value:'$94M total',worker_count:'100–180 workers',deadline:'2025-05-30',contact_email:null},
+  ];
+}
+
+// ── POST PROJECT ────────────────────────────────────────
+async function doPostProject(){
+  const title=document.getElementById('pp-title')?.value?.trim();
+  const desc=document.getElementById('pp-desc')?.value?.trim();
+  const email=document.getElementById('pp-email')?.value?.trim();
+  const err=document.getElementById('pp-err');
+  const ok=document.getElementById('pp-ok');
+  const btn=document.getElementById('pp-btn');
+  err.classList.remove('show');ok.classList.remove('show');
+  if(!title){err.textContent='Please enter a project title.';err.classList.add('show');return;}
+  if(!desc){err.textContent='Please enter a description.';err.classList.add('show');return;}
+  if(!email){err.textContent='Please enter a contact email.';err.classList.add('show');return;}
+  btn.textContent='Posting...';btn.disabled=true;
+  const {error}=await sb.from('projects').insert([{
+    title,project_type:document.getElementById('pp-type')?.value,description:desc,
+    city:document.getElementById('pp-city')?.value||'',
+    total_value:document.getElementById('pp-val')?.value||'',
+    deadline:document.getElementById('pp-deadline')?.value||null,
+    contact_email:email,status:'pending'
+  }]);
+  btn.textContent='Post Opportunity →';btn.disabled=false;
+  if(error){err.textContent='Error: '+error.message;err.classList.add('show');}
+  else{ok.textContent='✅ Project submitted for review! It will be live within 24 hours.';ok.classList.add('show');setTimeout(()=>closeModal('proj-modal'),2500);}
+}
+
+// ── LIVE COUNTS ──────────────────────────────────────────
+async function loadCounts(){
+  const {count:cc}=await sb.from('companies').select('*',{count:'exact',head:true}).eq('status','active');
+  const {count:pc}=await sb.from('projects').select('*',{count:'exact',head:true}).eq('status','active');
+  const e1=document.getElementById('h-cos');
+  if(e1)e1.innerHTML=cc?cc:'-';
+  const e2=document.getElementById('an-cos');
+  if(e2)e2.textContent=cc||'—';
+  const e3=document.getElementById('h-projs');
+  if(e3)e3.textContent=pc||'-';
+  const e4=document.getElementById('opp-total');
+  if(e4)e4.textContent=pc||0;
+}
+
+// ── INIT ─────────────────────────────────────────────────
+window.addEventListener('load',async()=>{
+  const {data:{session}}=await sb.auth.getSession();
+  currentUser=session?.user||null;
+  updateAuthUI();
+  loadCounts();
+});
+</script>
+</body>
+</html>
