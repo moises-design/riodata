@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RioData — Regional Map</title>
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const {createClient}=supabase;
+const sb=createClient('https://knbtwcxwdhyjvgncnzjo.supabase.co','sb_publishable_nXdgaJcI0K1zR_u0PvBlAg_SIImbEmw');
+</script>
+<style>
+:root{--ink:#0F0F0E;--ink3:#5C5C54;--border:#E2DDD6;--parch:#F7F3EE;--white:#FDFCFB;--rust:#B8431E;--rustl:#F2E8E3;--teal:#1A6B72;--teall:#E3F0F1;--gold:#B07D1A;--green:#2A6B43;--greenl:#E4F0EA;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;font-family:'Instrument Sans',sans-serif;color:var(--ink);}
+nav{background:#0F0F0E;height:52px;display:flex;align-items:center;padding:0 20px;gap:12px;z-index:100;position:relative;}
+.brand{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:white;text-decoration:none;display:flex;align-items:center;gap:6px;}
+.brand-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);}
+.nav-back{font-size:12px;color:rgba(255,255,255,.4);text-decoration:none;}
+.nav-back:hover{color:white;}
+.map-status{margin-left:auto;font-size:12px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:6px;}
+.add-btn{padding:7px 14px;border-radius:6px;background:var(--teal);color:white;text-decoration:none;font-size:12.5px;font-weight:600;}
+.filter-bar{background:rgba(15,15,14,.96);border-bottom:1px solid rgba(255,255,255,.07);padding:8px 16px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;z-index:100;position:relative;}
+.filter-label{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);}
+.fbtn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.55);font-family:inherit;transition:all .12s;}
+.fbtn:hover{border-color:rgba(255,255,255,.4);color:white;}
+.fbtn.on{background:var(--teal);color:white;border-color:var(--teal);}
+.map-wrap{display:flex;height:calc(100vh - 52px - 45px);}
+#map{flex:1;position:relative;}
+/* SIDEBAR */
+.sidebar{width:300px;background:white;border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.sb-head{padding:14px 16px;border-bottom:1px solid var(--border);}
+.sb-title{font-family:'Fraunces',serif;font-size:14px;font-weight:700;margin-bottom:2px;}
+.sb-meta{font-size:11.5px;color:var(--ink3);}
+.sb-search{padding:10px 12px;border-bottom:1px solid var(--border);}
+.sb-inp{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:6px;font-family:inherit;font-size:12.5px;}
+.sb-inp:focus{outline:none;border-color:var(--teal);}
+.co-list{flex:1;overflow-y:auto;}
+.co-item{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;display:flex;align-items:center;gap:9px;transition:background .1s;}
+.co-item:hover{background:var(--parch);}
+.co-av{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:12px;font-weight:700;flex-shrink:0;}
+.co-name{font-size:12px;font-weight:600;color:var(--ink);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.co-sub{font-size:10.5px;color:var(--ink3);margin-top:1px;}
+.co-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-left:auto;}
+/* MAP STATS */
+.map-stats{position:absolute;top:12px;left:12px;z-index:10;background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:10px;padding:11px 16px;display:flex;gap:18px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.ms{text-align:center;}
+.ms-num{font-family:'Fraunces',serif;font-size:19px;font-weight:700;line-height:1;}
+.ms-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink3);margin-top:2px;}
+/* LEGEND */
+.map-legend{position:absolute;bottom:32px;left:12px;z-index:10;background:rgba(255,255,255,.97);border:1px solid var(--border);border-radius:8px;padding:10px 13px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.leg-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);margin-bottom:7px;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink3);margin-bottom:4px;}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+/* POPUP */
+.mapboxgl-popup-content{border-radius:12px!important;padding:0!important;border:none!important;box-shadow:0 8px 32px rgba(0,0,0,.15)!important;min-width:240px;}
+.popup-inner{padding:16px;}
+.popup-name{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.3;}
+.popup-loc{font-size:11.5px;color:var(--ink3);margin-bottom:9px;display:flex;align-items:center;gap:4px;}
+.popup-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px;}
+.ptag{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:3px;}
+.ptag-ready{background:var(--greenl);color:var(--green);}
+.ptag-sector{background:var(--teall);color:var(--teal);}
+.ptag-cert{background:#FBF4E3;color:var(--gold);}
+.popup-desc{font-size:12px;color:var(--ink3);line-height:1.55;margin-bottom:10px;}
+.popup-contact{display:block;padding:8px 12px;background:var(--teal);color:white;border-radius:6px;text-align:center;text-decoration:none;font-size:12.5px;font-weight:600;}
+/* LOADING */
+.loading{position:absolute;inset:0;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;z-index:200;flex-direction:column;gap:10px;}
+.spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:.5}70%{transform:scale(1.5);opacity:0}100%{transform:scale(1.5);opacity:0}}
+@media(max-width:768px){.sidebar{display:none;}}
+/* Fix marker jumping on hover */
+.mapboxgl-marker{transition:none!important;}
+.mapboxgl-marker:hover{z-index:999!important;}
+.mapboxgl-canvas-container{cursor:grab;}
+.mapboxgl-canvas-container:active{cursor:grabbing;}
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="/"><span class="brand-dot"></span>RioData</a>
+  <span style="color:rgba(255,255,255,.2)">·</span>
+  <a class="nav-back" href="/"><i class="fa-solid fa-arrow-left" style="margin-right:4px"></i>Back</a>
+  <div class="map-status" id="map-status"><div class="spinner" style="width:14px;height:14px;border-width:2px"></div> Loading...</div>
+  <a href="/onboarding.html" class="add-btn"><i class="fa-solid fa-plus" style="margin-right:4px"></i>Add Business</a>
+</nav>
+<div class="filter-bar">
+  <span class="filter-label">Filter</span>
+  <button class="fbtn on" onclick="setFilter(this,'')">All</button>
+  <button class="fbtn" onclick="setFilter(this,'ready')"><i class="fa-solid fa-check" style="margin-right:3px;font-size:9px"></i>Ready</button>
+  <button class="fbtn" onclick="setFilter(this,'US')">🇺🇸 Texas</button>
+  <button class="fbtn" onclick="setFilter(this,'MX')">🇲🇽 Mexico</button>
+  <button class="fbtn" onclick="setFilter(this,'Construction')"><i class="fa-solid fa-hard-hat" style="margin-right:3px;font-size:10px"></i>Construction</button>
+  <button class="fbtn" onclick="setFilter(this,'Energy')"><i class="fa-solid fa-bolt" style="margin-right:3px;font-size:10px"></i>Energy</button>
+  <button class="fbtn" onclick="setFilter(this,'Logistics')"><i class="fa-solid fa-truck" style="margin-right:3px;font-size:10px"></i>Logistics</button>
+  <button class="fbtn" onclick="setFilter(this,'Manufacturing')"><i class="fa-solid fa-industry" style="margin-right:3px;font-size:10px"></i>Manufacturing</button>
+</div>
+<div class="map-wrap">
+  <div id="map">
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <div style="font-size:13px;color:var(--ink3)">Loading regional map...</div>
+    </div>
+    <div class="map-stats" id="map-stats" style="display:none">
+      <div class="ms"><div class="ms-num" id="st-total">0</div><div class="ms-lbl">Companies</div></div>
+      <div class="ms"><div class="ms-num" id="st-ready" style="color:var(--green)">0</div><div class="ms-lbl">Ready</div></div>
+      <div class="ms"><div class="ms-num" id="st-tx">0</div><div class="ms-lbl">Texas</div></div>
+      <div class="ms"><div class="ms-num" id="st-mx">0</div><div class="ms-lbl">Mexico</div></div>
+    </div>
+    <div class="map-legend">
+      <div class="leg-title">Legend</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#1A6B72"></div>Construction</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#2A6B43;box-shadow:0 0 0 3px rgba(42,107,67,.2)"></div>Ready to Work</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#B8431E"></div>Energy / LNG</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#B07D1A"></div>Logistics</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#5B3FA6"></div>Manufacturing</div>
+    </div>
+  </div>
+  <div class="sidebar">
+    <div class="sb-head">
+      <div class="sb-title">Company Directory</div>
+      <div class="sb-meta" id="sb-meta">Loading...</div>
+    </div>
+    <div class="sb-search"><input class="sb-inp" id="sb-search" placeholder="Search companies..." oninput="filterSidebar()"></div>
+    <div class="co-list" id="co-list"><div style="text-align:center;padding:32px;color:var(--ink3)"><div class="spinner" style="margin:0 auto 10px"></div>Loading...</div></div>
+  </div>
+</div>
+
+<script>
+// ── YOUR MAPBOX TOKEN ─────────────────────
+// Replace with your actual token from mapbox.com/account/access-tokens
+const MAPBOX_TOKEN = document.currentScript ? null : null;
+
+// Read token from map.html itself (set by GitHub)
+mapboxgl.accessToken = document.querySelector('script[data-token]')?.dataset.token || 
+  'pk.eyJ1IjoibW9pc2VzdmlzdGF0ZWNoIiwiYSI6ImNtOWNtbnhrZzhoZDAzZHIyeHEwbXJwN2Q1MnQifQ.IJyADVqw8boGQrtB9Q97qw';
+
+const SECTOR_COLORS = {
+  'Construction':'#1A6B72','Energy':'#B8431E','Manufacturing':'#5B3FA6',
+  'Logistics':'#B07D1A','Technology':'#1A5CB8','Healthcare':'#B8431E',
+  'default':'#5C5C54'
+};
+
+// City coordinates - slight offsets so markers don't stack
+const CITY_BASE = {
+  'Laredo':[-99.5075,27.5036],'Nuevo Laredo':[-99.5161,27.4763],
+  'McAllen':[-98.2301,26.2034],'Edinburg':[-98.1633,26.3017],
+  'Mission':[-98.3251,26.2159],'Pharr':[-98.1847,26.1939],
+  'Harlingen':[-97.6961,26.1906],'Weslaco':[-97.9903,26.1595],
+  'Brownsville':[-97.4975,25.9017],'Hidalgo':[-98.2602,26.1009],
+  'Reynosa':[-98.2977,26.0852],'Matamoros':[-97.5032,25.8692],
+  'Nuevo Laredo':[-99.5161,27.4763],'Río Bravo':[-98.0833,26.0833],
+  'Rio Bravo':[-98.0833,26.0833],'Valle Hermoso':[-97.6597,25.6731],
+  'Monterrey':[-100.3161,25.6866],'Saltillo':[-101.0,25.43],
+};
+
+let allCos=[], markers=[], activeFilter='', map;
+
+function getCoords(city, country, index) {
+  const base = CITY_BASE[city];
+  if (!base) {
+    return country==='MX' 
+      ? [-98.5+(Math.random()-.5)*4, 26.2+(Math.random()-.5)*2]
+      : [-98.2+(Math.random()-.5)*2, 26.3+(Math.random()-.5)*1];
+  }
+  // Scatter markers around city center so they don't all stack
+  const angle = (index * 137.5) * Math.PI / 180; // golden angle
+  const radius = Math.min(0.02 + Math.floor(index/8)*0.015, 0.08);
+  return [base[0] + Math.cos(angle)*radius, base[1] + Math.sin(angle)*radius];
+}
+
+function getColor(c) {
+  if (c.ready_to_work) return '#2A6B43';
+  return SECTOR_COLORS[c.sector] || SECTOR_COLORS.default;
+}
+
+// Init map
+try {
+  map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/navigation-day-v1',
+    center: [-98.5, 26.4],
+    zoom: 8,
+    minZoom: 5,
+    maxZoom: 18
+  });
+  map.addControl(new mapboxgl.NavigationControl({showCompass:false}), 'bottom-right');
+  map.addControl(new mapboxgl.ScaleControl({unit:'imperial'}), 'bottom-left');
+  map.on('load', () => loadCompanies());
+  map.on('error', () => loadCompanies());
+  setTimeout(() => { if (!map._loaded) loadCompanies(); }, 4000);
+} catch(e) {
+  loadCompanies();
+}
+
+async function loadCompanies() {
+  if (allCos.length) return;
+  const {data} = await sb.from('companies').select('*').eq('status','active').order('ready_to_work',{ascending:false});
+  allCos = data?.length ? data : [];
+  document.getElementById('loading').style.display='none';
+  document.getElementById('map-stats').style.display='flex';
+  updateStats(allCos);
+  addMarkers(allCos);
+  renderSidebar(allCos);
+  document.getElementById('map-status').innerHTML = '<i class="fa-solid fa-circle" style="color:#4CAF78;font-size:8px;margin-right:5px"></i>'+allCos.length+' companies mapped';
+}
+
+// Track city indices for scatter
+const cityIndex = {};
+
+function addMarkers(cos) {
+  markers.forEach(m=>m.remove());
+  markers=[];
+  Object.keys(cityIndex).forEach(k=>delete cityIndex[k]);
+
+  cos.forEach(c => {
+    const cityKey = (c.city||'unknown')+'_'+(c.country||'US');
+    cityIndex[cityKey] = (cityIndex[cityKey]||0);
+    const coords = getCoords(c.city, c.country, cityIndex[cityKey]++);
+    const color = getColor(c);
+
+    const el = document.createElement('div');
+    el.style.cssText = `position:relative;width:30px;height:30px;border-radius:50%;background:${color};border:2px solid white;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:12px;font-weight:700;color:white;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:transform .15s;will-change:transform;transform-origin:center center;`;
+    el.textContent = (c.legal_name||'C')[0].toUpperCase();
+
+    if (c.ready_to_work) {
+      const pulse = document.createElement('div');
+      pulse.style.cssText = `position:absolute;inset:-4px;border-radius:50%;border:2px solid ${color};animation:pulse-ring 2s ease infinite;pointer-events:none;`;
+      el.appendChild(pulse);
+    }
+
+    el.onmouseenter = () => { el.style.transform='scale(1.2)'; el.style.zIndex='999'; };
+    el.onmouseleave = () => { el.style.transform='scale(1)'; el.style.zIndex='1'; };
+
+    const certs = [c.cert_hubzone&&'HUBZone',c.cert_sam&&'SAM',c.cert_ctpat&&'C-TPAT',c.cert_immex&&'IMMEX'].filter(Boolean);
+    const popup = new mapboxgl.Popup({offset:14,closeButton:true,maxWidth:'280px'})
+      .setHTML(`<div class="popup-inner">
+        <div class="popup-name">${c.legal_name}</div>
+        <div class="popup-loc"><i class="fa-solid fa-location-dot" style="font-size:10px;color:var(--teal);margin-right:3px"></i>${c.city||''}${c.state_province?', '+c.state_province:''} ${c.country==='MX'?'🇲🇽':'🇺🇸'}</div>
+        <div class="popup-tags">
+          ${c.ready_to_work?'<span class="ptag ptag-ready">✅ Ready</span>':''}
+          <span class="ptag ptag-sector">${c.sector||'General'}</span>
+          ${certs.map(t=>`<span class="ptag ptag-cert">${t}</span>`).join('')}
+        </div>
+        ${c.description?`<div class="popup-desc">${c.description.substring(0,100)}...</div>`:''}
+        ${c.contact_email?`<a class="popup-contact" href="mailto:${c.contact_email}"><i class="fa-solid fa-envelope" style="margin-right:5px"></i>Contact</a>`:''}
+      </div>`);
+
+    const m = new mapboxgl.Marker({element:el,anchor:'center',offset:[0,0]}).setLngLat(coords).setPopup(popup);
+    if(map) m.addTo(map);
+    markers.push(m);
+  });
+}
+
+function updateStats(cos) {
+  document.getElementById('st-total').textContent=cos.length;
+  document.getElementById('st-ready').textContent=cos.filter(c=>c.ready_to_work).length;
+  document.getElementById('st-tx').textContent=cos.filter(c=>c.country==='US').length;
+  document.getElementById('st-mx').textContent=cos.filter(c=>c.country==='MX').length;
+}
+
+function setFilter(el,type) {
+  document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  activeFilter=type;
+  let f=allCos;
+  if(type==='ready')f=allCos.filter(c=>c.ready_to_work);
+  else if(type==='US')f=allCos.filter(c=>c.country==='US');
+  else if(type==='MX')f=allCos.filter(c=>c.country==='MX');
+  else if(type)f=allCos.filter(c=>c.sector===type);
+  updateStats(f); addMarkers(f); renderSidebar(f);
+}
+
+function renderSidebar(cos) {
+  const q=(document.getElementById('sb-search')?.value||'').toLowerCase();
+  const f=q?cos.filter(c=>(c.legal_name||'').toLowerCase().includes(q)||(c.city||'').toLowerCase().includes(q)):cos;
+  document.getElementById('sb-meta').textContent=f.length+' companies';
+  const pal=['#E3F0F1,#1A6B72','#F2E8E3,#B8431E','#FBF4E3,#B07D1A','#E4F0EA,#2A6B43','#EDE8F8,#5B3FA6'];
+  document.getElementById('co-list').innerHTML=f.length?f.map(c=>{
+    const [bg,fg]=pal[(c.legal_name||'').charCodeAt(0)%pal.length].split(',');
+    return `<div class="co-item" onclick="flyTo('${(c.id||c.legal_name).replace(/'/g,"\\'")}')">
+      <div class="co-av" style="background:${bg};color:${fg}">${(c.legal_name||'C')[0]}</div>
+      <div style="min-width:0;flex:1">
+        <div class="co-name">${c.legal_name}</div>
+        <div class="co-sub">${c.city||''} · ${c.sector||'General'}</div>
+      </div>
+      <div class="co-dot" style="background:${c.ready_to_work?'#2A6B43':'#E2DDD6'}"></div>
+    </div>`;
+  }).join(''):'<div style="text-align:center;padding:32px;color:var(--ink3)">No companies found</div>';
+}
+
+function flyTo(id) {
+  const c=allCos.find(c=>(c.id||c.legal_name)===id);
+  if(!c||!map)return;
+  const cityKey=(c.city||'unknown')+'_'+(c.country||'US');
+  const idx=allCos.filter(x=>(x.city||'unknown')+'_'+(x.country||'US')===cityKey).indexOf(c);
+  const coords=getCoords(c.city,c.country,idx);
+  map.flyTo({center:coords,zoom:13,duration:800});
+  const mi=allCos.indexOf(c);
+  if(markers[mi])markers[mi].togglePopup();
+}
+
+function filterSidebar(){
+  const f=activeFilter?allCos.filter(c=>{
+    if(activeFilter==='ready')return c.ready_to_work;
+    if(activeFilter==='US')return c.country==='US';
+    if(activeFilter==='MX')return c.country==='MX';
+    return c.sector===activeFilter;
+  }):allCos;
+  renderSidebar(f);
+}
+</script>
+</body>
+</html>
